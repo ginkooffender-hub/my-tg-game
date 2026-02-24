@@ -10,91 +10,107 @@
         :root {
             --gold: #ffcf4d;
             --emerald: #2ecc71;
-            --dark-blue: #0f172a;
-            --glass: rgba(30, 41, 59, 0.7);
+            --bg: #020617;
+            --glass: rgba(255, 255, 255, 0.07);
         }
 
         body {
-            margin: 0; padding: 0;
-            font-family: 'Montserrat', sans-serif;
+            margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;
             background: radial-gradient(circle at top, #1e293b, #020617);
             color: white; height: 100vh; overflow: hidden;
-            display: flex; justify-content: center;
         }
 
-        .app { width: 100%; max-width: 420px; display: flex; flex-direction: column; padding: 20px; position: relative; }
+        .app { height: 100vh; display: flex; flex-direction: column; padding: 20px 20px 100px 20px; box-sizing: border-box; }
 
         /* Баланс */
-        .top-nav {
+        .balance-card {
             background: var(--glass); backdrop-filter: blur(15px);
-            padding: 15px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
-            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 20px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
+            text-align: center; margin-bottom: 20px;
         }
-        .balance-val { font-family: 'Bungee'; font-size: 38px; color: var(--gold); text-shadow: 0 4px 0 #b8860b; }
-        .lvl-badge { font-size: 10px; background: var(--emerald); padding: 4px 12px; border-radius: 20px; text-transform: uppercase; font-weight: 800; }
+        .balance-val { font-family: 'Bungee'; font-size: 42px; color: var(--gold); }
+        .passive-income { font-size: 12px; color: var(--emerald); font-weight: 800; }
 
-        /* Игровая зона */
-        .game-core { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
-        
-        .tree-box { position: relative; transition: transform 0.1s; cursor: pointer; }
-        .tree-img { font-size: 140px; filter: drop-shadow(0 0 30px rgba(46, 204, 113, 0.4)); animation: float 3s ease-in-out infinite; }
-        
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        /* Вкладки */
+        .tab-content { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; }
+        .tab-content.active { display: flex; }
+
+        /* Дерево */
+        .tree-btn { font-size: 160px; cursor: pointer; transition: 0.1s; user-select: none; filter: drop-shadow(0 0 30px rgba(46,204,113,0.3)); }
+        .tree-btn:active { transform: scale(0.9); }
+
+        /* Бусты */
+        .boost-list { width: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .boost-item {
+            background: var(--glass); padding: 15px; border-radius: 18px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .boost-info b { display: block; font-size: 14px; }
+        .boost-info span { font-size: 11px; opacity: 0.6; }
+        .buy-btn { background: var(--gold); color: black; border: none; padding: 8px 15px; border-radius: 12px; font-weight: 800; font-size: 12px; }
+
+        /* Нижнее меню */
+        .nav {
+            position: fixed; bottom: 20px; left: 20px; right: 20px;
+            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px);
+            border-radius: 24px; display: flex; justify-content: space-around;
+            padding: 15px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .nav-item { font-size: 12px; font-weight: 800; opacity: 0.5; cursor: pointer; text-align: center; }
+        .nav-item.active { opacity: 1; color: var(--gold); }
 
         /* Энергия */
-        .energy-box { width: 100%; margin-bottom: 20px; }
-        .bar-outer { height: 16px; background: #111; border-radius: 10px; border: 1px solid #333; overflow: hidden; }
-        .bar-inner { height: 100%; width: 100%; background: linear-gradient(90deg, #22c55e, #a8ff78); transition: width 0.2s; box-shadow: 0 0 15px var(--emerald); }
-
-        /* Магазин */
-        .upgrades { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .up-card { 
-            background: var(--glass); padding: 12px; border-radius: 18px; 
-            border: 1px solid rgba(255,255,255,0.05); text-align: left;
-        }
-        .up-card:active { transform: scale(0.95); }
-        .up-name { font-size: 11px; opacity: 0.7; font-weight: 800; }
-        .up-cost { display: block; font-size: 16px; color: var(--gold); font-family: 'Bungee'; }
-
-        /* Летающие монетки */
-        .tap-anim {
-            position: absolute; color: var(--gold); font-family: 'Bungee';
-            font-size: 24px; pointer-events: none; animation: flyUp 0.8s ease-out forwards;
-        }
-        @keyframes flyUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-120px); opacity: 0; } }
+        .energy-bar { width: 100%; height: 12px; background: #111; border-radius: 10px; margin-top: 20px; overflow: hidden; }
+        .energy-fill { height: 100%; background: var(--emerald); transition: width 0.3s; }
     </style>
 </head>
 <body>
     <div class="app">
-        <div class="top-nav">
-            <span class="lvl-badge" id="lvlName">Росток</span>
+        <div class="balance-card">
+            <div class="passive-income">Прибыль: +<span id="pIncome">0</span>/сек</div>
             <div class="balance-val" id="coins">0</div>
-            <div style="font-size: 12px; opacity: 0.5;">MONEY COINS</div>
+            <div id="lvlName" style="font-size:10px; opacity:0.5; letter-spacing:2px;">РОСТОК</div>
         </div>
 
-        <div class="game-core">
-            <div class="tree-box" id="treeBtn">
-                <div class="tree-img" id="mainTree">🌱</div>
+        <div id="game" class="tab-content active">
+            <div class="tree-btn" id="tree">🌱</div>
+            <div style="width:100%">
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:20px;">
+                    <span>⚡ Энергия</span>
+                    <span id="eText">100/100</span>
+                </div>
+                <div class="energy-bar"><div class="energy-fill" id="eFill"></div></div>
             </div>
         </div>
 
-        <div class="energy-box">
-            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;">
-                <span>ЭНЕРГИЯ</span>
-                <span id="energyText">100/100</span>
+        <div id="boosts" class="tab-content">
+            <h2 style="font-family:'Bungee'; color:var(--gold)">Магазин</h2>
+            <div class="boost-list">
+                <div class="boost-item">
+                    <div class="boost-info"><b>💪 Мульти-тап</b><span>+1 к клику</span></div>
+                    <button class="buy-btn" onclick="buy('tap')"><span id="tapCost">50</span></button>
+                </div>
+                <div class="boost-item">
+                    <div class="boost-info"><b>🔋 Лимит энергии</b><span>+50 к макс.</span></div>
+                    <button class="buy-btn" onclick="buy('energy')"><span id="energyCost">100</span></button>
+                </div>
+                <div class="boost-item">
+                    <div class="boost-info"><b>🤖 Садовник</b><span>+1 монета/сек</span></div>
+                    <button class="buy-btn" onclick="buy('auto')"><span id="autoCost">250</span></button>
+                </div>
             </div>
-            <div class="bar-outer"><div class="bar-inner" id="energyFill"></div></div>
         </div>
 
-        <div class="upgrades">
-            <div class="up-card" onclick="buy('tap')">
-                <span class="up-name">СИЛА ТАПА</span>
-                <span class="up-cost" id="tapCost">50</span>
-            </div>
-            <div class="up-card" onclick="buy('energy')">
-                <span class="up-name">МАКС ЭНЕРГИЯ</span>
-                <span class="up-cost" id="energyCost">100</span>
-            </div>
+        <div id="top" class="tab-content">
+            <h2 style="font-family:'Bungee'; color:var(--emerald)">Топ игроков</h2>
+            <div style="opacity:0.5">Скоро здесь будет список...</div>
+        </div>
+
+        <div class="nav">
+            <div class="nav-item active" onclick="showTab('game', this)">🌳<br>Игра</div>
+            <div class="nav-item" onclick="showTab('boosts', this)">🚀<br>Бусты</div>
+            <div class="nav-item" onclick="showTab('top', this)">🏆<br>Топ</div>
         </div>
     </div>
 
@@ -102,79 +118,64 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        let state = JSON.parse(localStorage.getItem('mTree_v1')) || {
-            coins: 0, power: 1, energy: 100, maxEnergy: 100, lvl: 1
+        let state = JSON.parse(localStorage.getItem('mTree_v2')) || {
+            coins: 0, power: 1, energy: 100, maxEnergy: 100, passive: 0, lastTime: Date.now()
         };
 
-        const trees = ["🌱", "🌿", "🌳", "🌲", "🎄", "✨"];
-        const lvlNames = ["Росток", "Куст", "Дерево", "Большое дерево", "Дуб", "Золотое Древо"];
+        // Офлайн доход
+        const now = Date.now();
+        const diff = Math.floor((now - state.lastTime) / 1000);
+        if (diff > 0 && state.passive > 0) {
+            const earned = diff * state.passive;
+            state.coins += earned;
+            alert(`Пока тебя не было, дерево принесло ${earned} монет!`);
+        }
+
+        function showTab(id, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
+        }
 
         function update() {
             document.getElementById('coins').textContent = Math.floor(state.coins);
-            document.getElementById('energyText').textContent = Math.floor(state.energy) + "/" + state.maxEnergy;
-            document.getElementById('energyFill').style.width = (state.energy / state.maxEnergy * 100) + "%";
+            document.getElementById('pIncome').textContent = state.passive;
+            document.getElementById('eText').textContent = Math.floor(state.energy) + "/" + state.maxEnergy;
+            document.getElementById('eFill').style.width = (state.energy / state.maxEnergy * 100) + "%";
             
-            // Смена уровня
-            let currentLvl = Math.min(Math.floor(state.coins / 500), 5);
-            document.getElementById('mainTree').textContent = trees[currentLvl];
-            document.getElementById('lvlName').textContent = lvlNames[currentLvl];
-
             document.getElementById('tapCost').textContent = 50 * state.power;
             document.getElementById('energyCost').textContent = state.maxEnergy * 2;
-            
-            localStorage.setItem('mTree_v1', JSON.stringify(state));
+            document.getElementById('autoCost').textContent = (state.passive + 1) * 250;
+
+            state.lastTime = Date.now();
+            localStorage.setItem('mTree_v2', JSON.stringify(state));
         }
 
-        document.getElementById('treeBtn').onclick = (e) => {
-            if (state.energy < 1) {
-                tg.HapticFeedback.notificationOccurred('error');
-                return;
-            }
-
+        document.getElementById('tree').onclick = (e) => {
+            if (state.energy < 1) return;
             state.coins += state.power;
             state.energy -= 1;
-
-            // Анимация
-            const clickAnim = document.createElement('div');
-            clickAnim.className = 'tap-anim';
-            clickAnim.textContent = "+" + state.power;
-            clickAnim.style.left = e.clientX + "px";
-            clickAnim.style.top = e.clientY + "px";
-            document.body.appendChild(clickAnim);
-            setTimeout(() => clickAnim.remove(), 800);
-
-            document.getElementById('treeBtn').style.transform = "scale(0.9)";
-            setTimeout(() => document.getElementById('treeBtn').style.transform = "scale(1)", 100);
-
             tg.HapticFeedback.impactOccurred('medium');
             update();
         };
 
         function buy(type) {
-            if (type === 'tap') {
-                let cost = 50 * state.power;
-                if (state.coins >= cost) {
-                    state.coins -= cost;
-                    state.power++;
-                }
-            } else if (type === 'energy') {
-                let cost = state.maxEnergy * 2;
-                if (state.coins >= cost) {
-                    state.coins -= cost;
-                    state.maxEnergy += 50;
-                    state.energy = state.maxEnergy;
-                }
+            if (type === 'tap' && state.coins >= 50 * state.power) {
+                state.coins -= 50 * state.power; state.power++;
+            } else if (type === 'energy' && state.coins >= state.maxEnergy * 2) {
+                state.coins -= state.maxEnergy * 2; state.maxEnergy += 50; state.energy = state.maxEnergy;
+            } else if (type === 'auto' && state.coins >= (state.passive + 1) * 250) {
+                state.coins -= (state.passive + 1) * 250; state.passive++;
             }
-            tg.HapticFeedback.notificationOccurred('success');
             update();
         }
 
         setInterval(() => {
-            if (state.energy < state.maxEnergy) {
-                state.energy = Math.min(state.maxEnergy, state.energy + 0.4);
-                update();
-            }
-        }, 500);
+            state.energy = Math.min(state.maxEnergy, state.energy + 0.5);
+            state.coins += state.passive / 10;
+            update();
+        }, 100);
 
         update();
     </script>
