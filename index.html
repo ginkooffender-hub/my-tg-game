@@ -3,128 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Money Tree: HD Edition</title>
+    <title>Money Tree: Classic</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --gold: #ffcf4d;
-            --emerald: #2ecc71;
-            --glass: rgba(255, 255, 255, 0.08);
-        }
-
-        body {
-            margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;
-            background: radial-gradient(circle at top, #1e293b, #020617);
-            color: white; height: 100vh; overflow: hidden;
-            user-select: none; -webkit-tap-highlight-color: transparent;
-        }
-
+        :root { --gold: #ffcf4d; --emerald: #2ecc71; --glass: rgba(255, 255, 255, 0.08); }
+        body { margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; background: radial-gradient(circle at top, #1e293b, #020617); color: white; height: 100vh; overflow: hidden; user-select: none; -webkit-tap-highlight-color: transparent; }
         .app { height: 100vh; display: flex; flex-direction: column; padding: 20px 20px 100px 20px; box-sizing: border-box; }
-
-        .balance-card {
-            background: var(--glass); backdrop-filter: blur(15px);
-            padding: 20px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.1);
-            text-align: center; margin-bottom: 20px;
-        }
+        
+        .balance-card { background: var(--glass); backdrop-filter: blur(15px); padding: 20px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.1); text-align: center; margin-bottom: 20px; }
         .balance-val { font-family: 'Bungee'; font-size: 44px; color: var(--gold); text-shadow: 0 4px 0 #b8860b; line-height: 1; }
-        .passive-income { font-size: 13px; color: var(--emerald); font-weight: 800; margin-bottom: 5px; }
-
+        
         .tab-content { display: none; flex: 1; flex-direction: column; align-items: center; width: 100%; }
         .tab-content.active { display: flex; }
-
-        /* ГРАФИКА ДЕРЕВА */
-        .tree-container { 
-            flex: 1; display: flex; align-items: center; justify-content: center; 
-            position: relative; width: 100%;
-        }
-
-        .tree-img { 
-            width: 280px; /* Фиксированный размер для графики */
-            height: 280px;
-            object-fit: contain;
-            cursor: pointer; 
-            transition: transform 0.05s ease-out; 
-            animation: sway 4s ease-in-out infinite;
-            z-index: 100;
-            -webkit-user-drag: none;
-        }
-
-        @keyframes sway {
-            0%, 100% { transform: rotate(-2deg) scale(1); }
-            50% { transform: rotate(2deg) scale(1.05); }
-        }
-
-        .tree-img:active { 
-            transform: scale(0.85) !important; 
-            animation: none;
-        }
-
-        /* Остальное без изменений для стабильности */
-        .boost-list { width: 100%; display: flex; flex-direction: column; gap: 10px; }
-        .boost-item {
-            background: var(--glass); padding: 14px; border-radius: 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .buy-btn { background: var(--gold); color: #451a03; border: none; padding: 10px 15px; border-radius: 12px; font-weight: 800; }
+        
+        .tree-container { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; }
+        .tree-img { width: 240px; height: 240px; object-fit: contain; cursor: pointer; transition: transform 0.05s ease-out; animation: sway 4s ease-in-out infinite; }
+        @keyframes sway { 0%, 100% { transform: rotate(-2deg) scale(1); } 50% { transform: rotate(2deg) scale(1.05); } }
+        .tree-img:active { transform: scale(0.9) !important; animation: none; }
+        
         .energy-section { width: 100%; margin-top: auto; }
         .energy-bar { width: 100%; height: 12px; background: rgba(0,0,0,0.4); border-radius: 10px; overflow: hidden; margin-top: 5px; }
         .energy-fill { height: 100%; background: var(--emerald); transition: width 0.3s; }
-        .nav {
-            position: fixed; bottom: 20px; left: 20px; right: 20px;
-            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px);
-            border-radius: 24px; display: flex; justify-content: space-around;
-            padding: 12px; border: 1px solid rgba(255,255,255,0.1);
-        }
-        .nav-item { font-size: 11px; opacity: 0.4; text-align: center; color: white; }
+        
+        .nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border-radius: 24px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid rgba(255,255,255,0.1); }
+        .nav-item { font-size: 11px; opacity: 0.4; text-align: center; color: white; cursor: pointer; }
         .nav-item.active { opacity: 1; color: var(--gold); }
+        
         .tap-pop { position: absolute; color: white; font-family: 'Bungee'; font-size: 30px; pointer-events: none; z-index: 200; animation: tapUp 0.6s ease-out forwards; }
         @keyframes tapUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-100px); opacity: 0; } }
+        
+        .boost-item { background: var(--glass); padding: 14px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; width: 100%; box-sizing: border-box; }
+        .buy-btn { background: var(--gold); color: #451a03; border: none; padding: 10px 15px; border-radius: 12px; font-weight: 800; }
     </style>
 </head>
 <body>
     <div class="app">
         <div class="balance-card">
-            <div class="passive-income">Прибыль: +<span id="pIncome">0</span>/сек</div>
+            <div style="font-size: 13px; color: var(--emerald); font-weight: 800; margin-bottom: 5px;">ПРИБЫЛЬ: +<span id="pIncome">0</span>/СЕК</div>
             <div class="balance-val" id="coins">0</div>
-            <div id="lvlName" style="font-size:10px; opacity:0.5; letter-spacing:2px; text-transform:uppercase;">УРОВЕНЬ 1</div>
+            <div id="lvlName" style="font-size:10px; opacity:0.5; letter-spacing:2px;">УРОВЕНЬ 1</div>
         </div>
 
         <div id="game" class="tab-content active">
             <div class="tree-container">
-                <img src="https://cdn-icons-png.flaticon.com/512/1892/1892751.png" class="tree-img" id="treeImg">
+                <img src="https://cdn-icons-png.flaticon.com/512/3593/3593450.png" class="tree-img" id="treeImg">
             </div>
             <div class="energy-section">
-                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800;">
-                    <span>ЭНЕРГИЯ</span>
-                    <span id="eText">100/100</span>
-                </div>
+                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800;"><span>ЭНЕРГИЯ</span><span id="eText">100/100</span></div>
                 <div class="energy-bar"><div class="energy-fill" id="eFill"></div></div>
             </div>
         </div>
 
         <div id="boosts" class="tab-content">
-            <h3 style="font-family:'Bungee'; color:var(--gold)">МАГАЗИН</h3>
-            <div class="boost-list">
-                <div class="boost-item">
-                    <div><b>💪 Сила тапа</b><br><small id="tapCostText">Цена: 100</small></div>
-                    <button class="buy-btn" onclick="buy('tap')">УЛУЧШИТЬ</button>
-                </div>
-                <div class="boost-item">
-                    <div><b>🔋 Энергия</b><br><small id="energyCostText">Цена: 50</small></div>
-                    <button class="buy-btn" onclick="buy('energy')">УЛУЧШИТЬ</button>
-                </div>
-                <div class="boost-item">
-                    <div><b>🤖 Садовник</b><br><small id="autoCostText">Цена: 500</small></div>
-                    <button class="buy-btn" onclick="buy('auto')">УЛУЧШИТЬ</button>
-                </div>
+            <h3 style="font-family:'Bungee'; color:var(--gold); margin-bottom: 15px;">МАГАЗИН</h3>
+            <div style="width:100%">
+                <div class="boost-item"><div><b>💪 Мульти-тап</b><br><small id="tapCost">100</small></div><button class="buy-btn" onclick="buy('tap')">АП</button></div>
+                <div class="boost-item"><div><b>🔋 Лимит энергии</b><br><small id="energyCost">50</small></div><button class="buy-btn" onclick="buy('energy')">АП</button></div>
+                <div class="boost-item"><div><b>🤖 Садовник</b><br><small id="autoCost">500</small></div><button class="buy-btn" onclick="buy('auto')">АП</button></div>
             </div>
         </div>
 
         <div id="top" class="tab-content">
             <h3 style="font-family:'Bungee'; color:var(--emerald)">РЕЙТИНГ</h3>
-            <p style="opacity:0.5">Лидерборд скоро...</p>
+            <p style="opacity:0.5; text-align:center;">Скоро здесь будут лидеры!</p>
         </div>
 
         <div class="nav">
@@ -142,39 +84,21 @@
             coins: 0, power: 1, energy: 100, maxEnergy: 100, passive: 0
         };
 
-        // Ссылки на картинки уровней
-        const treeSkins = [
-            "https://cdn-icons-png.flaticon.com/512/1892/1892751.png", // Ур 1
-            "https://cdn-icons-png.flaticon.com/512/2824/2824851.png", // Ур 2
-            "https://cdn-icons-png.flaticon.com/512/489/489969.png",   // Ур 3
-            "https://cdn-icons-png.flaticon.com/512/3246/3246067.png", // Ур 4
-            "https://cdn-icons-png.flaticon.com/512/2913/2913520.png"  // Ур 5
-        ];
-
         function update() {
             document.getElementById('coins').textContent = Math.floor(state.coins);
             document.getElementById('pIncome').textContent = state.passive.toFixed(1);
             document.getElementById('eText').textContent = Math.floor(state.energy) + "/" + state.maxEnergy;
             document.getElementById('eFill').style.width = (state.energy / state.maxEnergy * 100) + "%";
             
-            document.getElementById('tapCostText').textContent = "Цена: " + Math.floor(100 * Math.pow(1.8, state.power - 1));
-            document.getElementById('energyCostText').textContent = "Цена: " + Math.floor(50 * (state.maxEnergy / 50));
-            document.getElementById('autoCostText').textContent = "Цена: " + Math.floor((state.passive + 1) * 500);
-
-            // Смена картинки
-            let idx = Math.min(Math.floor(state.coins / 2000), 4);
-            document.getElementById('treeImg').src = treeSkins[idx];
-            document.getElementById('lvlName').textContent = `УРОВЕНЬ ${idx + 1}`;
+            document.getElementById('tapCost').textContent = "Цена: " + Math.floor(100 * Math.pow(1.8, state.power - 1));
+            document.getElementById('energyCost').textContent = "Цена: " + Math.floor(50 * (state.maxEnergy / 50));
+            document.getElementById('autoCost').textContent = "Цена: " + Math.floor((state.passive + 1) * 500);
 
             localStorage.setItem('mTree_v2.6', JSON.stringify(state));
         }
 
-        const btn = document.getElementById('treeImg');
-        btn.onclick = (e) => {
-            if (state.energy < 1) {
-                tg.HapticFeedback.notificationOccurred('warning');
-                return;
-            }
+        document.getElementById('treeImg').onclick = (e) => {
+            if (state.energy < 1) return;
             state.coins += state.power;
             state.energy -= 1;
             
