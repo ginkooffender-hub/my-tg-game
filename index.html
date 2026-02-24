@@ -3,51 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Money Tree: Classic</title>
+    <title>Money Tree: Evolution</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #ffcf4d; --emerald: #2ecc71; --glass: rgba(255, 255, 255, 0.08); }
-        body { margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; background: radial-gradient(circle at top, #1e293b, #020617); color: white; height: 100vh; overflow: hidden; user-select: none; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --gold: #ffcf4d;
+            --emerald: #2ecc71;
+            --glass: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;
+            background: radial-gradient(circle at top, #1e293b, #020617);
+            color: white; height: 100vh; overflow: hidden;
+            user-select: none; -webkit-tap-highlight-color: transparent;
+        }
+
         .app { height: 100vh; display: flex; flex-direction: column; padding: 20px 20px 100px 20px; box-sizing: border-box; }
-        
-        .balance-card { background: var(--glass); backdrop-filter: blur(15px); padding: 20px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.1); text-align: center; margin-bottom: 20px; }
+
+        .balance-card {
+            background: var(--glass); backdrop-filter: blur(15px);
+            padding: 20px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.1);
+            text-align: center; margin-bottom: 20px;
+        }
         .balance-val { font-family: 'Bungee'; font-size: 44px; color: var(--gold); text-shadow: 0 4px 0 #b8860b; line-height: 1; }
-        
+        .passive-income { font-size: 13px; color: var(--emerald); font-weight: 800; margin-bottom: 5px; }
+
         .tab-content { display: none; flex: 1; flex-direction: column; align-items: center; width: 100%; }
         .tab-content.active { display: flex; }
-        
+
         .tree-container { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; }
-        .tree-img { width: 240px; height: 240px; object-fit: contain; cursor: pointer; transition: transform 0.05s ease-out; animation: sway 4s ease-in-out infinite; }
+        .tree-img { 
+            width: 260px; height: 260px; object-fit: contain; cursor: pointer; 
+            transition: transform 0.05s ease-out; animation: sway 4s ease-in-out infinite;
+        }
         @keyframes sway { 0%, 100% { transform: rotate(-2deg) scale(1); } 50% { transform: rotate(2deg) scale(1.05); } }
-        .tree-img:active { transform: scale(0.9) !important; animation: none; }
-        
+        .tree-img:active { transform: scale(0.85) !important; animation: none; }
+
+        .boost-list { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+        .boost-item {
+            background: var(--glass); padding: 14px; border-radius: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .buy-btn { background: var(--gold); color: #451a03; border: none; padding: 10px 15px; border-radius: 12px; font-weight: 800; }
+
         .energy-section { width: 100%; margin-top: auto; }
         .energy-bar { width: 100%; height: 12px; background: rgba(0,0,0,0.4); border-radius: 10px; overflow: hidden; margin-top: 5px; }
         .energy-fill { height: 100%; background: var(--emerald); transition: width 0.3s; }
-        
-        .nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border-radius: 24px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid rgba(255,255,255,0.1); }
+
+        .nav {
+            position: fixed; bottom: 20px; left: 20px; right: 20px;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px);
+            border-radius: 24px; display: flex; justify-content: space-around;
+            padding: 12px; border: 1px solid rgba(255,255,255,0.1);
+        }
         .nav-item { font-size: 11px; opacity: 0.4; text-align: center; color: white; cursor: pointer; }
         .nav-item.active { opacity: 1; color: var(--gold); }
-        
+
         .tap-pop { position: absolute; color: white; font-family: 'Bungee'; font-size: 30px; pointer-events: none; z-index: 200; animation: tapUp 0.6s ease-out forwards; }
         @keyframes tapUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-100px); opacity: 0; } }
-        
-        .boost-item { background: var(--glass); padding: 14px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; width: 100%; box-sizing: border-box; }
-        .buy-btn { background: var(--gold); color: #451a03; border: none; padding: 10px 15px; border-radius: 12px; font-weight: 800; }
     </style>
 </head>
 <body>
     <div class="app">
         <div class="balance-card">
-            <div style="font-size: 13px; color: var(--emerald); font-weight: 800; margin-bottom: 5px;">ПРИБЫЛЬ: +<span id="pIncome">0</span>/СЕК</div>
+            <div class="passive-income">⛏️ ПРИБЫЛЬ: +<span id="pIncome">0</span>/СЕК</div>
             <div class="balance-val" id="coins">0</div>
             <div id="lvlName" style="font-size:10px; opacity:0.5; letter-spacing:2px;">УРОВЕНЬ 1</div>
         </div>
 
         <div id="game" class="tab-content active">
             <div class="tree-container">
-                <img src="https://cdn-icons-png.flaticon.com/512/3593/3593450.png" class="tree-img" id="treeImg">
+                <img src="https://cdn-icons-png.flaticon.com/512/628/628283.png" class="tree-img" id="treeImg">
             </div>
             <div class="energy-section">
                 <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800;"><span>ЭНЕРГИЯ</span><span id="eText">100/100</span></div>
@@ -57,10 +86,19 @@
 
         <div id="boosts" class="tab-content">
             <h3 style="font-family:'Bungee'; color:var(--gold); margin-bottom: 15px;">МАГАЗИН</h3>
-            <div style="width:100%">
-                <div class="boost-item"><div><b>💪 Мульти-тап</b><br><small id="tapCost">100</small></div><button class="buy-btn" onclick="buy('tap')">АП</button></div>
-                <div class="boost-item"><div><b>🔋 Лимит энергии</b><br><small id="energyCost">50</small></div><button class="buy-btn" onclick="buy('energy')">АП</button></div>
-                <div class="boost-item"><div><b>🤖 Садовник</b><br><small id="autoCost">500</small></div><button class="buy-btn" onclick="buy('auto')">АП</button></div>
+            <div class="boost-list" style="width:100%">
+                <div class="boost-item">
+                    <div><b>💪 Мульти-тап</b><br><small id="tapCostText">Цена: 100</small></div>
+                    <button class="buy-btn" onclick="buy('tap')">АП</button>
+                </div>
+                <div class="boost-item">
+                    <div><b>🔋 Макс. Энергия</b><br><small id="energyCostText">Цена: 50</small></div>
+                    <button class="buy-btn" onclick="buy('energy')">АП</button>
+                </div>
+                <div class="boost-item">
+                    <div><b>🤖 Садовник</b><br><small id="autoCostText">Цена: 500</small></div>
+                    <button class="buy-btn" onclick="buy('auto')">АП</button>
+                </div>
             </div>
         </div>
 
@@ -90,23 +128,23 @@
             document.getElementById('eText').textContent = Math.floor(state.energy) + "/" + state.maxEnergy;
             document.getElementById('eFill').style.width = (state.energy / state.maxEnergy * 100) + "%";
             
-            document.getElementById('tapCost').textContent = "Цена: " + Math.floor(100 * Math.pow(1.8, state.power - 1));
-            document.getElementById('energyCost').textContent = "Цена: " + Math.floor(50 * (state.maxEnergy / 50));
-            document.getElementById('autoCost').textContent = "Цена: " + Math.floor((state.passive + 1) * 500);
+            document.getElementById('tapCostText').textContent = "Цена: " + Math.floor(100 * Math.pow(1.8, state.power - 1));
+            document.getElementById('energyCostText').textContent = "Цена: " + Math.floor(50 * (state.maxEnergy / 50));
+            document.getElementById('autoCostText').textContent = "Цена: " + Math.floor((state.passive + 1) * 500);
 
             localStorage.setItem('mTree_v2.6', JSON.stringify(state));
         }
 
         document.getElementById('treeImg').onclick = (e) => {
-            if (state.energy < 1) return;
+            if (state.energy < 1) { tg.HapticFeedback.notificationOccurred('warning'); return; }
             state.coins += state.power;
             state.energy -= 1;
             
             const p = document.createElement('div');
             p.className = 'tap-pop';
             p.textContent = `+${state.power}`;
-            p.style.left = (e.clientX || e.touches[0].clientX) + 'px';
-            p.style.top = (e.clientY || e.touches[0].clientY) + 'px';
+            p.style.left = (e.clientX || (e.touches && e.touches[0].clientX)) + 'px';
+            p.style.top = (e.clientY || (e.touches && e.touches[0].clientY)) + 'px';
             document.body.appendChild(p);
             setTimeout(() => p.remove(), 600);
 
