@@ -1,309 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Money Tree</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<style>
-:root{
---bg:#0f1115;
---card:rgba(255,255,255,0.06);
---gold:#f5c451;
---green:#3ddc97;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Money Tree: Evolution</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #ffcf4d;
+            --emerald: #2ecc71;
+            --dark-blue: #0f172a;
+            --glass: rgba(30, 41, 59, 0.7);
+        }
 
-*{box-sizing:border-box}
-body{
-margin:0;
-font-family:system-ui,Arial;
-background:radial-gradient(circle at top,#1a1d24,#0b0d12);
-color:white;
-overflow:hidden;
-}
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: radial-gradient(circle at top, #1e293b, #020617);
+            color: white; height: 100vh; overflow: hidden;
+            display: flex; justify-content: center;
+        }
 
-.app{
-padding:16px;
-max-width:520px;
-margin:auto;
-}
+        .app { width: 100%; max-width: 420px; display: flex; flex-direction: column; padding: 20px; position: relative; }
 
-.card{
-background:var(--card);
-backdrop-filter:blur(12px);
-border-radius:18px;
-padding:14px;
-box-shadow:0 10px 30px rgba(0,0,0,.4), inset 0 1px rgba(255,255,255,.05);
-}
+        /* Баланс */
+        .top-nav {
+            background: var(--glass); backdrop-filter: blur(15px);
+            padding: 15px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
+            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .balance-val { font-family: 'Bungee'; font-size: 38px; color: var(--gold); text-shadow: 0 4px 0 #b8860b; }
+        .lvl-badge { font-size: 10px; background: var(--emerald); padding: 4px 12px; border-radius: 20px; text-transform: uppercase; font-weight: 800; }
 
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:10px;
-}
+        /* Игровая зона */
+        .game-core { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+        
+        .tree-box { position: relative; transition: transform 0.1s; cursor: pointer; }
+        .tree-img { font-size: 140px; filter: drop-shadow(0 0 30px rgba(46, 204, 113, 0.4)); animation: float 3s ease-in-out infinite; }
+        
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-.energy{
-height:14px;
-border-radius:10px;
-background:#1e222b;
-overflow:hidden;
-box-shadow:inset 0 2px 6px rgba(0,0,0,.6);
-}
+        /* Энергия */
+        .energy-box { width: 100%; margin-bottom: 20px; }
+        .bar-outer { height: 16px; background: #111; border-radius: 10px; border: 1px solid #333; overflow: hidden; }
+        .bar-inner { height: 100%; width: 100%; background: linear-gradient(90deg, #22c55e, #a8ff78); transition: width 0.2s; box-shadow: 0 0 15px var(--emerald); }
 
-.energy-bar{
-height:100%;
-background:linear-gradient(90deg,var(--green),#7affc1);
-box-shadow:0 0 10px var(--green);
-transition:width .3s;
-}
+        /* Магазин */
+        .upgrades { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .up-card { 
+            background: var(--glass); padding: 12px; border-radius: 18px; 
+            border: 1px solid rgba(255,255,255,0.05); text-align: left;
+        }
+        .up-card:active { transform: scale(0.95); }
+        .up-name { font-size: 11px; opacity: 0.7; font-weight: 800; }
+        .up-cost { display: block; font-size: 16px; color: var(--gold); font-family: 'Bungee'; }
 
-.tree-area{
-position:relative;
-height:360px;
-display:flex;
-justify-content:center;
-align-items:center;
-}
-
-.tree{
-font-size:120px;
-transition:transform .25s;
-user-select:none;
-cursor:pointer;
-animation:breath 3s infinite ease-in-out;
-}
-
-@keyframes breath{
-0%,100%{transform:scale(1)}
-50%{transform:scale(1.05)}
-}
-
-.level{
-text-align:center;
-margin-top:6px;
-opacity:.8;
-}
-
-.coin{
-position:absolute;
-font-size:22px;
-animation:fall 900ms forwards;
-}
-
-@keyframes fall{
-0%{transform:translateY(-10px) scale(.6);opacity:1}
-100%{transform:translateY(120px) scale(1);opacity:0}
-}
-
-.float{
-position:absolute;
-font-weight:700;
-color:var(--gold);
-text-shadow:0 0 10px gold,0 0 20px gold;
-animation:float 900ms forwards;
-}
-
-@keyframes float{
-0%{transform:translateY(0);opacity:1}
-100%{transform:translateY(-80px);opacity:0}
-}
-
-.buttons{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-margin-top:12px;
-}
-
-.btn{
-padding:14px;
-border-radius:14px;
-background:linear-gradient(145deg,#1b1f27,#0f1218);
-box-shadow:inset 0 2px 4px rgba(255,255,255,.05),0 6px 16px rgba(0,0,0,.6);
-text-align:center;
-}
-
-.prestige{
-position:absolute;
-inset:0;
-pointer-events:none;
-border-radius:50%;
-filter:blur(40px);
-opacity:0;
-background:radial-gradient(circle,gold,transparent 60%);
-transition:opacity .4s;
-}
-
-</style>
+        /* Летающие монетки */
+        .tap-anim {
+            position: absolute; color: var(--gold); font-family: 'Bungee';
+            font-size: 24px; pointer-events: none; animation: flyUp 0.8s ease-out forwards;
+        }
+        @keyframes flyUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-120px); opacity: 0; } }
+    </style>
 </head>
 <body>
-<div class="app">
+    <div class="app">
+        <div class="top-nav">
+            <span class="lvl-badge" id="lvlName">Росток</span>
+            <div class="balance-val" id="coins">0</div>
+            <div style="font-size: 12px; opacity: 0.5;">MONEY COINS</div>
+        </div>
 
-<div class="card">
+        <div class="game-core">
+            <div class="tree-box" id="treeBtn">
+                <div class="tree-img" id="mainTree">🌱</div>
+            </div>
+        </div>
 
-<div class="header">
-<div>Coins: <span id="coins">0</span></div>
-<div>LVL <span id="level">1</span></div>
-</div>
+        <div class="energy-box">
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;">
+                <span>ЭНЕРГИЯ</span>
+                <span id="energyText">100/100</span>
+            </div>
+            <div class="bar-outer"><div class="bar-inner" id="energyFill"></div></div>
+        </div>
 
-<div class="energy">
-<div class="energy-bar" id="energyBar"></div>
-</div>
+        <div class="upgrades">
+            <div class="up-card" onclick="buy('tap')">
+                <span class="up-name">СИЛА ТАПА</span>
+                <span class="up-cost" id="tapCost">50</span>
+            </div>
+            <div class="up-card" onclick="buy('energy')">
+                <span class="up-name">МАКС ЭНЕРГИЯ</span>
+                <span class="up-cost" id="energyCost">100</span>
+            </div>
+        </div>
+    </div>
 
-<div class="tree-area" id="treeArea">
-<div class="prestige" id="prestige"></div>
-<div class="tree" id="tree">🌱</div>
-</div>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-<div class="level">Money Tree</div>
+        let state = JSON.parse(localStorage.getItem('mTree_v1')) || {
+            coins: 0, power: 1, energy: 100, maxEnergy: 100, lvl: 1
+        };
 
-</div>
+        const trees = ["🌱", "🌿", "🌳", "🌲", "🎄", "✨"];
+        const lvlNames = ["Росток", "Куст", "Дерево", "Большое дерево", "Дуб", "Золотое Древо"];
 
-<div class="buttons">
-<div class="btn" onclick="buyPower()">Tap Power</div>
-<div class="btn" onclick="buyEnergy()">Max Energy</div>
-</div>
+        function update() {
+            document.getElementById('coins').textContent = Math.floor(state.coins);
+            document.getElementById('energyText').textContent = Math.floor(state.energy) + "/" + state.maxEnergy;
+            document.getElementById('energyFill').style.width = (state.energy / state.maxEnergy * 100) + "%";
+            
+            // Смена уровня
+            let currentLvl = Math.min(Math.floor(state.coins / 500), 5);
+            document.getElementById('mainTree').textContent = trees[currentLvl];
+            document.getElementById('lvlName').textContent = lvlNames[currentLvl];
 
-</div>
+            document.getElementById('tapCost').textContent = 50 * state.power;
+            document.getElementById('energyCost').textContent = state.maxEnergy * 2;
+            
+            localStorage.setItem('mTree_v1', JSON.stringify(state));
+        }
 
-<script>
-const tg = window.Telegram.WebApp
-if(tg){tg.expand()}
+        document.getElementById('treeBtn').onclick = (e) => {
+            if (state.energy < 1) {
+                tg.HapticFeedback.notificationOccurred('error');
+                return;
+            }
 
-let state = JSON.parse(localStorage.getItem('moneyTree')) || {
-coins:0,
-power:1,
-energy:100,
-maxEnergy:100,
-level:1,
-auto:0,
-last:Date.now()
-}
+            state.coins += state.power;
+            state.energy -= 1;
 
-const tree = document.getElementById('tree')
-const area = document.getElementById('treeArea')
+            // Анимация
+            const clickAnim = document.createElement('div');
+            clickAnim.className = 'tap-anim';
+            clickAnim.textContent = "+" + state.power;
+            clickAnim.style.left = e.clientX + "px";
+            clickAnim.style.top = e.clientY + "px";
+            document.body.appendChild(clickAnim);
+            setTimeout(() => clickAnim.remove(), 800);
 
-function save(){
-localStorage.setItem('moneyTree',JSON.stringify(state))
-}
+            document.getElementById('treeBtn').style.transform = "scale(0.9)";
+            setTimeout(() => document.getElementById('treeBtn').style.transform = "scale(1)", 100);
 
-function updateUI(){
-coins.textContent=Math.floor(state.coins)
-level.textContent=state.level
-energyBar.style.width=(state.energy/state.maxEnergy*100)+'%'
-updateTreeVisual()
-}
+            tg.HapticFeedback.impactOccurred('medium');
+            update();
+        };
 
-function updateTreeVisual(){
-let stage='🌱'
-if(state.level>=5) stage='🌿'
-if(state.level>=10) stage='🌳'
-if(state.level>=20) stage='🌳'
-if(state.level>=30) stage='🌳'
+        function buy(type) {
+            if (type === 'tap') {
+                let cost = 50 * state.power;
+                if (state.coins >= cost) {
+                    state.coins -= cost;
+                    state.power++;
+                }
+            } else if (type === 'energy') {
+                let cost = state.maxEnergy * 2;
+                if (state.coins >= cost) {
+                    state.coins -= cost;
+                    state.maxEnergy += 50;
+                    state.energy = state.maxEnergy;
+                }
+            }
+            tg.HapticFeedback.notificationOccurred('success');
+            update();
+        }
 
-tree.textContent=stage
+        setInterval(() => {
+            if (state.energy < state.maxEnergy) {
+                state.energy = Math.min(state.maxEnergy, state.energy + 0.4);
+                update();
+            }
+        }, 500);
 
-let scale=1+state.level*0.05
-
-tree.style.transform='scale('+scale+')'
-
-if(state.coins>10000){
-prestige.style.opacity=1
-}else{
-prestige.style.opacity=0
-}
-}
-
-function spawnCoin(x,y){
-const c=document.createElement('div')
-c.className='coin'
-c.textContent='🪙'
-c.style.left=x+'px'
-c.style.top=y+'px'
-area.appendChild(c)
-setTimeout(()=>c.remove(),900)
-}
-
-function spawnText(x,y,val){
-const t=document.createElement('div')
-t.className='float'
-t.textContent='+'+val
-
-t.style.left=x+'px'
-t.style.top=y+'px'
-area.appendChild(t)
-setTimeout(()=>t.remove(),900)
-}
-
-function clickTree(e){
-if(state.energy<=0) return
-
-state.energy--
-state.coins+=state.power
-
-let rect=area.getBoundingClientRect()
-let x=e.clientX-rect.left
-let y=e.clientY-rect.top
-
-spawnCoin(x,y)
-spawnText(x,y,state.power)
-
-tree.style.transform+=' rotate('+(Math.random()*6-3)+'deg)'
-
-if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light')
-
-checkLevel()
-save()
-updateUI()
-}
-
-function checkLevel(){
-let lvl=Math.floor(state.coins/200)+1
-if(lvl>state.level){
-state.level=lvl
-if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
-}
-}
-
-function buyPower(){
-let cost=50*state.power
-if(state.coins>=cost){
-state.coins-=cost
-state.power++
-}
-updateUI()
-save()
-}
-
-function buyEnergy(){
-let cost=80
-if(state.coins>=cost){
-state.coins-=cost
-state.maxEnergy+=20
-}
-updateUI()
-save()
-}
-
-setInterval(()=>{
-state.energy=Math.min(state.maxEnergy,state.energy+1)
-state.coins+=state.auto
-updateUI()
-},1000)
-
-function offline(){
-let now=Date.now()
-let diff=(now-state.last)/1000
-state.coins+=diff*state.auto
-state.last=now
-}
-
-offline()
-updateUI()
-
-area.addEventListener('click',clickTree)
-
-</script>
+        update();
+    </script>
 </body>
 </html>
