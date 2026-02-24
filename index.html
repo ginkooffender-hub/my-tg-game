@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Money Tree: Evolution</title>
+    <title>Money Tree: Glow Edition</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
     <style>
@@ -35,25 +35,26 @@
         .tab-content { display: none; flex: 1; flex-direction: column; align-items: center; width: 100%; overflow-y: auto; }
         .tab-content.active { display: flex; }
 
-        /* ОЖИВЛЕННОЕ ДЕРЕВО */
+        /* ОЖИВЛЕННОЕ ДЕРЕВО С МЕРЦАНИЕМ */
         .tree-container { 
             flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%;
-            animation: treeBreathe 4s ease-in-out infinite; 
+            animation: treeBreathe 3s ease-in-out infinite, treeGlow 3s ease-in-out infinite; 
         }
-        @keyframes treeBreathe {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03); }
+
+        @keyframes treeBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes treeGlow { 
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(46, 204, 113, 0.2)); } 
+            50% { filter: drop-shadow(0 0 40px rgba(46, 204, 113, 0.7)); } 
         }
 
         .tree-btn { 
             font-size: 150px; cursor: pointer; 
-            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            filter: drop-shadow(0 0 20px rgba(46,204,113,0.2));
+            transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             display: inline-block;
         }
         .tree-btn:active { 
-            transform: scale(0.8) rotate(-3deg); 
-            filter: drop-shadow(0 0 50px rgba(46,204,113,0.6));
+            transform: scale(0.8) rotate(-5deg); 
+            filter: brightness(1.4) drop-shadow(0 0 50px rgba(46, 204, 113, 1));
         }
 
         /* Бусты */
@@ -146,7 +147,7 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        let state = JSON.parse(localStorage.getItem('mTree_v2.2')) || {
+        let state = JSON.parse(localStorage.getItem('mTree_v2.3')) || {
             coins: 0, power: 1, energy: 100, maxEnergy: 100, passive: 0
         };
 
@@ -165,7 +166,7 @@
             document.getElementById('tree').textContent = trees[idx];
             document.getElementById('lvlName').textContent = `УРОВЕНЬ ${idx + 1}`;
 
-            localStorage.setItem('mTree_v2.2', JSON.stringify(state));
+            localStorage.setItem('mTree_v2.3', JSON.stringify(state));
         }
 
         document.getElementById('tree').onclick = (e) => {
@@ -187,29 +188,3 @@
 
         function buy(type) {
             if (type === 'tap' && state.coins >= 100 * Math.pow(1.8, state.power - 1)) {
-                state.coins -= 100 * Math.pow(1.8, state.power - 1); state.power++;
-            } else if (type === 'energy' && state.coins >= 50 * (state.maxEnergy / 50)) {
-                state.coins -= 50 * (state.maxEnergy / 50); state.maxEnergy += 50; state.energy += 50;
-            } else if (type === 'auto' && state.coins >= (state.passive + 1) * 500) {
-                state.coins -= (state.passive + 1) * 500; state.passive += 0.5;
-            }
-            update();
-        }
-
-        function showTab(id, el) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            el.classList.add('active');
-        }
-
-        setInterval(() => {
-            if (state.energy < state.maxEnergy) state.energy = Math.min(state.maxEnergy, state.energy + 0.05);
-            if (state.passive > 0) state.coins += state.passive / 10;
-            update();
-        }, 100);
-
-        update();
-    </script>
-</body>
-</html>
