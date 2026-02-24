@@ -3,60 +3,109 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Money Tree</title>
+<title>Money Tree 2</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box}
+html,body{margin:0}
 body{
-margin:0;
 font-family:system-ui,Arial;
-background:radial-gradient(circle at top,#1f3b73,#020617);
+background:radial-gradient(circle at top,#07130f,#020617 60%);
 color:#fff;
-overflow-x:hidden;
-}
-.app{max-width:420px;margin:auto;padding:18px}
-.card{
-background:linear-gradient(180deg,rgba(30,41,59,.9),rgba(2,6,23,.9));
-border-radius:28px;
-padding:22px;
-box-shadow:0 25px 80px rgba(0,0,0,.6);
-text-align:center;
+min-height:100vh;
 }
 
-.title{font-size:26px;margin-bottom:10px;font-weight:700;letter-spacing:.5px}
+.app{max-width:430px;margin:auto;padding:18px}
+
+.card{
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(16px);
+border-radius:26px;
+padding:20px;
+box-shadow:0 10px 60px rgba(0,0,0,.6), inset 0 0 40px rgba(255,255,255,.03);
+}
+
+.title{
+font-size:26px;
+font-weight:700;
+letter-spacing:.5px;
+text-align:center;
+background:linear-gradient(90deg,#d4af37,#f6e27a);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.level{
+text-align:center;
+font-size:13px;
+opacity:.8;
+margin-top:4px
+}
 
 .treeWrap{
 position:relative;
-height:170px;
+height:190px;
 display:flex;
 align-items:center;
 justify-content:center;
+margin-top:6px
 }
 
 .tree{
-font-size:110px;
+font-size:120px;
+transition:transform .15s, filter .2s;
+filter:drop-shadow(0 15px 30px rgba(0,0,0,.7));
+animation:breath 3s ease-in-out infinite;
 cursor:pointer;
-user-select:none;
-transition:transform .08s, filter .15s;
-filter:drop-shadow(0 10px 20px rgba(0,0,0,.6));
 }
 
-.tree:active{
-transform:scale(.88) rotate(-4deg);
-filter:brightness(1.2);
+@keyframes breath{
+0%,100%{transform:scale(1)}
+50%{transform:scale(1.05)}
+}
+
+.prestige{
+filter:drop-shadow(0 0 25px gold) drop-shadow(0 0 50px rgba(255,215,0,.4));
 }
 
 .coin{
 position:absolute;
-font-size:24px;
-animation:coinFall 900ms ease-in forwards;
-pointer-events:none;
+font-size:22px;
+animation:coin .9s ease-out forwards;
+pointer-events:none
 }
 
-@keyframes coinFall{
-0%{transform:translateY(-10px) scale(.7);opacity:0}
+@keyframes coin{
+0%{transform:translateY(-10px) scale(.6);opacity:0}
 20%{opacity:1}
-100%{transform:translateY(120px) rotate(120deg);opacity:0}
+100%{transform:translateY(130px) rotate(140deg);opacity:0}
+}
+
+.spark{
+position:absolute;
+width:6px;
+height:6px;
+border-radius:50%;
+background:radial-gradient(circle,#fff,#facc15);
+animation:spark 700ms linear forwards;
+}
+
+@keyframes spark{
+0%{opacity:1;transform:translateY(0) scale(1)}
+100%{opacity:0;transform:translateY(-40px) scale(.4)}
+}
+
+.float{
+position:absolute;
+font-weight:700;
+color:#facc15;
+text-shadow:0 0 10px gold,0 0 20px gold;
+animation:float 900ms ease-out forwards;
+}
+
+@keyframes float{
+0%{transform:translateY(0);opacity:1}
+100%{transform:translateY(-50px);opacity:0}
 }
 
 .stats{
@@ -66,17 +115,22 @@ margin-top:6px;
 font-size:18px
 }
 
+.energyWrap{
+margin-top:10px
+}
+
 .bar{
-height:12px;
-background:#1f2937;
-border-radius:10px;
-margin-top:8px;
-overflow:hidden
+height:14px;
+background:#0f172a;
+border-radius:20px;
+overflow:hidden;
+box-shadow:inset 0 2px 8px rgba(0,0,0,.8);
 }
 
 .energy{
 height:100%;
-background:linear-gradient(90deg,#22c55e,#4ade80);
+background:linear-gradient(90deg,#10b981,#4ade80);
+box-shadow:0 0 12px #22c55e;
 width:100%;
 transition:width .25s
 }
@@ -86,39 +140,30 @@ transition:width .25s
 .shop{
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:10px;
-margin-top:10px
+gap:12px
 }
 
 .btn{
-background:linear-gradient(180deg,#1f2937,#111827);
-border:none;
-border-radius:16px;
 padding:12px;
+border-radius:16px;
+border:none;
 color:white;
 font-size:13px;
 cursor:pointer;
-transition:.15s;
-box-shadow:0 6px 14px rgba(0,0,0,.5)
+background:linear-gradient(180deg,#1f2937,#020617);
+box-shadow:
+0 6px 18px rgba(0,0,0,.6),
+inset 0 1px 0 rgba(255,255,255,.05),
+inset 0 -4px 8px rgba(0,0,0,.8);
+transition:.12s
 }
 
-.btn:active{transform:scale(.95)}
-.btn:hover{background:#374151}
-
-.small{font-size:12px;opacity:.7}
-
-.floating{
-position:absolute;
-font-weight:700;
-color:#fde047;
-animation:floatUp 900ms ease-out forwards;
-pointer-events:none
+.btn:active{
+transform:translateY(2px);
+box-shadow:inset 0 4px 10px rgba(0,0,0,.9);
 }
 
-@keyframes floatUp{
-0%{transform:translateY(0);opacity:1}
-100%{transform:translateY(-40px);opacity:0}
-}
+.small{font-size:12px;opacity:.7;margin-bottom:6px}
 
 </style>
 </head>
@@ -126,9 +171,10 @@ pointer-events:none
 <div class="app">
 <div class="card">
 
-<div class="title">🌳 Money Tree</div>
+<div class="title">Money Tree</div>
+<div class="level">Tree Level <span id="level">1</span></div>
 
-<div class="treeWrap" id="treeWrap">
+<div class="treeWrap" id="wrap">
 <div id="tree" class="tree">🌳</div>
 </div>
 
@@ -137,7 +183,9 @@ pointer-events:none
 <div>⚡ <span id="energyText">0</span></div>
 </div>
 
+<div class="energyWrap">
 <div class="bar"><div id="energy" class="energy"></div></div>
+</div>
 
 <div class="section">
 <div class="small">Upgrades</div>
@@ -163,6 +211,7 @@ energy:100,
 maxEnergy:100,
 regen:1,
 auto:0,
+level:1,
 tapLevel:1,
 energyLevel:1,
 regenLevel:1,
@@ -171,77 +220,105 @@ autoLevel:0
 
 function save(){localStorage.setItem("moneyTreeSave",JSON.stringify(state))}
 
-const tree = document.getElementById("tree")
-const wrap = document.getElementById("treeWrap")
-const coinsEl = document.getElementById("coins")
-const energyEl = document.getElementById("energy")
-const energyText = document.getElementById("energyText")
+const tree=document.getElementById("tree")
+const wrap=document.getElementById("wrap")
+const coinsEl=document.getElementById("coins")
+const energyEl=document.getElementById("energy")
+const energyText=document.getElementById("energyText")
+const levelEl=document.getElementById("level")
 
-const tapBtn = document.getElementById("tapUpgrade")
-const energyBtn = document.getElementById("energyUpgrade")
-const regenBtn = document.getElementById("regenUpgrade")
-const autoBtn = document.getElementById("autoUpgrade")
+const tapBtn=document.getElementById("tapUpgrade")
+const energyBtn=document.getElementById("energyUpgrade")
+const regenBtn=document.getElementById("regenUpgrade")
+const autoBtn=document.getElementById("autoUpgrade")
 
 function prices(){
-return {
-tap: 50 * state.tapLevel,
-energy: 120 * state.energyLevel,
-regen: 140 * state.regenLevel,
-auto: 300 * (state.autoLevel+1)
+return{
+tap:50*state.tapLevel,
+energy:120*state.energyLevel,
+regen:140*state.regenLevel,
+auto:300*(state.autoLevel+1)
 }
 }
 
 function updateButtons(){
-const p = prices()
-tapBtn.innerText = `💪 Tap +1 (${p.tap})`
-energyBtn.innerText = `🔋 Energy +20 (${p.energy})`
-regenBtn.innerText = `⚡ Regen +1 (${p.regen})`
-autoBtn.innerText = `🤖 Auto tap (${p.auto})`
+const p=prices()
+tapBtn.innerText=`💪 Tap +1 (${p.tap})`
+energyBtn.innerText=`🔋 Energy +20 (${p.energy})`
+regenBtn.innerText=`⚡ Regen +1 (${p.regen})`
+autoBtn.innerText=`🤖 Auto tap (${p.auto})`
 }
 
 function update(){
-coinsEl.textContent = Math.floor(state.coins)
-energyText.textContent = Math.floor(state.energy)
-energyEl.style.width = (state.energy/state.maxEnergy*100)+"%"
+coinsEl.textContent=Math.floor(state.coins)
+energyText.textContent=Math.floor(state.energy)
+energyEl.style.width=(state.energy/state.maxEnergy*100)+"%"
+levelEl.textContent=state.level
+
+if(state.coins>5000) tree.classList.add("prestige")
+
 updateButtons()
 save()
 }
 
-function coinBurst(x,y,amount){
-for(let i=0;i<Math.min(amount,6);i++){
+function spark(x,y){
+for(let i=0;i<6;i++){
+const s=document.createElement("div")
+s.className="spark"
+s.style.left=(x+(Math.random()*40-20))+"px"
+s.style.top=(y+(Math.random()*10))+"px"
+wrap.appendChild(s)
+setTimeout(()=>s.remove(),700)
+}
+}
+
+function coinsBurst(x,y,amount){
+for(let i=0;i<Math.min(amount,5);i++){
 const c=document.createElement("div")
 c.className="coin"
-c.innerText="🪙"
-c.style.left=(x+(Math.random()*60-30))+'px'
-c.style.top=(y-20)+'px'
+c.textContent="🪙"
+c.style.left=(x+(Math.random()*60-30))+"px"
+c.style.top=y+"px"
 wrap.appendChild(c)
 setTimeout(()=>c.remove(),900)
 }
 }
 
-function floatingText(x,y,value){
-const el=document.createElement("div")
-el.className="floating"
-el.innerText=`+${value}`
-el.style.left=x+'px'
-el.style.top=y+'px'
-wrap.appendChild(el)
-setTimeout(()=>el.remove(),900)
+function floatText(x,y,val){
+const f=document.createElement("div")
+f.className="float"
+f.innerText=`+${val}`
+f.style.left=x+"px"
+f.style.top=y+"px"
+wrap.appendChild(f)
+setTimeout(()=>f.remove(),900)
 }
 
 function clickTree(e){
 if(state.energy<=0) return
-state.coins += state.power
-state.energy -= 2
 
-const rect = wrap.getBoundingClientRect()
-const x = e.clientX - rect.left
-const y = e.clientY - rect.top
+const rect=wrap.getBoundingClientRect()
+const x=e.clientX-rect.left
+const y=e.clientY-rect.top
 
-coinBurst(x,y,state.power)
-floatingText(x,y,state.power)
+const tilt=(x-rect.width/2)/10
+
+tree.style.transform=`rotate(${tilt}deg) scale(.95)`
+setTimeout(()=>tree.style.transform="",120)
+
+state.coins+=state.power
+state.energy-=2
+
+coinsBurst(x,y,state.power)
+spark(x,y)
+floatText(x,y,state.power)
 
 if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred("light")
+
+if(state.coins>state.level*1000){
+state.level++
+tree.style.fontSize=120+state.level*3+"px"
+}
 
 update()
 }
@@ -249,14 +326,14 @@ update()
 tree.addEventListener("click",clickTree)
 
 setInterval(()=>{
-state.energy += state.regen * 0.5
+state.energy+=state.regen*.5
 if(state.energy>state.maxEnergy) state.energy=state.maxEnergy
 update()
 },500)
 
 setInterval(()=>{
 if(state.auto>0){
-state.coins += state.auto
+state.coins+=state.auto
 update()
 }
 },1000)
@@ -264,7 +341,7 @@ update()
 // upgrades
 
 tapBtn.onclick=()=>{
-const p = prices().tap
+const p=prices().tap
 if(state.coins>=p){
 state.coins-=p
 state.tapLevel++
@@ -274,42 +351,42 @@ update()
 }
 
 energyBtn.onclick=()=>{
-const p = prices().energy
+const p=prices().energy
 if(state.coins>=p){
 state.coins-=p
 state.energyLevel++
-state.maxEnergy += 20
-state.energy = state.maxEnergy
+state.maxEnergy+=20
+state.energy=state.maxEnergy
 update()
 }
 }
 
 regenBtn.onclick=()=>{
-const p = prices().regen
+const p=prices().regen
 if(state.coins>=p){
 state.coins-=p
 state.regenLevel++
-state.regen += 0.5
+state.regen+=.5
 update()
 }
 }
 
 autoBtn.onclick=()=>{
-const p = prices().auto
+const p=prices().auto
 if(state.coins>=p){
 state.coins-=p
 state.autoLevel++
-state.auto += 1
+state.auto++
 update()
 }
 }
 
 // offline progress
-let last = Number(localStorage.getItem("lastTime")||Date.now())
-let now = Date.now()
-let diff = Math.floor((now-last)/1000)
+let last=Number(localStorage.getItem("lastTime")||Date.now())
+let now=Date.now()
+let diff=Math.floor((now-last)/1000)
 if(diff>0 && state.auto>0){
-state.coins += diff * state.auto
+state.coins+=diff*state.auto
 }
 localStorage.setItem("lastTime",now)
 
