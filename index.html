@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Money Tree: Glow Edition</title>
+    <title>Money Tree: Glow Fixed</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
     <style>
@@ -26,39 +26,42 @@
         .balance-card {
             background: var(--glass); backdrop-filter: blur(15px);
             padding: 20px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.1);
-            text-align: center; margin-bottom: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            text-align: center; margin-bottom: 20px; z-index: 10;
         }
         .balance-val { font-family: 'Bungee'; font-size: 44px; color: var(--gold); text-shadow: 0 4px 0 #b8860b; line-height: 1; margin: 10px 0; }
         .passive-income { font-size: 13px; color: var(--emerald); font-weight: 800; }
 
-        .tab-content { display: none; flex: 1; flex-direction: column; align-items: center; width: 100%; overflow-y: auto; }
+        .tab-content { display: none; flex: 1; flex-direction: column; align-items: center; width: 100%; }
         .tab-content.active { display: flex; }
 
-        /* ОЖИВЛЕННОЕ ДЕРЕВО С МЕРЦАНИЕМ */
+        /* ИСПРАВЛЕННАЯ ЗОНА ТАПА */
         .tree-container { 
-            flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%;
-            animation: treeBreathe 3s ease-in-out infinite, treeGlow 3s ease-in-out infinite; 
-        }
-
-        @keyframes treeBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        @keyframes treeGlow { 
-            0%, 100% { filter: drop-shadow(0 0 15px rgba(46, 204, 113, 0.2)); } 
-            50% { filter: drop-shadow(0 0 40px rgba(46, 204, 113, 0.7)); } 
+            flex: 1; display: flex; align-items: center; justify-content: center; 
+            position: relative; width: 100%; pointer-events: none; /* Контейнер не мешает клику */
         }
 
         .tree-btn { 
             font-size: 150px; cursor: pointer; 
+            pointer-events: auto; /* Только сама кнопка ловит клик */
             transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             display: inline-block;
-        }
-        .tree-btn:active { 
-            transform: scale(0.8) rotate(-5deg); 
-            filter: brightness(1.4) drop-shadow(0 0 50px rgba(46, 204, 113, 1));
+            z-index: 50;
+            animation: treeBreathe 3s ease-in-out infinite, treeGlow 3s ease-in-out infinite;
         }
 
-        /* Бусты */
-        .boost-list { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+        @keyframes treeBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes treeGlow { 
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(46, 204, 113, 0.3)); } 
+            50% { filter: drop-shadow(0 0 30px rgba(46, 204, 113, 0.7)); } 
+        }
+
+        .tree-btn:active { 
+            transform: scale(0.8) rotate(-5deg) !important; 
+            filter: brightness(1.5) drop-shadow(0 0 40px rgba(46, 204, 113, 1)) !important;
+        }
+
+        /* Остальные стили */
+        .boost-list { width: 100%; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
         .boost-item {
             background: var(--glass); padding: 16px; border-radius: 22px;
             display: flex; justify-content: space-between; align-items: center;
@@ -71,22 +74,22 @@
             box-shadow: 0 4px 0 #b45309;
         }
 
-        .energy-section { width: 100%; margin-top: auto; }
+        .energy-section { width: 100%; margin-top: auto; z-index: 10; }
         .energy-bar { width: 100%; height: 14px; background: rgba(0,0,0,0.5); border-radius: 12px; overflow: hidden; margin-top: 8px; }
-        .energy-fill { height: 100%; background: linear-gradient(90deg, #22c55e, #a8ff78); transition: width 0.3s; }
+        .energy-fill { height: 100%; background: var(--emerald); transition: width 0.3s; }
 
         .nav {
             position: fixed; bottom: 25px; left: 20px; right: 20px;
             background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(25px);
             border-radius: 28px; display: flex; justify-content: space-around;
-            padding: 12px; border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px; border: 1px solid rgba(255,255,255,0.1); z-index: 100;
         }
-        .nav-item { font-size: 11px; font-weight: 700; opacity: 0.4; cursor: pointer; text-align: center; }
+        .nav-item { font-size: 11px; font-weight: 700; opacity: 0.4; text-align: center; }
         .nav-item.active { opacity: 1; color: var(--gold); }
 
         .tap-pop {
             position: absolute; color: white; font-family: 'Bungee'; font-size: 32px;
-            pointer-events: none; z-index: 100;
+            pointer-events: none; z-index: 200;
             animation: tapUp 0.8s ease-out forwards;
         }
         @keyframes tapUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-150px) scale(0.5); opacity: 0; } }
@@ -102,7 +105,7 @@
 
         <div id="game" class="tab-content active">
             <div class="tree-container">
-                <div class="tree-btn" id="tree">🌱</div>
+                <div class="tree-btn" id="treeBtn">🌱</div>
             </div>
             <div class="energy-section">
                 <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:800;">
@@ -114,7 +117,7 @@
         </div>
 
         <div id="boosts" class="tab-content">
-            <h2 style="font-family:'Bungee'; color:var(--gold)">МАГАЗИН</h2>
+            <h2 style="font-family:'Bungee'; color:var(--gold); margin-bottom:15px;">МАГАЗИН</h2>
             <div class="boost-list">
                 <div class="boost-item">
                     <div><b>💪 Мульти-тап</b><br><small id="tapCostText">Цена: 100</small></div>
@@ -133,7 +136,7 @@
 
         <div id="top" class="tab-content">
             <h2 style="font-family:'Bungee'; color:var(--emerald)">ТОП</h2>
-            <p style="opacity:0.5">Лидерборд скоро появится...</p>
+            <p style="opacity:0.5">Лидерборд скоро...</p>
         </div>
 
         <div class="nav">
@@ -147,7 +150,7 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        let state = JSON.parse(localStorage.getItem('mTree_v2.3')) || {
+        let state = JSON.parse(localStorage.getItem('mTree_v2.4')) || {
             coins: 0, power: 1, energy: 100, maxEnergy: 100, passive: 0
         };
 
@@ -163,14 +166,19 @@
 
             const trees = ["🌱", "🌿", "🌳", "🌲", "🎄", "✨"];
             let idx = Math.min(Math.floor(state.coins / 1000), 5);
-            document.getElementById('tree').textContent = trees[idx];
+            document.getElementById('treeBtn').textContent = trees[idx];
             document.getElementById('lvlName').textContent = `УРОВЕНЬ ${idx + 1}`;
 
-            localStorage.setItem('mTree_v2.3', JSON.stringify(state));
+            localStorage.setItem('mTree_v2.4', JSON.stringify(state));
         }
 
-        document.getElementById('tree').onclick = (e) => {
-            if (state.energy < 1) return;
+        // КЛИК ТЕПЕРЬ НА ОТДЕЛЬНОМ ID
+        document.getElementById('treeBtn').addEventListener('click', (e) => {
+            if (state.energy < 1) {
+                tg.HapticFeedback.notificationOccurred('warning');
+                return;
+            }
+            
             state.coins += state.power;
             state.energy -= 1;
             
@@ -184,7 +192,8 @@
 
             tg.HapticFeedback.impactOccurred('medium');
             update();
-        };
+        });
 
         function buy(type) {
             if (type === 'tap' && state.coins >= 100 * Math.pow(1.8, state.power - 1)) {
+                state.coins -= 100 * Math.pow(1.8,
