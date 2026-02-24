@@ -3,33 +3,134 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Money Tree WebApp</title>
+<title>Money Tree</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,Arial;background:radial-gradient(circle at top,#1a2a44,#020617);color:#fff}
-.app{max-width:420px;margin:auto;padding:16px}
-.card{background:rgba(15,23,42,.85);backdrop-filter:blur(10px);border-radius:26px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.6);text-align:center}
-.title{font-size:24px;margin-bottom:6px}
-.tree{font-size:96px;cursor:pointer;transition:.1s}
-.tree:active{transform:scale(.9) rotate(-2deg)}
-.stats{display:flex;justify-content:space-between;margin-top:10px;font-size:18px}
-.bar{height:12px;background:#1f2937;border-radius:10px;margin-top:8px;overflow:hidden}
-.energy{height:100%;background:linear-gradient(90deg,#22c55e,#4ade80);width:100%}
-.coin{position:fixed;font-size:22px;pointer-events:none;animation:fall 1s linear forwards}
-@keyframes fall{0%{transform:translateY(-10px);opacity:1}100%{transform:translateY(100px);opacity:0}}
-.section{margin-top:16px}
-.shop{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.btn{background:#1f2937;border:none;border-radius:14px;padding:10px;color:white;font-size:13px;cursor:pointer}
+body{
+margin:0;
+font-family:system-ui,Arial;
+background:radial-gradient(circle at top,#1f3b73,#020617);
+color:#fff;
+overflow-x:hidden;
+}
+.app{max-width:420px;margin:auto;padding:18px}
+.card{
+background:linear-gradient(180deg,rgba(30,41,59,.9),rgba(2,6,23,.9));
+border-radius:28px;
+padding:22px;
+box-shadow:0 25px 80px rgba(0,0,0,.6);
+text-align:center;
+}
+
+.title{font-size:26px;margin-bottom:10px;font-weight:700;letter-spacing:.5px}
+
+.treeWrap{
+position:relative;
+height:170px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.tree{
+font-size:110px;
+cursor:pointer;
+user-select:none;
+transition:transform .08s, filter .15s;
+filter:drop-shadow(0 10px 20px rgba(0,0,0,.6));
+}
+
+.tree:active{
+transform:scale(.88) rotate(-4deg);
+filter:brightness(1.2);
+}
+
+.coin{
+position:absolute;
+font-size:24px;
+animation:coinFall 900ms ease-in forwards;
+pointer-events:none;
+}
+
+@keyframes coinFall{
+0%{transform:translateY(-10px) scale(.7);opacity:0}
+20%{opacity:1}
+100%{transform:translateY(120px) rotate(120deg);opacity:0}
+}
+
+.stats{
+display:flex;
+justify-content:space-between;
+margin-top:6px;
+font-size:18px
+}
+
+.bar{
+height:12px;
+background:#1f2937;
+border-radius:10px;
+margin-top:8px;
+overflow:hidden
+}
+
+.energy{
+height:100%;
+background:linear-gradient(90deg,#22c55e,#4ade80);
+width:100%;
+transition:width .25s
+}
+
+.section{margin-top:18px}
+
+.shop{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:10px
+}
+
+.btn{
+background:linear-gradient(180deg,#1f2937,#111827);
+border:none;
+border-radius:16px;
+padding:12px;
+color:white;
+font-size:13px;
+cursor:pointer;
+transition:.15s;
+box-shadow:0 6px 14px rgba(0,0,0,.5)
+}
+
+.btn:active{transform:scale(.95)}
 .btn:hover{background:#374151}
+
 .small{font-size:12px;opacity:.7}
+
+.floating{
+position:absolute;
+font-weight:700;
+color:#fde047;
+animation:floatUp 900ms ease-out forwards;
+pointer-events:none
+}
+
+@keyframes floatUp{
+0%{transform:translateY(0);opacity:1}
+100%{transform:translateY(-40px);opacity:0}
+}
+
 </style>
 </head>
 <body>
 <div class="app">
 <div class="card">
+
 <div class="title">🌳 Money Tree</div>
+
+<div class="treeWrap" id="treeWrap">
 <div id="tree" class="tree">🌳</div>
+</div>
 
 <div class="stats">
 <div>🪙 <span id="coins">0</span></div>
@@ -48,16 +149,12 @@ body{margin:0;font-family:system-ui,Arial;background:radial-gradient(circle at t
 </div>
 </div>
 
-<div class="section">
-<button class="btn" id="invite">Invite Friends</button>
-</div>
-
 </div>
 </div>
 
 <script>
 const tg = window.Telegram?.WebApp
-if(tg){tg.expand()}
+if(tg) tg.expand()
 
 let state = JSON.parse(localStorage.getItem("moneyTreeSave")||"null") || {
 coins:0,
@@ -75,6 +172,7 @@ autoLevel:0
 function save(){localStorage.setItem("moneyTreeSave",JSON.stringify(state))}
 
 const tree = document.getElementById("tree")
+const wrap = document.getElementById("treeWrap")
 const coinsEl = document.getElementById("coins")
 const energyEl = document.getElementById("energy")
 const energyText = document.getElementById("energyText")
@@ -109,33 +207,53 @@ updateButtons()
 save()
 }
 
-function spawnCoin(x,y){
+function coinBurst(x,y,amount){
+for(let i=0;i<Math.min(amount,6);i++){
 const c=document.createElement("div")
 c.className="coin"
-c.textContent="🪙"
-c.style.left=x+"px"
-c.style.top=y+"px"
-document.body.appendChild(c)
-setTimeout(()=>c.remove(),1000)
+c.innerText="🪙"
+c.style.left=(x+(Math.random()*60-30))+'px'
+c.style.top=(y-20)+'px'
+wrap.appendChild(c)
+setTimeout(()=>c.remove(),900)
+}
 }
 
-tree.onclick=(e)=>{
+function floatingText(x,y,value){
+const el=document.createElement("div")
+el.className="floating"
+el.innerText=`+${value}`
+el.style.left=x+'px'
+el.style.top=y+'px'
+wrap.appendChild(el)
+setTimeout(()=>el.remove(),900)
+}
+
+function clickTree(e){
 if(state.energy<=0) return
 state.coins += state.power
 state.energy -= 2
-spawnCoin(e.clientX,e.clientY)
+
+const rect = wrap.getBoundingClientRect()
+const x = e.clientX - rect.left
+const y = e.clientY - rect.top
+
+coinBurst(x,y,state.power)
+floatingText(x,y,state.power)
+
 if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred("light")
+
 update()
 }
 
-// passive regen
+tree.addEventListener("click",clickTree)
+
 setInterval(()=>{
 state.energy += state.regen * 0.5
 if(state.energy>state.maxEnergy) state.energy=state.maxEnergy
 update()
 },500)
 
-// auto miner
 setInterval(()=>{
 if(state.auto>0){
 state.coins += state.auto
@@ -186,25 +304,13 @@ update()
 }
 }
 
-// invite button
-
-document.getElementById("invite").onclick=()=>{
-if(tg){
-const url = "https://t.me/your_bot"
-tg.openTelegramLink(`https://t.me/share/url?url=${url}&text=Join%20Money%20Tree`)
-}
-}
-
-// offline income
-
+// offline progress
 let last = Number(localStorage.getItem("lastTime")||Date.now())
 let now = Date.now()
 let diff = Math.floor((now-last)/1000)
-
 if(diff>0 && state.auto>0){
 state.coins += diff * state.auto
 }
-
 localStorage.setItem("lastTime",now)
 
 update()
