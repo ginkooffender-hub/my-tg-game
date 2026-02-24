@@ -3,91 +3,26 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Money Tree</title>
+<title>Money Tree WebApp</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box}
-body{
-margin:0;
-font-family:system-ui,Arial;
-background:radial-gradient(circle at top,#1a2a44,#020617);
-color:white;
-min-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-}
-.app{
-width:100%;
-max-width:420px;
-padding:20px;
-}
-.card{
-background:rgba(15,23,42,.8);
-backdrop-filter:blur(10px);
-border-radius:24px;
-padding:22px;
-box-shadow:0 10px 40px rgba(0,0,0,.6);
-text-align:center;
-}
-.title{
-font-size:24px;
-margin-bottom:10px;
-letter-spacing:.5px
-}
-.tree{
-font-size:96px;
-cursor:pointer;
-user-select:none;
-transition:transform .08s, filter .2s;
-}
-.tree:active{transform:scale(.9)}
-.tree:hover{filter:brightness(1.2)}
-.stats{
-display:flex;
-justify-content:space-between;
-margin-top:16px;
-font-size:18px
-}
-.energybar{
-height:12px;
-background:#1f2937;
-border-radius:12px;
-margin-top:10px;
-overflow:hidden
-}
-.energy{
-height:100%;
-background:linear-gradient(90deg,#22c55e,#4ade80);
-width:100%;
-transition:width .2s
-}
-.coin{
-position:fixed;
-font-size:22px;
-pointer-events:none;
-animation:fall 900ms linear forwards
-}
-@keyframes fall{
-0%{transform:translateY(-10px) scale(1);opacity:1}
-100%{transform:translateY(90px) scale(.8);opacity:0}
-}
-.shop{
-margin-top:18px;
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px
-}
-.btn{
-background:#1f2937;
-border:none;
-border-radius:14px;
-padding:10px;
-color:white;
-font-size:14px;
-cursor:pointer
-}
+body{margin:0;font-family:system-ui,Arial;background:radial-gradient(circle at top,#1a2a44,#020617);color:#fff}
+.app{max-width:420px;margin:auto;padding:16px}
+.card{background:rgba(15,23,42,.85);backdrop-filter:blur(10px);border-radius:26px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.6);text-align:center}
+.title{font-size:24px;margin-bottom:6px}
+.tree{font-size:96px;cursor:pointer;transition:.1s}
+.tree:active{transform:scale(.9) rotate(-2deg)}
+.stats{display:flex;justify-content:space-between;margin-top:10px;font-size:18px}
+.bar{height:12px;background:#1f2937;border-radius:10px;margin-top:8px;overflow:hidden}
+.energy{height:100%;background:linear-gradient(90deg,#22c55e,#4ade80);width:100%}
+.coin{position:fixed;font-size:22px;pointer-events:none;animation:fall 1s linear forwards}
+@keyframes fall{0%{transform:translateY(-10px);opacity:1}100%{transform:translateY(100px);opacity:0}}
+.section{margin-top:16px}
+.shop{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.btn{background:#1f2937;border:none;border-radius:14px;padding:10px;color:white;font-size:13px;cursor:pointer}
 .btn:hover{background:#374151}
+.small{font-size:12px;opacity:.7}
 </style>
 </head>
 <body>
@@ -98,93 +33,179 @@ cursor:pointer
 
 <div class="stats">
 <div>🪙 <span id="coins">0</span></div>
-<div>⚡ <span id="energyText">100</span></div>
+<div>⚡ <span id="energyText">0</span></div>
 </div>
 
-<div class="energybar"><div id="energy" class="energy"></div></div>
+<div class="bar"><div id="energy" class="energy"></div></div>
 
+<div class="section">
+<div class="small">Upgrades</div>
 <div class="shop">
-<button class="btn" id="power">💪 Tap +1</button>
-<button class="btn" id="energyUpgrade">🔋 Energy +20</button>
+<button class="btn" id="tapUpgrade"></button>
+<button class="btn" id="energyUpgrade"></button>
+<button class="btn" id="regenUpgrade"></button>
+<button class="btn" id="autoUpgrade"></button>
 </div>
+</div>
+
+<div class="section">
+<button class="btn" id="invite">Invite Friends</button>
+</div>
+
 </div>
 </div>
 
 <script>
-const tg = window.Telegram.WebApp
-if(tg){
- tg.expand()
+const tg = window.Telegram?.WebApp
+if(tg){tg.expand()}
+
+let state = JSON.parse(localStorage.getItem("moneyTreeSave")||"null") || {
+coins:0,
+power:1,
+energy:100,
+maxEnergy:100,
+regen:1,
+auto:0,
+tapLevel:1,
+energyLevel:1,
+regenLevel:1,
+autoLevel:0
 }
 
-let coins = Number(localStorage.getItem('coins')||0)
-let energy = Number(localStorage.getItem('energy')||100)
-let maxEnergy = Number(localStorage.getItem('maxEnergy')||100)
-let power = Number(localStorage.getItem('power')||1)
+function save(){localStorage.setItem("moneyTreeSave",JSON.stringify(state))}
 
-const tree=document.getElementById('tree')
-const coinsEl=document.getElementById('coins')
-const energyEl=document.getElementById('energy')
-const energyText=document.getElementById('energyText')
+const tree = document.getElementById("tree")
+const coinsEl = document.getElementById("coins")
+const energyEl = document.getElementById("energy")
+const energyText = document.getElementById("energyText")
 
-function save(){
-localStorage.setItem('coins',coins)
-localStorage.setItem('energy',energy)
-localStorage.setItem('maxEnergy',maxEnergy)
-localStorage.setItem('power',power)
+const tapBtn = document.getElementById("tapUpgrade")
+const energyBtn = document.getElementById("energyUpgrade")
+const regenBtn = document.getElementById("regenUpgrade")
+const autoBtn = document.getElementById("autoUpgrade")
+
+function prices(){
+return {
+tap: 50 * state.tapLevel,
+energy: 120 * state.energyLevel,
+regen: 140 * state.regenLevel,
+auto: 300 * (state.autoLevel+1)
+}
+}
+
+function updateButtons(){
+const p = prices()
+tapBtn.innerText = `💪 Tap +1 (${p.tap})`
+energyBtn.innerText = `🔋 Energy +20 (${p.energy})`
+regenBtn.innerText = `⚡ Regen +1 (${p.regen})`
+autoBtn.innerText = `🤖 Auto tap (${p.auto})`
 }
 
 function update(){
-coinsEl.textContent=Math.floor(coins)
-energyText.textContent=Math.floor(energy)
-energyEl.style.width=(energy/maxEnergy*100)+'%'
+coinsEl.textContent = Math.floor(state.coins)
+energyText.textContent = Math.floor(state.energy)
+energyEl.style.width = (state.energy/state.maxEnergy*100)+"%"
+updateButtons()
 save()
 }
 
 function spawnCoin(x,y){
-const c=document.createElement('div')
-c.className='coin'
-c.textContent='🪙'
-c.style.left=x+'px'
-c.style.top=y+'px'
+const c=document.createElement("div")
+c.className="coin"
+c.textContent="🪙"
+c.style.left=x+"px"
+c.style.top=y+"px"
 document.body.appendChild(c)
-setTimeout(()=>c.remove(),900)
+setTimeout(()=>c.remove(),1000)
 }
 
 tree.onclick=(e)=>{
-if(energy<=0) return
-coins += power
-energy -= 2
+if(state.energy<=0) return
+state.coins += state.power
+state.energy -= 2
 spawnCoin(e.clientX,e.clientY)
-if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light')
+if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred("light")
 update()
 }
 
+// passive regen
 setInterval(()=>{
-energy += .8
-if(energy>maxEnergy) energy=maxEnergy
+state.energy += state.regen * 0.5
+if(state.energy>state.maxEnergy) state.energy=state.maxEnergy
 update()
-},200)
+},500)
+
+// auto miner
+setInterval(()=>{
+if(state.auto>0){
+state.coins += state.auto
+update()
+}
+},1000)
 
 // upgrades
 
-document.getElementById('power').onclick=()=>{
-let price = 50*power
-if(coins>=price){
-coins -= price
-power += 1
+tapBtn.onclick=()=>{
+const p = prices().tap
+if(state.coins>=p){
+state.coins-=p
+state.tapLevel++
+state.power++
 update()
 }
 }
 
-document.getElementById('energyUpgrade').onclick=()=>{
-let price = 120
-if(coins>=price){
-coins -= price
-maxEnergy += 20
-energy = maxEnergy
+energyBtn.onclick=()=>{
+const p = prices().energy
+if(state.coins>=p){
+state.coins-=p
+state.energyLevel++
+state.maxEnergy += 20
+state.energy = state.maxEnergy
 update()
 }
 }
+
+regenBtn.onclick=()=>{
+const p = prices().regen
+if(state.coins>=p){
+state.coins-=p
+state.regenLevel++
+state.regen += 0.5
+update()
+}
+}
+
+autoBtn.onclick=()=>{
+const p = prices().auto
+if(state.coins>=p){
+state.coins-=p
+state.autoLevel++
+state.auto += 1
+update()
+}
+}
+
+// invite button
+
+document.getElementById("invite").onclick=()=>{
+if(tg){
+const url = "https://t.me/your_bot"
+tg.openTelegramLink(`https://t.me/share/url?url=${url}&text=Join%20Money%20Tree`)
+}
+}
+
+// offline income
+
+let last = Number(localStorage.getItem("lastTime")||Date.now())
+let now = Date.now()
+let diff = Math.floor((now-last)/1000)
+
+if(diff>0 && state.auto>0){
+state.coins += diff * state.auto
+}
+
+localStorage.setItem("lastTime",now)
 
 update()
 </script>
