@@ -18,12 +18,11 @@
             margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;
             background: radial-gradient(circle at top, #1e293b, #020617);
             color: white; height: 100vh; overflow: hidden;
-            user-select: none;
+            user-select: none; -webkit-tap-highlight-color: transparent;
         }
 
         .app { height: 100vh; display: flex; flex-direction: column; padding: 20px 20px 100px 20px; box-sizing: border-box; }
 
-        /* Верхняя панель */
         .balance-card {
             background: var(--glass); backdrop-filter: blur(15px);
             padding: 20px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.1);
@@ -31,56 +30,62 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
         }
         .balance-val { font-family: 'Bungee'; font-size: 44px; color: var(--gold); text-shadow: 0 4px 0 #b8860b; line-height: 1; margin: 10px 0; }
-        .passive-income { font-size: 13px; color: var(--emerald); font-weight: 800; display: flex; justify-content: center; align-items: center; gap: 5px; }
+        .passive-income { font-size: 13px; color: var(--emerald); font-weight: 800; }
 
-        /* Контент вкладок */
         .tab-content { display: none; flex: 1; flex-direction: column; align-items: center; width: 100%; overflow-y: auto; }
         .tab-content.active { display: flex; }
 
-        /* Главная: Дерево */
-        .tree-container { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; }
-        .tree-btn { font-size: 150px; cursor: pointer; transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: drop-shadow(0 0 30px rgba(46,204,113,0.3)); }
-        .tree-btn:active { transform: scale(0.85); }
+        /* ОЖИВЛЕННОЕ ДЕРЕВО */
+        .tree-container { 
+            flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%;
+            animation: treeBreathe 4s ease-in-out infinite; 
+        }
+        @keyframes treeBreathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
 
-        /* Магазин: Бусты */
-        .boost-list { width: 100%; display: flex; flex-direction: column; gap: 12px; padding-top: 10px; }
+        .tree-btn { 
+            font-size: 150px; cursor: pointer; 
+            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            filter: drop-shadow(0 0 20px rgba(46,204,113,0.2));
+            display: inline-block;
+        }
+        .tree-btn:active { 
+            transform: scale(0.8) rotate(-3deg); 
+            filter: drop-shadow(0 0 50px rgba(46,204,113,0.6));
+        }
+
+        /* Бусты */
+        .boost-list { width: 100%; display: flex; flex-direction: column; gap: 12px; }
         .boost-item {
             background: var(--glass); padding: 16px; border-radius: 22px;
             display: flex; justify-content: space-between; align-items: center;
             border: 1px solid rgba(255,255,255,0.05);
         }
-        .boost-info b { display: block; font-size: 15px; margin-bottom: 2px; }
-        .boost-info span { font-size: 12px; opacity: 0.6; }
         .buy-btn { 
             background: linear-gradient(135deg, var(--gold), #f59e0b); 
             color: #451a03; border: none; padding: 10px 18px; 
             border-radius: 14px; font-weight: 800; font-size: 14px;
             box-shadow: 0 4px 0 #b45309;
         }
-        .buy-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #b45309; }
 
-        /* Энергия */
         .energy-section { width: 100%; margin-top: auto; }
-        .energy-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 800; margin-bottom: 8px; }
-        .energy-bar { width: 100%; height: 14px; background: rgba(0,0,0,0.5); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
-        .energy-fill { height: 100%; background: linear-gradient(90deg, #22c55e, #a8ff78); transition: width 0.3s; box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
+        .energy-bar { width: 100%; height: 14px; background: rgba(0,0,0,0.5); border-radius: 12px; overflow: hidden; margin-top: 8px; }
+        .energy-fill { height: 100%; background: linear-gradient(90deg, #22c55e, #a8ff78); transition: width 0.3s; }
 
-        /* Навигация */
         .nav {
             position: fixed; bottom: 25px; left: 20px; right: 20px;
             background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(25px);
             border-radius: 28px; display: flex; justify-content: space-around;
             padding: 12px; border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
-        .nav-item { font-size: 11px; font-weight: 700; opacity: 0.4; cursor: pointer; text-align: center; transition: 0.2s; }
-        .nav-item i { font-style: normal; font-size: 24px; display: block; margin-bottom: 4px; }
-        .nav-item.active { opacity: 1; color: var(--gold); transform: translateY(-5px); }
+        .nav-item { font-size: 11px; font-weight: 700; opacity: 0.4; cursor: pointer; text-align: center; }
+        .nav-item.active { opacity: 1; color: var(--gold); }
 
-        /* Анимация клика */
         .tap-pop {
-            position: absolute; color: white; font-family: 'Bungee'; font-size: 28px;
-            pointer-events: none; z-index: 100; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            position: absolute; color: white; font-family: 'Bungee'; font-size: 32px;
+            pointer-events: none; z-index: 100;
             animation: tapUp 0.8s ease-out forwards;
         }
         @keyframes tapUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-150px) scale(0.5); opacity: 0; } }
@@ -91,16 +96,15 @@
         <div class="balance-card">
             <div class="passive-income">⛏️ Прибыль: +<span id="pIncome">0</span>/сек</div>
             <div class="balance-val" id="coins">0</div>
-            <div id="lvlName" style="font-size:10px; opacity:0.5; letter-spacing:3px; text-transform: uppercase;">Уровень 1: Росток</div>
+            <div id="lvlName" style="font-size:10px; opacity:0.5; letter-spacing:3px;">УРОВЕНЬ 1</div>
         </div>
 
         <div id="game" class="tab-content active">
             <div class="tree-container">
                 <div class="tree-btn" id="tree">🌱</div>
             </div>
-            
             <div class="energy-section">
-                <div class="energy-header">
+                <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:800;">
                     <span>⚡ ЭНЕРГИЯ</span>
                     <span id="eText">100/100</span>
                 </div>
@@ -109,34 +113,32 @@
         </div>
 
         <div id="boosts" class="tab-content">
-            <h2 style="font-family:'Bungee'; color:var(--gold); margin-top:0;">БУСТЫ</h2>
+            <h2 style="font-family:'Bungee'; color:var(--gold)">МАГАЗИН</h2>
             <div class="boost-list">
                 <div class="boost-item">
-                    <div class="boost-info"><b>💪 Мульти-тап</b><span>+1 к каждому клику</span></div>
-                    <button class="buy-btn" onclick="buy('tap')">🪙 <span id="tapCost">100</span></button>
+                    <div><b>💪 Мульти-тап</b><br><small id="tapCostText">Цена: 100</small></div>
+                    <button class="buy-btn" onclick="buy('tap')">КУПИТЬ</button>
                 </div>
                 <div class="boost-item">
-                    <div class="boost-info"><b>🔋 Лимит энергии</b><span>+50 к максимуму</span></div>
-                    <button class="buy-btn" onclick="buy('energy')">🪙 <span id="energyCost">50</span></button>
+                    <div><b>🔋 Лимит энергии</b><br><small id="energyCostText">Цена: 50</small></div>
+                    <button class="buy-btn" onclick="buy('energy')">КУПИТЬ</button>
                 </div>
                 <div class="boost-item">
-                    <div class="boost-info"><b>🤖 Садовник</b><span>+1 монета каждые 2 сек</span></div>
-                    <button class="buy-btn" onclick="buy('auto')">🪙 <span id="autoCost">500</span></button>
+                    <div><b>🤖 Садовник</b><br><small id="autoCostText">Цена: 500</small></div>
+                    <button class="buy-btn" onclick="buy('auto')">КУПИТЬ</button>
                 </div>
             </div>
         </div>
 
         <div id="top" class="tab-content">
-            <h2 style="font-family:'Bungee'; color:var(--emerald); margin-top:0;">ТОП ИГРОКОВ</h2>
-            <div style="background:var(--glass); width:100%; padding:20px; border-radius:20px; text-align:center; opacity:0.6;">
-                Здесь будет глобальный рейтинг игроков после подключения базы данных...
-            </div>
+            <h2 style="font-family:'Bungee'; color:var(--emerald)">ТОП</h2>
+            <p style="opacity:0.5">Лидерборд скоро появится...</p>
         </div>
 
         <div class="nav">
-            <div class="nav-item active" onclick="showTab('game', this)"><i>🌳</i>Игра</div>
-            <div class="nav-item" onclick="showTab('boosts', this)"><i>🚀</i>Бусты</div>
-            <div class="nav-item" onclick="showTab('top', this)"><i>🏆</i>Топ</div>
+            <div class="nav-item active" onclick="showTab('game', this)">🌳<br>Игра</div>
+            <div class="nav-item" onclick="showTab('boosts', this)">🚀<br>Бусты</div>
+            <div class="nav-item" onclick="showTab('top', this)">🏆<br>Топ</div>
         </div>
     </div>
 
@@ -144,9 +146,8 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Загрузка состояния
-        let state = JSON.parse(localStorage.getItem('mTree_v2.1')) || {
-            coins: 0, power: 1, energy: 100, maxEnergy: 100, passive: 0, lastTime: Date.now()
+        let state = JSON.parse(localStorage.getItem('mTree_v2.2')) || {
+            coins: 0, power: 1, energy: 100, maxEnergy: 100, passive: 0
         };
 
         function update() {
@@ -155,31 +156,23 @@
             document.getElementById('eText').textContent = Math.floor(state.energy) + "/" + state.maxEnergy;
             document.getElementById('eFill').style.width = (state.energy / state.maxEnergy * 100) + "%";
             
-            // Динамические цены
-            document.getElementById('tapCost').textContent = Math.floor(100 * Math.pow(1.8, state.power - 1));
-            document.getElementById('energyCost').textContent = Math.floor(50 * (state.maxEnergy / 50));
-            document.getElementById('autoCost').textContent = Math.floor((state.passive + 1) * 500);
+            document.getElementById('tapCostText').textContent = "Цена: " + Math.floor(100 * Math.pow(1.8, state.power - 1));
+            document.getElementById('energyCostText').textContent = "Цена: " + Math.floor(50 * (state.maxEnergy / 50));
+            document.getElementById('autoCostText').textContent = "Цена: " + Math.floor((state.passive + 1) * 500);
 
-            // Визуальный прогресс дерева
             const trees = ["🌱", "🌿", "🌳", "🌲", "🎄", "✨"];
             let idx = Math.min(Math.floor(state.coins / 1000), 5);
             document.getElementById('tree').textContent = trees[idx];
-            document.getElementById('lvlName').textContent = `Уровень ${idx + 1}: ${["Росток","Куст","Дерево","Кедр","Дуб","Золотой Дух"][idx]}`;
+            document.getElementById('lvlName').textContent = `УРОВЕНЬ ${idx + 1}`;
 
-            localStorage.setItem('mTree_v2.1', JSON.stringify(state));
+            localStorage.setItem('mTree_v2.2', JSON.stringify(state));
         }
 
-        // Логика тапа
         document.getElementById('tree').onclick = (e) => {
-            if (state.energy < 1) {
-                tg.HapticFeedback.notificationOccurred('warning');
-                return;
-            }
-            
+            if (state.energy < 1) return;
             state.coins += state.power;
             state.energy -= 1;
             
-            // Анимация цифры
             const p = document.createElement('div');
             p.className = 'tap-pop';
             p.textContent = `+${state.power}`;
@@ -192,42 +185,27 @@
             update();
         };
 
-        // Покупки
         function buy(type) {
-            let cost = 0;
-            if (type === 'tap') {
-                cost = Math.floor(100 * Math.pow(1.8, state.power - 1));
-                if (state.coins >= cost) { state.coins -= cost; state.power++; }
-            } else if (type === 'energy') {
-                cost = Math.floor(50 * (state.maxEnergy / 50));
-                if (state.coins >= cost) { state.coins -= cost; state.maxEnergy += 50; state.energy += 50; }
-            } else if (type === 'auto') {
-                cost = Math.floor((state.passive + 1) * 500);
-                if (state.coins >= cost) { state.coins -= cost; state.passive += 0.5; }
+            if (type === 'tap' && state.coins >= 100 * Math.pow(1.8, state.power - 1)) {
+                state.coins -= 100 * Math.pow(1.8, state.power - 1); state.power++;
+            } else if (type === 'energy' && state.coins >= 50 * (state.maxEnergy / 50)) {
+                state.coins -= 50 * (state.maxEnergy / 50); state.maxEnergy += 50; state.energy += 50;
+            } else if (type === 'auto' && state.coins >= (state.passive + 1) * 500) {
+                state.coins -= (state.passive + 1) * 500; state.passive += 0.5;
             }
-            tg.HapticFeedback.notificationOccurred('success');
             update();
         }
 
-        // Вкладки
         function showTab(id, el) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             el.classList.add('active');
-            tg.HapticFeedback.impactOccurred('light');
         }
 
-        // Игровой цикл (регенерация и пассивный доход)
         setInterval(() => {
-            // Энергия восстанавливается на 1 ед. каждые 2 секунды (0.05 ед. в 100мс)
-            if (state.energy < state.maxEnergy) {
-                state.energy = Math.min(state.maxEnergy, state.energy + 0.05); 
-            }
-            // Пассивный доход (начисляется каждые 100мс)
-            if (state.passive > 0) {
-                state.coins += state.passive / 10;
-            }
+            if (state.energy < state.maxEnergy) state.energy = Math.min(state.maxEnergy, state.energy + 0.05);
+            if (state.passive > 0) state.coins += state.passive / 10;
             update();
         }, 100);
 
