@@ -1,396 +1,312 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Money Tree 2</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<style>
-*{box-sizing:border-box}
-html,body{margin:0}
-body{
-font-family:system-ui,Arial;
-background:radial-gradient(circle at top,#07130f,#020617 60%);
-color:#fff;
-min-height:100vh;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Money Tree Premium</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #020617;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent-gold: #fbbf24;
+            --accent-green: #22c55e;
+            --text-main: #f8fafc;
+        }
 
-.app{max-width:430px;margin:auto;padding:18px}
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-.card{
-background:rgba(255,255,255,.05);
-backdrop-filter:blur(16px);
-border-radius:26px;
-padding:20px;
-box-shadow:0 10px 60px rgba(0,0,0,.6), inset 0 0 40px rgba(255,255,255,.03);
-}
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+        }
 
-.title{
-font-size:26px;
-font-weight:700;
-letter-spacing:.5px;
-text-align:center;
-background:linear-gradient(90deg,#d4af37,#f6e27a);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+        }
 
-.level{
-text-align:center;
-font-size:13px;
-opacity:.8;
-margin-top:4px
-}
+        /* Header Stats */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            padding: 15px 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
 
-.treeWrap{
-position:relative;
-height:190px;
-display:flex;
-align-items:center;
-justify-content:center;
-margin-top:6px
-}
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 24px; font-weight: 800; color: var(--accent-gold); display: block; }
+        .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; }
 
-.tree{
-font-size:120px;
-transition:transform .15s, filter .2s;
-filter:drop-shadow(0 15px 30px rgba(0,0,0,.7));
-animation:breath 3s ease-in-out infinite;
-cursor:pointer;
-}
+        /* Main Game Area */
+        .game-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
 
-@keyframes breath{
-0%,100%{transform:scale(1)}
-50%{transform:scale(1.05)}
-}
+        .tree-container {
+            position: relative;
+            z-index: 2;
+            transition: transform 0.1s;
+        }
 
-.prestige{
-filter:drop-shadow(0 0 25px gold) drop-shadow(0 0 50px rgba(255,215,0,.4));
-}
+        .main-tree {
+            font-size: 160px;
+            filter: drop-shadow(0 0 30px rgba(34, 197, 94, 0.4));
+            cursor: pointer;
+            user-select: none;
+            animation: breathe 3s ease-in-out infinite;
+        }
 
-.coin{
-position:absolute;
-font-size:22px;
-animation:coin .9s ease-out forwards;
-pointer-events:none
-}
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
 
-@keyframes coin{
-0%{transform:translateY(-10px) scale(.6);opacity:0}
-20%{opacity:1}
-100%{transform:translateY(130px) rotate(140deg);opacity:0}
-}
+        /* Energy Bar */
+        .energy-section {
+            width: 100%;
+            margin-top: 30px;
+        }
 
-.spark{
-position:absolute;
-width:6px;
-height:6px;
-border-radius:50%;
-background:radial-gradient(circle,#fff,#facc15);
-animation:spark 700ms linear forwards;
-}
+        .energy-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
 
-@keyframes spark{
-0%{opacity:1;transform:translateY(0) scale(1)}
-100%{opacity:0;transform:translateY(-40px) scale(.4)}
-}
+        .progress-bg {
+            width: 100%;
+            height: 14px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
 
-.float{
-position:absolute;
-font-weight:700;
-color:#facc15;
-text-shadow:0 0 10px gold,0 0 20px gold;
-animation:float 900ms ease-out forwards;
-}
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e, #4ade80);
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+            transition: width 0.3s ease-out;
+        }
 
-@keyframes float{
-0%{transform:translateY(0);opacity:1}
-100%{transform:translateY(-50px);opacity:0}
-}
+        /* Upgrades Grid */
+        .upgrades-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 25px;
+        }
 
-.stats{
-display:flex;
-justify-content:space-between;
-margin-top:6px;
-font-size:18px
-}
+        .upgrade-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.2s;
+        }
 
-.energyWrap{
-margin-top:10px
-}
+        .upgrade-card:active { transform: scale(0.95); }
+        .upgrade-name { font-size: 12px; font-weight: 700; display: block; margin-bottom: 4px; }
+        .upgrade-cost { font-size: 14px; color: var(--accent-gold); font-weight: 800; }
 
-.bar{
-height:14px;
-background:#0f172a;
-border-radius:20px;
-overflow:hidden;
-box-shadow:inset 0 2px 8px rgba(0,0,0,.8);
-}
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            color: var(--accent-gold);
+            font-weight: 800;
+            pointer-events: none;
+            z-index: 10;
+            animation: floatUp 0.8s ease-out forwards;
+        }
 
-.energy{
-height:100%;
-background:linear-gradient(90deg,#10b981,#4ade80);
-box-shadow:0 0 12px #22c55e;
-width:100%;
-transition:width .25s
-}
-
-.section{margin-top:18px}
-
-.shop{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px
-}
-
-.btn{
-padding:12px;
-border-radius:16px;
-border:none;
-color:white;
-font-size:13px;
-cursor:pointer;
-background:linear-gradient(180deg,#1f2937,#020617);
-box-shadow:
-0 6px 18px rgba(0,0,0,.6),
-inset 0 1px 0 rgba(255,255,255,.05),
-inset 0 -4px 8px rgba(0,0,0,.8);
-transition:.12s
-}
-
-.btn:active{
-transform:translateY(2px);
-box-shadow:inset 0 4px 10px rgba(0,0,0,.9);
-}
-
-.small{font-size:12px;opacity:.7;margin-bottom:6px}
-
-</style>
+        @keyframes floatUp {
+            0% { transform: translateY(0) opacity(1); }
+            100% { transform: translateY(-100px) opacity(0); }
+        }
+    </style>
 </head>
 <body>
-<div class="app">
-<div class="card">
+    <div class="app-container">
+        <div class="header">
+            <div class="stat-item">
+                <span class="stat-label">Balance</span>
+                <span id="coins" class="stat-value">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Profit / Tap</span>
+                <span id="powerDisplay" class="stat-value" style="color: #4ade80;">+1</span>
+            </div>
+        </div>
 
-<div class="title">Money Tree</div>
-<div class="level">Tree Level <span id="level">1</span></div>
+        <div class="game-area">
+            <div id="treeContainer" class="tree-container">
+                <div id="tree" class="main-tree">🌳</div>
+            </div>
 
-<div class="treeWrap" id="wrap">
-<div id="tree" class="tree">🌳</div>
-</div>
+            <div class="energy-section">
+                <div class="energy-info">
+                    <span>Energy</span>
+                    <span id="energyText">100 / 100</span>
+                </div>
+                <div class="progress-bg">
+                    <div id="energyFill" class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
 
-<div class="stats">
-<div>🪙 <span id="coins">0</span></div>
-<div>⚡ <span id="energyText">0</span></div>
-</div>
+        <div class="upgrades-grid">
+            <div class="upgrade-card" onclick="buyUpgrade('tap')">
+                <span class="upgrade-name">💪 Multi-Tap</span>
+                <span id="tapCost" class="upgrade-cost">50</span>
+            </div>
+            <div class="upgrade-card" onclick="buyUpgrade('energy')">
+                <span class="upgrade-name">🔋 Max Energy</span>
+                <span id="energyCost" class="upgrade-cost">100</span>
+            </div>
+            <div class="upgrade-card" onclick="buyUpgrade('auto')">
+                <span class="upgrade-name">🤖 Auto-Bot</span>
+                <span id="autoCost" class="upgrade-cost">250</span>
+            </div>
+            <div class="upgrade-card" style="opacity: 0.5;">
+                <span class="upgrade-name">🏆 Prestige</span>
+                <span class="upgrade-cost">Soon</span>
+            </div>
+        </div>
+    </div>
 
-<div class="energyWrap">
-<div class="bar"><div id="energy" class="energy"></div></div>
-</div>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.enableClosingConfirmation();
 
-<div class="section">
-<div class="small">Upgrades</div>
-<div class="shop">
-<button class="btn" id="tapUpgrade"></button>
-<button class="btn" id="energyUpgrade"></button>
-<button class="btn" id="regenUpgrade"></button>
-<button class="btn" id="autoUpgrade"></button>
-</div>
-</div>
+        let state = JSON.parse(localStorage.getItem('moneyTreePro')) || {
+            coins: 0,
+            power: 1,
+            energy: 100,
+            maxEnergy: 100,
+            autoRate: 0,
+            tapLvl: 1
+        };
 
-</div>
-</div>
+        function save() {
+            localStorage.setItem('moneyTreePro', JSON.stringify(state));
+        }
 
-<script>
-const tg = window.Telegram?.WebApp
-if(tg) tg.expand()
+        function updateUI() {
+            document.getElementById('coins').textContent = Math.floor(state.coins);
+            document.getElementById('powerDisplay').textContent = '+' + state.power;
+            document.getElementById('energyText').textContent = Math.floor(state.energy) + ' / ' + state.maxEnergy;
+            document.getElementById('energyFill').style.width = (state.energy / state.maxEnergy * 100) + '%';
+            
+            document.getElementById('tapCost').textContent = 50 * state.tapLvl;
+            document.getElementById('energyCost').textContent = state.maxEnergy * 2;
+            document.getElementById('autoCost').textContent = (state.autoRate + 1) * 250;
+        }
 
-let state = JSON.parse(localStorage.getItem("moneyTreeSave")||"null") || {
-coins:0,
-power:1,
-energy:100,
-maxEnergy:100,
-regen:1,
-auto:0,
-level:1,
-tapLevel:1,
-energyLevel:1,
-regenLevel:1,
-autoLevel:0
-}
+        const tree = document.getElementById('tree');
+        
+        tree.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (state.energy < 1) return;
 
-function save(){localStorage.setItem("moneyTreeSave",JSON.stringify(state))}
+            state.coins += state.power;
+            state.energy -= 1;
+            
+            // Animation
+            document.getElementById('treeContainer').style.transform = 'scale(0.92)';
+            setTimeout(() => { document.getElementById('treeContainer').style.transform = 'scale(1)'; }, 50);
 
-const tree=document.getElementById("tree")
-const wrap=document.getElementById("wrap")
-const coinsEl=document.getElementById("coins")
-const energyEl=document.getElementById("energy")
-const energyText=document.getElementById("energyText")
-const levelEl=document.getElementById("level")
+            // Particle
+            const touch = e.touches[0];
+            createParticle(touch.clientX, touch.clientY);
 
-const tapBtn=document.getElementById("tapUpgrade")
-const energyBtn=document.getElementById("energyUpgrade")
-const regenBtn=document.getElementById("regenUpgrade")
-const autoBtn=document.getElementById("autoUpgrade")
+            // Haptic
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            
+            updateUI();
+            save();
+        });
 
-function prices(){
-return{
-tap:50*state.tapLevel,
-energy:120*state.energyLevel,
-regen:140*state.regenLevel,
-auto:300*(state.autoLevel+1)
-}
-}
+        function createParticle(x, y) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = x + 'px';
+            p.style.top = y + 'px';
+            p.textContent = '+' + state.power;
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 800);
+        }
 
-function updateButtons(){
-const p=prices()
-tapBtn.innerText=`💪 Tap +1 (${p.tap})`
-energyBtn.innerText=`🔋 Energy +20 (${p.energy})`
-regenBtn.innerText=`⚡ Regen +1 (${p.regen})`
-autoBtn.innerText=`🤖 Auto tap (${p.auto})`
-}
+        function buyUpgrade(type) {
+            if (type === 'tap') {
+                let cost = 50 * state.tapLvl;
+                if (state.coins >= cost) {
+                    state.coins -= cost;
+                    state.power++;
+                    state.tapLvl++;
+                }
+            } else if (type === 'energy') {
+                let cost = state.maxEnergy * 2;
+                if (state.coins >= cost) {
+                    state.coins -= cost;
+                    state.maxEnergy += 50;
+                    state.energy = state.maxEnergy;
+                }
+            } else if (type === 'auto') {
+                let cost = (state.autoRate + 1) * 250;
+                if (state.coins >= cost) {
+                    state.coins -= cost;
+                    state.autoRate += 1;
+                }
+            }
+            updateUI();
+            save();
+        }
 
-function update(){
-coinsEl.textContent=Math.floor(state.coins)
-energyText.textContent=Math.floor(state.energy)
-energyEl.style.width=(state.energy/state.maxEnergy*100)+"%"
-levelEl.textContent=state.level
+        // Loops
+        setInterval(() => {
+            if (state.energy < state.maxEnergy) {
+                state.energy = Math.min(state.maxEnergy, state.energy + 0.5);
+                updateUI();
+            }
+            if (state.autoRate > 0) {
+                state.coins += state.autoRate / 10;
+                updateUI();
+            }
+        }, 100);
 
-if(state.coins>5000) tree.classList.add("prestige")
-
-updateButtons()
-save()
-}
-
-function spark(x,y){
-for(let i=0;i<6;i++){
-const s=document.createElement("div")
-s.className="spark"
-s.style.left=(x+(Math.random()*40-20))+"px"
-s.style.top=(y+(Math.random()*10))+"px"
-wrap.appendChild(s)
-setTimeout(()=>s.remove(),700)
-}
-}
-
-function coinsBurst(x,y,amount){
-for(let i=0;i<Math.min(amount,5);i++){
-const c=document.createElement("div")
-c.className="coin"
-c.textContent="🪙"
-c.style.left=(x+(Math.random()*60-30))+"px"
-c.style.top=y+"px"
-wrap.appendChild(c)
-setTimeout(()=>c.remove(),900)
-}
-}
-
-function floatText(x,y,val){
-const f=document.createElement("div")
-f.className="float"
-f.innerText=`+${val}`
-f.style.left=x+"px"
-f.style.top=y+"px"
-wrap.appendChild(f)
-setTimeout(()=>f.remove(),900)
-}
-
-function clickTree(e){
-if(state.energy<=0) return
-
-const rect=wrap.getBoundingClientRect()
-const x=e.clientX-rect.left
-const y=e.clientY-rect.top
-
-const tilt=(x-rect.width/2)/10
-
-tree.style.transform=`rotate(${tilt}deg) scale(.95)`
-setTimeout(()=>tree.style.transform="",120)
-
-state.coins+=state.power
-state.energy-=2
-
-coinsBurst(x,y,state.power)
-spark(x,y)
-floatText(x,y,state.power)
-
-if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred("light")
-
-if(state.coins>state.level*1000){
-state.level++
-tree.style.fontSize=120+state.level*3+"px"
-}
-
-update()
-}
-
-tree.addEventListener("click",clickTree)
-
-setInterval(()=>{
-state.energy+=state.regen*.5
-if(state.energy>state.maxEnergy) state.energy=state.maxEnergy
-update()
-},500)
-
-setInterval(()=>{
-if(state.auto>0){
-state.coins+=state.auto
-update()
-}
-},1000)
-
-// upgrades
-
-tapBtn.onclick=()=>{
-const p=prices().tap
-if(state.coins>=p){
-state.coins-=p
-state.tapLevel++
-state.power++
-update()
-}
-}
-
-energyBtn.onclick=()=>{
-const p=prices().energy
-if(state.coins>=p){
-state.coins-=p
-state.energyLevel++
-state.maxEnergy+=20
-state.energy=state.maxEnergy
-update()
-}
-}
-
-regenBtn.onclick=()=>{
-const p=prices().regen
-if(state.coins>=p){
-state.coins-=p
-state.regenLevel++
-state.regen+=.5
-update()
-}
-}
-
-autoBtn.onclick=()=>{
-const p=prices().auto
-if(state.coins>=p){
-state.coins-=p
-state.autoLevel++
-state.auto++
-update()
-}
-}
-
-// offline progress
-let last=Number(localStorage.getItem("lastTime")||Date.now())
-let now=Date.now()
-let diff=Math.floor((now-last)/1000)
-if(diff>0 && state.auto>0){
-state.coins+=diff*state.auto
-}
-localStorage.setItem("lastTime",now)
-
-update()
-</script>
+        updateUI();
+    </script>
 </body>
 </html>
