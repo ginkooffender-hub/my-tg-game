@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Money Tree: Stable Edition</title>
+    <title>Money Tree: HD Edition</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --gold: #ffcf4d;
             --emerald: #2ecc71;
-            --bg: #020617;
             --glass: rgba(255, 255, 255, 0.08);
         }
 
@@ -34,62 +33,53 @@
         .tab-content { display: none; flex: 1; flex-direction: column; align-items: center; width: 100%; }
         .tab-content.active { display: flex; }
 
-        /* ЧИСТАЯ ЗОНА ТАПА БЕЗ ФИЛЬТРОВ */
+        /* ГРАФИКА ДЕРЕВА */
         .tree-container { 
             flex: 1; display: flex; align-items: center; justify-content: center; 
             position: relative; width: 100%;
         }
 
-        .tree-btn { 
-            font-size: 140px; cursor: pointer; 
+        .tree-img { 
+            width: 280px; /* Фиксированный размер для графики */
+            height: 280px;
+            object-fit: contain;
+            cursor: pointer; 
             transition: transform 0.05s ease-out; 
-            display: inline-block;
-            animation: sway 4s ease-in-out infinite; /* Плавное покачивание */
+            animation: sway 4s ease-in-out infinite;
             z-index: 100;
+            -webkit-user-drag: none;
         }
 
-        /* Анимация покачивания */
         @keyframes sway {
-            0%, 100% { transform: rotate(-3deg) scale(1); }
-            50% { transform: rotate(3deg) scale(1.05); }
+            0%, 100% { transform: rotate(-2deg) scale(1); }
+            50% { transform: rotate(2deg) scale(1.05); }
         }
 
-        /* Отклик при нажатии */
-        .tree-btn:active { 
+        .tree-img:active { 
             transform: scale(0.85) !important; 
-            animation: none; /* Остановка покачивания при тапе для четкости */
+            animation: none;
         }
 
-        /* Интерфейс */
-        .boost-list { width: 100%; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+        /* Остальное без изменений для стабильности */
+        .boost-list { width: 100%; display: flex; flex-direction: column; gap: 10px; }
         .boost-item {
             background: var(--glass); padding: 14px; border-radius: 20px;
             display: flex; justify-content: space-between; align-items: center;
             border: 1px solid rgba(255,255,255,0.05);
         }
-        .buy-btn { 
-            background: var(--gold); color: #451a03; border: none; 
-            padding: 10px 15px; border-radius: 12px; font-weight: 800; 
-        }
-
+        .buy-btn { background: var(--gold); color: #451a03; border: none; padding: 10px 15px; border-radius: 12px; font-weight: 800; }
         .energy-section { width: 100%; margin-top: auto; }
         .energy-bar { width: 100%; height: 12px; background: rgba(0,0,0,0.4); border-radius: 10px; overflow: hidden; margin-top: 5px; }
         .energy-fill { height: 100%; background: var(--emerald); transition: width 0.3s; }
-
         .nav {
             position: fixed; bottom: 20px; left: 20px; right: 20px;
             background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px);
             border-radius: 24px; display: flex; justify-content: space-around;
             padding: 12px; border: 1px solid rgba(255,255,255,0.1);
         }
-        .nav-item { font-size: 11px; opacity: 0.4; text-align: center; color: white; text-decoration: none; }
+        .nav-item { font-size: 11px; opacity: 0.4; text-align: center; color: white; }
         .nav-item.active { opacity: 1; color: var(--gold); }
-
-        .tap-pop {
-            position: absolute; color: white; font-family: 'Bungee'; font-size: 30px;
-            pointer-events: none; z-index: 200;
-            animation: tapUp 0.6s ease-out forwards;
-        }
+        .tap-pop { position: absolute; color: white; font-family: 'Bungee'; font-size: 30px; pointer-events: none; z-index: 200; animation: tapUp 0.6s ease-out forwards; }
         @keyframes tapUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-100px); opacity: 0; } }
     </style>
 </head>
@@ -98,12 +88,12 @@
         <div class="balance-card">
             <div class="passive-income">Прибыль: +<span id="pIncome">0</span>/сек</div>
             <div class="balance-val" id="coins">0</div>
-            <div id="lvlName" style="font-size:10px; opacity:0.5; letter-spacing:2px;">УРОВЕНЬ 1</div>
+            <div id="lvlName" style="font-size:10px; opacity:0.5; letter-spacing:2px; text-transform:uppercase;">УРОВЕНЬ 1</div>
         </div>
 
         <div id="game" class="tab-content active">
             <div class="tree-container">
-                <div class="tree-btn" id="treeBtn">🌱</div>
+                <img src="https://cdn-icons-png.flaticon.com/512/1892/1892751.png" class="tree-img" id="treeImg">
             </div>
             <div class="energy-section">
                 <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800;">
@@ -116,7 +106,7 @@
 
         <div id="boosts" class="tab-content">
             <h3 style="font-family:'Bungee'; color:var(--gold)">МАГАЗИН</h3>
-            <div class="boost-list" id="bList">
+            <div class="boost-list">
                 <div class="boost-item">
                     <div><b>💪 Сила тапа</b><br><small id="tapCostText">Цена: 100</small></div>
                     <button class="buy-btn" onclick="buy('tap')">УЛУЧШИТЬ</button>
@@ -134,7 +124,7 @@
 
         <div id="top" class="tab-content">
             <h3 style="font-family:'Bungee'; color:var(--emerald)">РЕЙТИНГ</h3>
-            <p style="opacity:0.5">Тут будет список лидеров</p>
+            <p style="opacity:0.5">Лидерборд скоро...</p>
         </div>
 
         <div class="nav">
@@ -148,9 +138,18 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        let state = JSON.parse(localStorage.getItem('mTree_v2.5')) || {
+        let state = JSON.parse(localStorage.getItem('mTree_v2.6')) || {
             coins: 0, power: 1, energy: 100, maxEnergy: 100, passive: 0
         };
+
+        // Ссылки на картинки уровней
+        const treeSkins = [
+            "https://cdn-icons-png.flaticon.com/512/1892/1892751.png", // Ур 1
+            "https://cdn-icons-png.flaticon.com/512/2824/2824851.png", // Ур 2
+            "https://cdn-icons-png.flaticon.com/512/489/489969.png",   // Ур 3
+            "https://cdn-icons-png.flaticon.com/512/3246/3246067.png", // Ур 4
+            "https://cdn-icons-png.flaticon.com/512/2913/2913520.png"  // Ур 5
+        ];
 
         function update() {
             document.getElementById('coins').textContent = Math.floor(state.coins);
@@ -162,29 +161,26 @@
             document.getElementById('energyCostText').textContent = "Цена: " + Math.floor(50 * (state.maxEnergy / 50));
             document.getElementById('autoCostText').textContent = "Цена: " + Math.floor((state.passive + 1) * 500);
 
-            const trees = ["🌱", "🌿", "🌳", "🌲", "🎄", "✨"];
-            let idx = Math.min(Math.floor(state.coins / 1000), 5);
-            document.getElementById('treeBtn').textContent = trees[idx];
+            // Смена картинки
+            let idx = Math.min(Math.floor(state.coins / 2000), 4);
+            document.getElementById('treeImg').src = treeSkins[idx];
             document.getElementById('lvlName').textContent = `УРОВЕНЬ ${idx + 1}`;
 
-            localStorage.setItem('mTree_v2.5', JSON.stringify(state));
+            localStorage.setItem('mTree_v2.6', JSON.stringify(state));
         }
 
-        // КЛИК С ГАРАНТИЕЙ РАБОТЫ
-        const btn = document.getElementById('treeBtn');
+        const btn = document.getElementById('treeImg');
         btn.onclick = (e) => {
             if (state.energy < 1) {
                 tg.HapticFeedback.notificationOccurred('warning');
                 return;
             }
-            
             state.coins += state.power;
             state.energy -= 1;
             
             const p = document.createElement('div');
             p.className = 'tap-pop';
             p.textContent = `+${state.power}`;
-            // Центрируем цифру над тапом
             p.style.left = (e.clientX || e.touches[0].clientX) + 'px';
             p.style.top = (e.clientY || e.touches[0].clientY) + 'px';
             document.body.appendChild(p);
@@ -202,25 +198,8 @@
             } else if (type === 'auto' && state.coins >= (state.passive + 1) * 500) {
                 state.coins -= (state.passive + 1) * 500; state.passive += 0.5;
             }
-            tg.HapticFeedback.notificationOccurred('success');
             update();
         }
 
         function showTab(id, el) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            el.classList.add('active');
-            tg.HapticFeedback.impactOccurred('light');
-        }
-
-        setInterval(() => {
-            if (state.energy < state.maxEnergy) state.energy = Math.min(state.maxEnergy, state.energy + 0.05);
-            if (state.passive > 0) state.coins += state.passive / 10;
-            update();
-        }, 100);
-
-        update();
-    </script>
-</body>
-</html>
+            document.querySelectorAll('.
