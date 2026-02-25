@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MONEY TREE 🎮 ULTIMATE</title>
+    <title>MONEY TREE 🌳 ПИКСЕЛЬНАЯ КОЛЛЕКЦИЯ</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
@@ -154,6 +154,10 @@
                 0 10px 0 #1e3a2a,
                 inset 0 -5px 0 #3a7a4a;
             transition: all 0.03s linear;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .tree-area:active {
@@ -162,10 +166,14 @@
         }
         
         .tree-sprite {
-            font-size: 120px;
+            width: 120px;
+            height: 120px;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
             display: block;
             filter: drop-shadow(0 10px 0 #1e3a2a);
             animation: treeSway 2s infinite;
+            object-fit: contain;
         }
         
         @keyframes treeSway {
@@ -551,28 +559,70 @@
             line-height: 1.5;
             margin-top: 20px;
         }
+        
+        /* Коллекция деревьев */
+        .tree-collection {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            margin: 15px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+        
+        .collection-item {
+            background: #2a3a5a;
+            border: 2px solid #4a6a9a;
+            padding: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .collection-item:hover {
+            transform: scale(1.05);
+            border-color: gold;
+        }
+        
+        .collection-item.active {
+            border-color: gold;
+            background: #3a4a6a;
+        }
+        
+        .collection-img {
+            width: 40px;
+            height: 40px;
+            image-rendering: pixelated;
+        }
+        
+        .collection-name {
+            color: #ffd700;
+            font-size: 6px;
+            margin-top: 3px;
+        }
     </style>
 </head>
 <body>
     <div id="preloader" class="preloader">
         <div class="preloader-box">
-            <div class="preloader-title">💰 MONEY TREE 💰</div>
+            <div class="preloader-title">💰 MONEY TREE 🌳</div>
             <div class="preloader-animation" id="preloaderEmoji">🌱</div>
             <div class="preloader-bar">
                 <div class="preloader-fill" id="preloaderFill" style="width: 0%"></div>
             </div>
             <div class="preloader-tip" id="preloaderTip">
-                ЗАГРУЗКА...
+                ЗАГРУЗКА ПИКСЕЛЬНЫХ ДЕРЕВЬЕВ...
             </div>
         </div>
     </div>
 
     <div class="cartridge">
-        <div class="cartridge-label">🎮 ULTIMATE EDITION 🎮</div>
+        <div class="cartridge-label">🎮 20 ПИКСЕЛЬНЫХ ДЕРЕВЬЕВ 🎮</div>
         
         <div class="led-panel">
             <span class="led">🔴 POWER</span>
-            <span class="led">🟡 READY</span>
+            <span class="led">🟡 COLLECTION</span>
             <span class="led">🟢 PLAY</span>
         </div>
         
@@ -583,7 +633,7 @@
             </div>
             
             <div class="tree-area" id="treeClick">
-                <span class="tree-sprite" id="treeEmoji">🌱</span>
+                <img class="tree-sprite" id="treeSprite" src="https://i.postimg.cc/0Nn2JpJh/Basic1.png" alt="Tree">
                 <div id="hitEffect" class="hit-flash" style="display: none;"></div>
             </div>
             
@@ -600,7 +650,7 @@
             <div class="stats-line">
                 <span>⚡ РЕГЕН: <span id="regenRate">0.15</span>/сек</span>
                 <span>🎯 КРИТ: <span id="critRate">0</span>%</span>
-                <span>🤖 АВТО: <span id="autoStatus">ВЫКЛ</span></span>
+                <span>🌳 ДЕРЕВО: <span id="treeNumber">1/20</span></span>
             </div>
             
             <div class="power-indicator">
@@ -609,6 +659,11 @@
             
             <div class="crit-indicator" id="critMessage" style="display: none;">
                 🎯 КРИТИЧЕСКИЙ УДАР! 🎯
+            </div>
+            
+            <!-- КОЛЛЕКЦИЯ ВСЕХ 20 ДЕРЕВЬЕВ -->
+            <div class="tree-collection" id="treeCollection">
+                <!-- Сюда добавятся деревья через JS -->
             </div>
             
             <button class="achievements-btn" onclick="toggleAchievements()">
@@ -623,10 +678,10 @@
                 <div class="shop-item">
                     <div class="item-info">
                         <h3>🌱 ЭВОЛЮЦИЯ</h3>
-                        <div class="item-desc">Множитель дохода +0.5</div>
+                        <div class="item-desc">Меняет дерево</div>
                         <div class="item-price" id="evoPrice">2000</div>
                     </div>
-                    <button class="buy-btn" onclick="buyUpgrade('evo')">АП</button>
+                    <button class="buy-btn" onclick="nextTree()">СЛЕДУЮЩЕЕ</button>
                 </div>
                 
                 <div class="shop-item">
@@ -694,7 +749,7 @@
             <button class="menu-btn active" onclick="showScreen('main', this)">🌳 ИГРА</button>
             <button class="menu-btn" onclick="showScreen('shop', this)">🚀 БУСТЫ</button>
             <button class="menu-btn" onclick="showScreen('friends', this)">👥 ДРУЗЬЯ</button>
-            <button class="menu-btn" onclick="showScreen('achievements', this)">🏆 АЧИВКИ</button>
+            <button class="menu-btn" onclick="toggleAchievements()">🏆 АЧИВКИ</button>
         </div>
     </div>
 
@@ -704,20 +759,45 @@
         tg.ready();
         
         const userId = tg.initDataUnsafe?.user?.id || 'guest_' + Math.random();
-        const SAVE_KEY = 'money_tree_final_' + userId;
+        const SAVE_KEY = 'money_tree_pixel_' + userId;
+        
+        // ========== ВАШИ 20 ПИКСЕЛЬНЫХ ДЕРЕВЬЕВ ==========
+        const treeImages = [
+            "https://i.postimg.cc/0Nn2JpJh/Basic1.png",   // 1
+            "https://i.postimg.cc/ZqjG2gGm/Basic2.png",   // 2
+            "https://i.postimg.cc/zGzJVRtG/Basic3.png",   // 3
+            "https://i.postimg.cc/FzPmS2tV/Basic4.png",   // 4
+            "https://i.postimg.cc/MKGLyfLY/Basic5.png",   // 5
+            "https://i.postimg.cc/hGt5K64P/Basic6.png",   // 6
+            "https://i.postimg.cc/WpzWV6vF/Basic7.png",   // 7
+            "https://i.postimg.cc/YqMjW9fY/Basic8.png",   // 8
+            "https://i.postimg.cc/Wz2QK0Pm/Basic9.png",   // 9
+            "https://i.postimg.cc/2S7rB6Tj/Basic10.png",  // 10
+            "https://i.postimg.cc/fTGwB4Gj/Basic11.png",  // 11
+            "https://i.postimg.cc/bwFkScpQ/Basic12.png",  // 12
+            "https://i.postimg.cc/RF0LF5d3/Basic13.png",  // 13
+            "https://i.postimg.cc/GpcHmb52/Basic14.png",  // 14
+            "https://i.postimg.cc/mkLyJhM6/Basic15.png",  // 15
+            "https://i.postimg.cc/mgWWvY5R/Basic16.png",  // 16
+            "https://i.postimg.cc/TYncNp2W/Basic17.png",  // 17
+            "https://i.postimg.cc/NF9hX2jz/Basic18.png",  // 18
+            "https://i.postimg.cc/9fTr5mh7/Basic19.png",  // 19
+            "https://i.postimg.cc/vTpVQ2mn/Basic20.png"    // 20
+        ];
         
         // СОСТОЯНИЕ ИГРЫ
         let gameState = {
-            coins: 0,
+            coins: 500,
             tapPower: 1,
             energy: 200,
             maxEnergy: 200,
-            treeLevel: 0,
+            treeLevel: 0, // Индекс текущего дерева (0-19)
             referrals: [],
             regenLevel: 0,
             autoClickerLevel: 0,
             critLevel: 0,
-            lastOnlineTime: Date.now(), // Сохраняем время последнего онлайна
+            lastOnlineTime: Date.now(),
+            unlockedTrees: [true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
             achievements: {
                 clicks: 0,
                 totalCoins: 0,
@@ -726,8 +806,6 @@
             },
             completedAchievements: []
         };
-        
-        const treeStages = ['🌱', '🌿', '🌳', '🌲', '🎄', '👑🌳'];
         
         // Загрузка сохранения
         try {
@@ -738,14 +816,22 @@
             }
         } catch (e) {}
         
-        // ========== ОФЛАЙН-ЭНЕРГИЯ ==========
+        // Рефералка
+        const urlParams = new URLSearchParams(window.location.search);
+        const refId = urlParams.get('startapp');
+        
+        if (refId && refId !== userId && !localStorage.getItem('ref_' + userId)) {
+            gameState.coins += 500;
+            gameState.referrals.push(refId);
+            localStorage.setItem('ref_' + userId, 'true');
+        }
+        
+        // ОФЛАЙН-ЭНЕРГИЯ
         function calculateOfflineEnergy() {
             const now = Date.now();
             const diffSeconds = (now - gameState.lastOnlineTime) / 1000;
             
-            console.log('Прошло секунд:', diffSeconds); // Для отладки
-            
-            if (diffSeconds > 5) { // Если прошло больше 5 секунд
+            if (diffSeconds > 5) {
                 const regenRate = 0.15 + (gameState.regenLevel * 0.1);
                 const recovered = diffSeconds * regenRate;
                 
@@ -763,24 +849,12 @@
                 }
             }
             
-            // Обновляем время
             gameState.lastOnlineTime = now;
             saveGame();
         }
         
-        // Сохранение игры
         function saveGame() {
             localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
-        }
-        
-        // Рефералка
-        const urlParams = new URLSearchParams(window.location.search);
-        const refId = urlParams.get('startapp');
-        
-        if (refId && refId !== userId && !localStorage.getItem('ref_' + userId)) {
-            gameState.coins += 500;
-            gameState.referrals.push(refId);
-            localStorage.setItem('ref_' + userId, 'true');
         }
         
         // ПРЕЛОАДЕР
@@ -790,17 +864,16 @@
         const preloaderEmoji = document.getElementById('preloaderEmoji');
         
         const tips = [
-            "КЛИКАЙ ПО ДЕРЕВУ, ЧТОБЫ ЗАРАБАТЫВАТЬ!",
-            "ПОКУПАЙ БУСТЫ В МАГАЗИНЕ!",
-            "ПРИГЛАШАЙ ДРУЗЕЙ И ПОЛУЧАЙ БОНУСЫ!",
-            "ЭНЕРГИЯ ВОССТАНАВЛИВАЕТСЯ ДАЖЕ ОФЛАЙН!"
+            "ЗДЕСЬ 20 УНИКАЛЬНЫХ ПИКСЕЛЬНЫХ ДЕРЕВЬЕВ!",
+            "СОБЕРИ ИХ ВСЕ!",
+            "КАЖДОЕ ДЕРЕВО УНИКАЛЬНО",
+            "ПОКУПАЙ НОВЫЕ ДЕРЕВЬЯ В МАГАЗИНЕ"
         ];
         
         let progress = 0;
         const preloadInterval = setInterval(() => {
             progress += 2;
             preloaderFill.style.width = progress + '%';
-            preloaderEmoji.textContent = ['🌱', '🌿', '🌳', '🌲', '🎄'][Math.floor(progress / 20)];
             
             if (progress % 25 === 0) {
                 preloaderTip.textContent = tips[Math.floor(Math.random() * tips.length)];
@@ -812,9 +885,9 @@
                 
                 setTimeout(() => {
                     preloader.classList.add('hidden');
-                    // ВАЖНО: считаем офлайн-энергию после загрузки
                     calculateOfflineEnergy();
                     updateDisplay();
+                    renderTreeCollection();
                 }, 500);
             }
         }, 30);
@@ -866,11 +939,13 @@
             { id: 'crit100', name: 'СНАЙПЕР', desc: '100 критов', icon: '🎯', target: 100, reward: 1000 },
             { id: 'friends5', name: 'КОМАНДА', desc: '5 друзей', icon: '👥', target: 5, reward: 2500 },
             { id: 'upgrades10', name: 'КОЛЛЕКЦИОНЕР', desc: '10 улучшений', icon: '⚡', target: 10, reward: 1500 },
-            { id: 'treeMax', name: 'ЛЕСНОЙ КОРОЛЬ', desc: 'Макс. дерево', icon: '👑', target: 1, reward: 5000 },
-            { id: 'regen5', name: 'БАТАРЕЙКА', desc: '5 ур регена', icon: '🔋', target: 5, reward: 3000 }
+            { id: 'tree10', name: 'САДОВНИК', desc: '10 деревьев', icon: '🌳', target: 10, reward: 3000 },
+            { id: 'tree20', name: 'КОЛЛЕКЦИОНЕР', desc: 'ВСЕ ДЕРЕВЬЯ!', icon: '👑', target: 20, reward: 10000 }
         ];
         
         function updateAchievements() {
+            const unlockedCount = gameState.unlockedTrees.filter(v => v).length;
+            
             achievements.forEach(ach => {
                 if (gameState.completedAchievements.includes(ach.id)) return;
                 
@@ -881,10 +956,10 @@
                 if (ach.id === 'crit100') progress = gameState.achievements.crits;
                 if (ach.id === 'friends5') progress = gameState.referrals.length;
                 if (ach.id === 'upgrades10') progress = gameState.achievements.upgrades;
-                if (ach.id === 'treeMax') progress = gameState.treeLevel >= 5 ? 1 : 0;
-                if (ach.id === 'regen5') progress = gameState.regenLevel;
+                if (ach.id === 'tree10') progress = unlockedCount;
+                if (ach.id === 'tree20') progress = unlockedCount;
                 
-                if (progress >= ach.target && !gameState.completedAchievements.includes(ach.id)) {
+                if (progress >= ach.target) {
                     gameState.completedAchievements.push(ach.id);
                     gameState.coins += ach.reward;
                     
@@ -909,8 +984,8 @@
                 if (ach.id === 'crit100') progress = gameState.achievements.crits;
                 if (ach.id === 'friends5') progress = gameState.referrals.length;
                 if (ach.id === 'upgrades10') progress = gameState.achievements.upgrades;
-                if (ach.id === 'treeMax') progress = gameState.treeLevel >= 5 ? 1 : 0;
-                if (ach.id === 'regen5') progress = gameState.regenLevel;
+                if (ach.id === 'tree10') progress = unlockedCount;
+                if (ach.id === 'tree20') progress = unlockedCount;
                 
                 const percent = Math.min(100, (progress / ach.target) * 100);
                 
@@ -933,6 +1008,76 @@
                 `🏆 АЧИВКИ (${gameState.completedAchievements.length}/10)`;
         }
         
+        // ОТОБРАЖЕНИЕ КОЛЛЕКЦИИ
+        function renderTreeCollection() {
+            const container = document.getElementById('treeCollection');
+            container.innerHTML = '';
+            
+            treeImages.forEach((src, index) => {
+                const unlocked = gameState.unlockedTrees[index];
+                const item = document.createElement('div');
+                item.className = `collection-item ${index === gameState.treeLevel ? 'active' : ''}`;
+                item.onclick = () => selectTree(index);
+                
+                const img = document.createElement('img');
+                img.src = unlocked ? src : 'https://i.postimg.cc/XYZ/placeholder.png'; // Скрытое, если не открыто
+                img.className = 'collection-img';
+                img.style.opacity = unlocked ? '1' : '0.3';
+                
+                const name = document.createElement('div');
+                name.className = 'collection-name';
+                name.textContent = unlocked ? `Дерево ${index+1}` : '???';
+                
+                item.appendChild(img);
+                item.appendChild(name);
+                container.appendChild(item);
+            });
+        }
+        
+        // ВЫБОР ДЕРЕВА
+        function selectTree(index) {
+            if (gameState.unlockedTrees[index]) {
+                gameState.treeLevel = index;
+                document.getElementById('treeSprite').src = treeImages[index];
+                renderTreeCollection();
+                updateDisplay();
+                playSound('click');
+            } else {
+                tg.showPopup({
+                    title: '❌ НЕ ОТКРЫТО',
+                    message: 'Купи это дерево в магазине!',
+                    buttons: [{ type: 'ok' }]
+                });
+            }
+        }
+        
+        // СЛЕДУЮЩЕЕ ДЕРЕВО (покупка)
+        function nextTree() {
+            const nextIndex = (gameState.treeLevel + 1) % treeImages.length;
+            const cost = 2000;
+            
+            if (gameState.coins >= cost) {
+                if (!gameState.unlockedTrees[nextIndex]) {
+                    gameState.coins -= cost;
+                    gameState.unlockedTrees[nextIndex] = true;
+                    playSound('buy');
+                    
+                    tg.showPopup({
+                        title: '🌳 НОВОЕ ДЕРЕВО!',
+                        message: `Ты открыл дерево ${nextIndex+1}!`,
+                        buttons: [{ type: 'ok' }]
+                    });
+                }
+                
+                gameState.treeLevel = nextIndex;
+                document.getElementById('treeSprite').src = treeImages[nextIndex];
+                renderTreeCollection();
+                updateDisplay();
+            } else {
+                tg.HapticFeedback.notificationOccurred('error');
+            }
+        }
+        
         function getRegenRate() {
             return 0.15 + (gameState.regenLevel * 0.1);
         }
@@ -942,7 +1087,7 @@
         }
         
         function getEarnPerTap() {
-            return gameState.tapPower * (1 + gameState.treeLevel * 0.5);
+            return gameState.tapPower * (1 + Math.floor(gameState.treeLevel / 4) * 0.5);
         }
         
         function updateDisplay() {
@@ -951,13 +1096,12 @@
             
             document.getElementById('energyDisplay').textContent = Math.floor(gameState.energy) + '/' + gameState.maxEnergy;
             document.getElementById('energyFill').style.width = (gameState.energy / gameState.maxEnergy * 100) + '%';
-            document.getElementById('treeEmoji').textContent = treeStages[gameState.treeLevel];
             document.getElementById('regenRate').textContent = getRegenRate().toFixed(2);
             document.getElementById('critRate').textContent = getCritChance();
             document.getElementById('earnPerTap').textContent = Math.floor(getEarnPerTap());
             document.getElementById('autoStatus').textContent = gameState.autoClickerLevel > 0 ? gameState.autoClickerLevel + 'УР' : 'ВЫКЛ';
+            document.getElementById('treeNumber').textContent = (gameState.treeLevel + 1) + '/20';
             
-            document.getElementById('evoPrice').textContent = (gameState.treeLevel + 1) * 2000;
             document.getElementById('tapPrice').textContent = Math.floor(100 * Math.pow(1.5, gameState.tapPower - 1));
             document.getElementById('energyPrice').textContent = gameState.maxEnergy;
             document.getElementById('regenPrice').textContent = 1000 * (gameState.regenLevel + 1);
@@ -970,7 +1114,7 @@
             }
             
             updateAchievements();
-            saveGame(); // Сохраняем при каждом обновлении
+            saveGame();
         }
         
         function playSound(type) {
@@ -1096,10 +1240,6 @@
             let cost = 0;
             
             switch(type) {
-                case 'evo':
-                    if (gameState.treeLevel >= 5) return;
-                    cost = (gameState.treeLevel + 1) * 2000;
-                    break;
                 case 'tap':
                     if (gameState.tapPower >= 25) return;
                     cost = Math.floor(100 * Math.pow(1.5, gameState.tapPower - 1));
@@ -1126,7 +1266,6 @@
                 gameState.coins -= cost;
                 
                 switch(type) {
-                    case 'evo': gameState.treeLevel++; break;
                     case 'tap': gameState.tapPower++; break;
                     case 'energy': 
                         gameState.maxEnergy += 100; 
@@ -1157,23 +1296,20 @@
             
             if (screen === 'main') {
                 document.getElementById('mainScreen').classList.remove('hidden');
+                renderTreeCollection();
             } else if (screen === 'shop') {
                 document.getElementById('shopScreen').classList.remove('hidden');
             } else if (screen === 'friends') {
                 document.getElementById('friendsScreen').classList.remove('hidden');
-            } else if (screen === 'achievements') {
-                document.getElementById('mainScreen').classList.remove('hidden');
-                document.getElementById('achievementsPanel').classList.toggle('hidden');
             }
         };
         
         window.inviteFriend = function() {
-            // Реферальная ссылка (не влияет на игру)
             const link = `https://t.me/your_bot/app?startapp=${userId}`;
             
             tg.openTelegramLink(
                 'https://t.me/share/url?url=' + encodeURIComponent(link) + 
-                '&text=🌳 ПРИСОЕДИНЯЙСЯ К MONEY TREE! СТАРТОВЫЙ БОНУС 500 МОНЕТ!'
+                '&text=🌳 У МЕНЯ 20 ПИКСЕЛЬНЫХ ДЕРЕВЬЕВ! ПРИСОЕДИНЯЙСЯ!'
             );
             
             playSound('click');
@@ -1181,9 +1317,11 @@
         
         window.toggleAchievements = function() {
             document.getElementById('achievementsPanel').classList.toggle('hidden');
+            renderTreeCollection();
         };
         
-        // ОБНОВЛЕНИЕ КАЖДУЮ СЕКУНДУ
+        window.nextTree = nextTree;
+        
         setInterval(() => {
             if (gameState.energy < gameState.maxEnergy) {
                 gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + getRegenRate() / 10);
@@ -1199,12 +1337,9 @@
                 }
             }
             
-            // ВАЖНО: НЕ обновляем lastOnlineTime здесь!
-            // lastOnlineTime должно обновляться ТОЛЬКО при закрытии или входе
             updateDisplay();
         }, 100);
         
-        // Сохраняем время при закрытии страницы
         window.addEventListener('beforeunload', function() {
             gameState.lastOnlineTime = Date.now();
             saveGame();
@@ -1212,6 +1347,7 @@
         
         showScreen('main', document.querySelector('.menu-btn'));
         updateDisplay();
+        renderTreeCollection();
     </script>
 </body>
 </html>
