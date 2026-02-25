@@ -2,220 +2,125 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Money Tree v4.0</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Money Tree v4.1</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
---gold:#ffcf4d;
---goldSoft:rgba(255,207,77,0.25);
---emerald:#2ecc71;
---dark1:#0f172a;
---dark2:#020617;
---glass:rgba(255,255,255,0.06);
+  --gold:#ffcf4d;
+  --goldSoft:rgba(255,207,77,0.25);
+  --emerald:#2ecc71;
+  --dark1:#0f172a;
+  --glass:rgba(255,255,255,0.06);
 }
 
 *{box-sizing:border-box;}
 body{
-margin:0;
-font-family:'Montserrat',sans-serif;
-background:radial-gradient(circle at top,#1e293b,#020617);
-color:white;
-height:100vh;
-overflow:hidden;
-user-select:none;
--webkit-tap-highlight-color:transparent;
+  margin:0;
+  font-family:'Montserrat',sans-serif;
+  background:radial-gradient(circle at top,#1e293b,#020617);
+  color:white;
+  height:100vh;
+  overflow:hidden;
+  user-select:none;
 }
 
 .app{
-height:100vh;
-display:flex;
-flex-direction:column;
-padding:20px 20px 110px 20px;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  padding:20px 20px 100px 20px;
 }
 
 /* ===== HEADER ===== */
 .balance-card{
-background:var(--glass);
-backdrop-filter:blur(20px);
-border-radius:28px;
-padding:18px;
-text-align:center;
-border:1px solid rgba(255,255,255,0.08);
-box-shadow:0 0 40px rgba(0,0,0,0.3);
+  background:var(--glass);
+  backdrop-filter:blur(20px);
+  border-radius:28px;
+  padding:18px;
+  text-align:center;
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:0 0 40px rgba(0,0,0,0.3);
 }
 
-.passive-income{
-font-size:12px;
-color:var(--emerald);
-font-weight:800;
-margin-bottom:4px;
-}
-
-.balance-val{
-font-family:'Bungee';
-font-size:42px;
-color:var(--gold);
-text-shadow:0 4px 0 #b8860b, 0 0 25px var(--goldSoft);
-}
-
-.lvl-name{
-font-size:11px;
-opacity:.6;
-letter-spacing:2px;
-margin-top:5px;
-}
+.passive-income{font-size:12px;color:var(--emerald);font-weight:800;margin-bottom:4px;}
+.balance-val{font-family:'Bungee';font-size:42px;color:var(--gold);text-shadow:0 4px 0 #b8860b, 0 0 25px var(--goldSoft);}
+.lvl-name{font-size:11px;opacity:.6;letter-spacing:2px;margin-top:5px;}
 
 /* ===== TREE CARD ===== */
-.tree-container{
-flex:1;
-display:flex;
-align-items:center;
-justify-content:center;
-position:relative;
-}
-
+.tree-container{flex:1;display:flex;align-items:center;justify-content:center;position:relative;}
 .tree-card{
-width:260px;
-height:260px;
-border-radius:34px;
-background:linear-gradient(145deg,rgba(255,207,77,0.12),rgba(255,255,255,0.04));
-backdrop-filter:blur(25px);
-border:1px solid var(--goldSoft);
-display:flex;
-align-items:center;
-justify-content:center;
-box-shadow:0 0 60px rgba(255,207,77,0.25);
-transition:transform .12s ease;
-position:relative;
-overflow:hidden;
+  width:260px;height:260px;border-radius:34px;
+  background:linear-gradient(145deg,rgba(255,207,77,0.12),rgba(255,255,255,0.04));
+  backdrop-filter:blur(25px);border:1px solid var(--goldSoft);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 60px rgba(255,207,77,0.25);
+  position:relative;overflow:hidden;cursor:pointer;
+  transition:transform .1s ease;
 }
+.tree-card:active{transform:scale(.95);}
+.tree-img{width:85%;pointer-events:none;filter:drop-shadow(0 0 25px rgba(255,215,0,.4));}
 
-.tree-card:active{
-transform:scale(.94);
-}
-
-.tree-img{
-width:85%;
-pointer-events:none;
-transition:all .4s ease;
-filter:drop-shadow(0 0 25px rgba(255,215,0,.4));
-}
-
-/* MAX MODE */
-.max-glow{
-animation:maxPulse 2s infinite ease-in-out;
-}
-
-@keyframes maxPulse{
-0%{box-shadow:0 0 40px rgba(255,215,0,.3);}
-50%{box-shadow:0 0 90px rgba(255,215,0,.8);}
-100%{box-shadow:0 0 40px rgba(255,215,0,.3);}
-}
-
-/* TAP FLOAT TEXT */
+/* FLOAT TEXT */
 .tap-pop{
-position:absolute;
-font-family:'Bungee';
-font-size:26px;
-pointer-events:none;
-animation:floatUp .8s ease-out forwards;
+  position:absolute;font-family:'Bungee';font-size:26px;
+  pointer-events:none;
+  animation:floatUp .8s ease-out forwards;
 }
-
 @keyframes floatUp{
-0%{transform:translateY(0);opacity:1;}
-100%{transform:translateY(-130px);opacity:0;}
+  0%{transform:translateY(0);opacity:1;}
+  100%{transform:translateY(-120px);opacity:0;}
 }
 
 /* PARTICLES */
 .particle{
-position:absolute;
-width:10px;
-height:10px;
-background:var(--gold);
-border-radius:50%;
-animation:particleFly .9s ease-out forwards;
+  position:absolute;width:8px;height:8px;
+  background:var(--gold);border-radius:50%;
+  animation:particleFly .8s ease-out forwards;
 }
-
 @keyframes particleFly{
-0%{opacity:1;transform:translate(0,0);}
-100%{opacity:0;transform:translate(var(--x),var(--y));}
+  0%{opacity:1;transform:translate(0,0);}
+  100%{opacity:0;transform:translate(var(--x),var(--y));}
 }
 
-/* ENERGY */
-.energy-section{margin-top:20px;}
-.energy-bar{
-height:12px;
-background:rgba(0,0,0,.5);
-border-radius:10px;
-overflow:hidden;
-}
-.energy-fill{
-height:100%;
-background:linear-gradient(90deg,#2ecc71,#27ae60);
-box-shadow:0 0 12px var(--emerald);
-transition:width .3s;
-}
+.energy-section{margin-top:15px;}
+.energy-bar{height:12px;background:rgba(0,0,0,.5);border-radius:10px;overflow:hidden;}
+.energy-fill{height:100%;background:linear-gradient(90deg,#2ecc71,#27ae60);box-shadow:0 0 12px var(--emerald);transition:width .3s;}
 
-/* NAV */
-.nav{
-position:fixed;
-bottom:20px;
-left:20px;
-right:20px;
-background:rgba(15,23,42,.95);
-backdrop-filter:blur(20px);
-border-radius:24px;
-display:flex;
-justify-content:space-around;
-padding:12px;
-border:1px solid rgba(255,255,255,0.1);
-}
-
-.nav-item{
-font-size:10px;
-opacity:.4;
-text-align:center;
-flex:1;
-cursor:pointer;
-}
-
-.nav-item.active{
-opacity:1;
-color:var(--gold);
-}
+.nav{display:none;}
 </style>
 </head>
 
 <body>
 <div class="app">
 
-<div class="balance-card">
-<div class="passive-income">⛏ ПРИБЫЛЬ: +<span id="pIncome">0</span>/СЕК</div>
-<div class="balance-val" id="coins">0</div>
-<div class="lvl-name" id="lvlName">РОСТОК</div>
-</div>
+  <div class="balance-card">
+    <div class="passive-income">⛏ ПРИБЫЛЬ: +<span id="pIncome">0</span>/СЕК</div>
+    <div class="balance-val" id="coins">0</div>
+    <div class="lvl-name" id="lvlName">РОСТОК</div>
+  </div>
 
-<div id="game">
-<div class="tree-container">
-<div class="tree-card" id="treeBtn">
-<img id="treeImg" src="img/stage0.png" class="tree-img">
-</div>
-</div>
+  <div id="game">
+    <div class="tree-container">
+      <div class="tree-card" id="treeBtn">
+        <img id="treeImg" src="img/stage0.png" class="tree-img">
+      </div>
+    </div>
 
-<div class="energy-section">
-<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;">
-<span>ЭНЕРГИЯ</span>
-<span id="eText">100/100</span>
-</div>
-<div class="energy-bar">
-<div class="energy-fill" id="eFill"></div>
-</div>
-</div>
-</div>
+    <div class="energy-section">
+      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;">
+        <span>ЭНЕРГИЯ</span>
+        <span id="eText">100/100</span>
+      </div>
+      <div class="energy-bar">
+        <div class="energy-fill" id="eFill"></div>
+      </div>
+    </div>
+
+  </div>
 
 </div>
 
@@ -223,99 +128,84 @@ color:var(--gold);
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-const userId = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 'guest';
-const SAVE_KEY = `mTree_v4_${userId}`;
+const SAVE_KEY = `mTree_v4_${tg.initDataUnsafe.user?.id || 'guest'}`;
 
 let state = JSON.parse(localStorage.getItem(SAVE_KEY)) || {
-coins:0,
-power:1,
-energy:100,
-maxEnergy:100,
-passive:0,
-treeLvl:0,
-lastTime:Date.now()
+  coins:0, power:1, energy:100, maxEnergy:100,
+  passive:0, treeLvl:0, lastTime: Date.now()
 };
 
 const names=["Росток","Куст","Дерево","Большое","Магическое","ЗОЛОТОЕ ДРЕВО"];
 const treeStages=[
-"img/stage0.png",
-"img/stage1.png",
-"img/stage2.png",
-"img/stage3.png",
-"img/stage4.png",
-"img/stage5.png"
+  "img/stage0.png",
+  "img/stage1.png",
+  "img/stage2.png",
+  "img/stage3.png",
+  "img/stage4.png",
+  "img/stage5.png"
 ];
 
-function save(){
-localStorage.setItem(SAVE_KEY,JSON.stringify(state));
+function save(){ localStorage.setItem(SAVE_KEY,JSON.stringify(state)); }
+
+function calcOffline(){
+  const now = Date.now();
+  const dt = (now - state.lastTime) / 1000;
+  if(dt > 1){
+    state.coins += state.passive * dt * (1 + state.treeLvl * .5);
+    state.lastTime = now;
+  }
+}
+
+function spawnParticle(x,y){
+  const p = document.createElement("div");
+  p.className="particle";
+  p.style.left=x+"px"; p.style.top=y+"px";
+  p.style.setProperty('--x',(Math.random()*150-75)+"px");
+  p.style.setProperty('--y',(Math.random()*-150)+"px");
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),800);
+}
+
+function showGain(x,y,amt){
+  const pop = document.createElement("div");
+  pop.className="tap-pop";
+  pop.style.left=x+"px"; pop.style.top=y+"px";
+  pop.textContent="+"+amt;
+  document.body.appendChild(pop);
+  setTimeout(()=>pop.remove(),800);
 }
 
 function update(){
-const multi=1+(state.treeLvl*0.5);
-coins.textContent=Math.floor(state.coins);
-pIncome.textContent=(state.passive*multi).toFixed(1);
-eText.textContent=Math.floor(state.energy)+"/"+state.maxEnergy;
-eFill.style.width=(state.energy/state.maxEnergy*100)+"%";
-lvlName.textContent=names[state.treeLvl];
-treeImg.src=treeStages[state.treeLvl];
-
-if(state.treeLvl===5){
-treeBtn.classList.add("max-glow");
-}else{
-treeBtn.classList.remove("max-glow");
+  calcOffline();
+  document.getElementById("coins").textContent=Math.floor(state.coins);
+  document.getElementById("pIncome").textContent=(state.passive*(1+state.treeLvl*0.5)).toFixed(1);
+  document.getElementById("lvlName").textContent=names[state.treeLvl];
+  document.getElementById("treeImg").src = treeStages[state.treeLvl];
+  document.getElementById("eText").textContent=`${Math.floor(state.energy)}/${state.maxEnergy}`;
+  document.getElementById("eFill").style.width=(state.energy/state.maxEnergy*100)+"%";
+  save();
 }
 
-save();
-}
+document.getElementById("treeBtn").addEventListener("click",(e)=>{
+  if(state.energy < 1) return;
+  const gain = Math.floor(state.power * (1 + state.treeLvl * .5));
+  state.coins += gain;
+  state.energy -= 1;
 
-function spawnParticles(x,y){
-for(let i=0;i<6;i++){
-const p=document.createElement("div");
-p.className="particle";
-p.style.left=x+"px";
-p.style.top=y+"px";
-p.style.setProperty('--x',(Math.random()*200-100)+"px");
-p.style.setProperty('--y',(Math.random()*-200)+"px");
-document.body.appendChild(p);
-setTimeout(()=>p.remove(),900);
-}
-}
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = rect.left + rect.width/2;
+  const y = rect.top + rect.height/2;
 
-treeBtn.onclick=(e)=>{
-if(state.energy<1){
-tg.HapticFeedback.notificationOccurred("warning");
-return;
-}
-const gain=state.power*(1+(state.treeLvl*0.5));
-state.coins+=gain;
-state.energy-=1;
+  showGain(x,y,gain);
+  for(let i=0;i<5;i++) spawnParticle(x,y);
 
-const rect=treeBtn.getBoundingClientRect();
-const x=rect.left+rect.width/2;
-const y=rect.top+rect.height/2;
-
-const pop=document.createElement("div");
-pop.className="tap-pop";
-pop.style.left=x+"px";
-pop.style.top=y+"px";
-pop.textContent="+"+Math.floor(gain);
-document.body.appendChild(pop);
-setTimeout(()=>pop.remove(),800);
-
-spawnParticles(x,y);
-
-tg.HapticFeedback.impactOccurred("medium");
-update();
-};
+  update();
+});
 
 setInterval(()=>{
-if(state.energy<state.maxEnergy){
-state.energy=Math.min(state.maxEnergy,state.energy+0.15);
-}
-if(state.passive>0){
-state.coins+=(state.passive*(1+state.treeLvl*0.5))/10;
-}
-update();
+  if(state.energy < state.maxEnergy) state.energy = Math.min(state.maxEnergy, state.energy+0.2);
+  if(state.passive > 0) state.coins += (state.passive*(1+state.treeLvl*0.5))/10;
+  update();
 },100);
 
 update();
