@@ -93,14 +93,14 @@
             margin-top: 20px;
         }
         
-        /* ОНБОРДИНГ */
+        /* ОНБОРДИНГ (полный) */
         .onboarding-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             backdrop-filter: blur(4px);
             display: flex;
             justify-content: center;
@@ -183,6 +183,95 @@
         
         .onboarding-btn:active {
             transform: translateY(6px);
+            border-bottom-width: 2px;
+        }
+        
+        /* КОРОТКИЙ ОНБОРДИНГ (для повторных входов) */
+        .quick-onboarding {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 14000;
+            transition: opacity 0.3s;
+        }
+        
+        .quick-onboarding.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .quick-box {
+            background: #1e2a3a;
+            border: 6px solid #7fffd4;
+            padding: 25px;
+            max-width: 320px;
+            text-align: center;
+        }
+        
+        .quick-title {
+            color: #7fffd4;
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 0 #2a6a6a;
+        }
+        
+        .quick-text {
+            color: #ffd700;
+            font-size: 10px;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+        
+        .quick-checkbox {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            color: #aaccff;
+            font-size: 8px;
+        }
+        
+        .quick-checkbox input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #ffd700;
+        }
+        
+        .quick-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .quick-btn {
+            flex: 1;
+            background: #ff6b6b;
+            border: none;
+            border-bottom: 4px solid #b22222;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            padding: 12px;
+            cursor: pointer;
+        }
+        
+        .quick-btn.primary {
+            background: #ffd700;
+            color: #000;
+            border-bottom-color: #b8860b;
+        }
+        
+        .quick-btn:active {
+            transform: translateY(4px);
             border-bottom-width: 2px;
         }
         
@@ -418,19 +507,6 @@
             text-shadow: 2px 2px 0 #b85e00;
         }
         
-        .crit-indicator {
-            color: #ff6b6b;
-            font-size: 8px;
-            text-align: center;
-            margin: 5px 0;
-            animation: critPulse 1s infinite;
-        }
-        
-        @keyframes critPulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; text-shadow: 0 0 10px red; }
-        }
-        
         .menu-buttons {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -502,12 +578,6 @@
             margin-bottom: 4px;
         }
         
-        .item-desc {
-            color: #aaccff;
-            font-size: 6px;
-            margin-bottom: 4px;
-        }
-        
         .item-price {
             color: #7fffd4;
             font-size: 7px;
@@ -571,13 +641,6 @@
             animation: popupFloat 0.6s steps(5) forwards;
         }
         
-        .popup-crit {
-            color: #ff6b6b;
-            text-shadow: 
-                4px 4px 0 #8b0000,
-                -2px -2px 0 #ff4500;
-        }
-        
         @keyframes popupFloat {
             0% { transform: translateY(0) scale(1); opacity: 1; }
             100% { transform: translateY(-120px) scale(2); opacity: 0; }
@@ -603,8 +666,8 @@
         </div>
     </div>
 
-    <!-- ОНБОРДИНГ -->
-    <div id="onboarding" class="onboarding-overlay">
+    <!-- ПОЛНЫЙ ОНБОРДИНГ (для первого входа) -->
+    <div id="fullOnboarding" class="onboarding-overlay">
         <div class="onboarding-box">
             <div class="onboarding-arrow">👇</div>
             <div class="onboarding-title" id="onboardingTitle">ДОБРО ПОЖАЛОВАТЬ!</div>
@@ -619,6 +682,25 @@
                 <span class="progress-dot"></span>
             </div>
             <button class="onboarding-btn" id="onboardingNext">ДАЛЕЕ +50</button>
+        </div>
+    </div>
+
+    <!-- КОРОТКИЙ ОНБОРДИНГ (для повторных входов) -->
+    <div id="quickOnboarding" class="quick-onboarding">
+        <div class="quick-box">
+            <div class="quick-title">⚡ СНОВА В ИГРЕ!</div>
+            <div class="quick-text">
+                Твое дерево ждет тебя!<br>
+                Кликай, зарабатывай, прокачивай!
+            </div>
+            <div class="quick-checkbox">
+                <input type="checkbox" id="dontShowAgain">
+                <label for="dontShowAgain">БОЛЬШЕ НЕ ПОКАЗЫВАТЬ</label>
+            </div>
+            <div class="quick-buttons">
+                <button class="quick-btn" id="skipQuick">ПРОПУСТИТЬ</button>
+                <button class="quick-btn primary" id="startQuick">НАЧАТЬ</button>
+            </div>
         </div>
     </div>
 
@@ -656,22 +738,17 @@
             
             <div class="stats-line" style="display: flex; justify-content: space-between; color: #7fffd4; font-size: 7px; margin: 5px 0;">
                 <span>⚡ РЕГЕН: <span id="regenRate">0.15</span>/сек</span>
-                <span>🎯 КРИТ: <span id="critRate">0</span>%</span>
             </div>
             
             <div class="power-indicator">
                 💰 ЗА КЛИК: <span id="earnPerTap">1</span>
             </div>
             
-            <!-- Кнопка ачивок -->
             <button class="achievements-btn" onclick="toggleAchievements()">
                 🏆 АЧИВКИ (0/10)
             </button>
             
-            <!-- Панель ачивок (скрыта) -->
-            <div id="achievementsPanel" class="achievements-panel hidden">
-                <!-- Сюда будут добавляться ачивки через JS -->
-            </div>
+            <div id="achievementsPanel" class="achievements-panel hidden"></div>
         </div>
         
         <!-- Магазин -->
@@ -680,7 +757,6 @@
                 <div class="shop-item">
                     <div class="item-info">
                         <h3>🌱 ЭВОЛЮЦИЯ</h3>
-                        <div class="item-desc">Множитель +0.5</div>
                         <div class="item-price" id="evoPrice">2000</div>
                     </div>
                     <button class="buy-btn" onclick="buyUpgrade('evo')">АП</button>
@@ -689,7 +765,6 @@
                 <div class="shop-item">
                     <div class="item-info">
                         <h3>💪 СИЛА ТАПА</h3>
-                        <div class="item-desc">+1 монета</div>
                         <div class="item-price" id="tapPrice">100</div>
                     </div>
                     <button class="buy-btn" onclick="buyUpgrade('tap')">АП</button>
@@ -698,7 +773,6 @@
                 <div class="shop-item">
                     <div class="item-info">
                         <h3>🔋 МАКС ЭНЕРГИЯ</h3>
-                        <div class="item-desc">+100 лимит</div>
                         <div class="item-price" id="energyPrice">100</div>
                     </div>
                     <button class="buy-btn" onclick="buyUpgrade('energy')">АП</button>
@@ -707,7 +781,6 @@
                 <div class="shop-item">
                     <div class="item-info">
                         <h3>⚡ РЕГЕНЕРАЦИЯ</h3>
-                        <div class="item-desc">+0.1/сек</div>
                         <div class="item-price" id="regenPrice">1000</div>
                     </div>
                     <button class="buy-btn" onclick="buyUpgrade('regen')">АП</button>
@@ -723,9 +796,6 @@
                 </button>
                 <div class="friend-counter" id="friendCount">
                     ДРУЗЕЙ: 0
-                </div>
-                <div style="color: #7fffd4; font-size: 7px; margin-top: 10px;">
-                    +500 ЗА КАЖДОГО ДРУГА
                 </div>
             </div>
         </div>
@@ -748,7 +818,8 @@
         const userName = tg.initDataUnsafe?.user?.first_name || 'ИГРОК';
         
         const SAVE_KEY = 'money_tree_final_' + userId;
-        const ONBOARDING_KEY = 'onboarding_' + userId;
+        const ONBOARDING_KEY = 'onboarding_completed_' + userId;
+        const QUICK_ONBOARDING_KEY = 'quick_onboarding_dont_show_' + userId;
         
         // СОСТОЯНИЕ ИГРЫ
         let gameState = {
@@ -760,16 +831,10 @@
             treeLevel: 0,
             referrals: [],
             regenLevel: 0,
-            
-            // Для офлайн-энергии
             lastOnlineTime: Date.now(),
-            
-            // Ачивки
             achievements: {
                 clicks: 0,
                 totalCoins: 0,
-                crits: 0,
-                friends: 0,
                 upgrades: 0
             },
             completedAchievements: []
@@ -811,28 +876,21 @@
             
             if (progress >= 100) {
                 clearInterval(preloadInterval);
-                
-                // Звук включения
                 playBootSound();
                 
                 setTimeout(() => {
                     preloader.classList.add('hidden');
-                    
-                    // Проверка онбординга
-                    checkOnboarding();
-                    
-                    // Проверка офлайн-энергии
                     checkOfflineEnergy();
+                    checkAndShowOnboarding();
                 }, 500);
             }
         }, 30);
         
-        // Звук включения (как Dendy)
+        // Звук включения
         function playBootSound() {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             const ctx = new AudioContext();
             
-            // Основной звук
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             
@@ -850,7 +908,6 @@
             osc.start();
             osc.stop(ctx.currentTime + 0.3);
             
-            // Второй голос
             const osc2 = ctx.createOscillator();
             osc2.type = 'triangle';
             osc2.frequency.setValueAtTime(880, ctx.currentTime + 0.1);
@@ -867,17 +924,24 @@
             osc2.stop(ctx.currentTime + 0.3);
         }
         
-        // ОНБОРДИНГ
-        function checkOnboarding() {
-            const onboardingShown = localStorage.getItem(ONBOARDING_KEY);
+        // ПРОВЕРКА ОНБОРДИНГА
+        function checkAndShowOnboarding() {
+            const onboardingCompleted = localStorage.getItem(ONBOARDING_KEY);
+            const dontShowQuick = localStorage.getItem(QUICK_ONBOARDING_KEY);
             
-            if (!onboardingShown) {
-                const onboarding = document.getElementById('onboarding');
-                onboarding.classList.remove('hidden');
-                startOnboarding();
+            if (!onboardingCompleted) {
+                // Первый вход - полный онбординг
+                startFullOnboarding();
+            } else if (!dontShowQuick) {
+                // Повторный вход - короткий онбординг (если не отключили)
+                showQuickOnboarding();
+            } else {
+                // Сразу показываем игру
+                console.log('Игра готова');
             }
         }
         
+        // ПОЛНЫЙ ОНБОРДИНГ (4 шага)
         let onboardingStep = 0;
         const onboardingSteps = [
             {
@@ -906,12 +970,14 @@
             }
         ];
         
-        function startOnboarding() {
-            const overlay = document.getElementById('onboarding');
+        function startFullOnboarding() {
+            const overlay = document.getElementById('fullOnboarding');
             const title = document.getElementById('onboardingTitle');
             const text = document.getElementById('onboardingText');
-            const dots = document.querySelectorAll('.progress-dot');
+            const dots = document.querySelectorAll('#onboardingProgress .progress-dot');
             const nextBtn = document.getElementById('onboardingNext');
+            
+            overlay.classList.remove('hidden');
             
             function updateStep() {
                 const step = onboardingSteps[onboardingStep];
@@ -919,8 +985,8 @@
                 text.textContent = step.text;
                 nextBtn.textContent = `ДАЛЕЕ +${step.bonus}`;
                 
-                // Подсветка элемента
                 document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+                
                 if (step.highlight === 'treeClick') {
                     document.getElementById('treeClick').classList.add('highlight');
                 } else if (step.highlight === 'energyContainer') {
@@ -931,7 +997,6 @@
                     document.querySelectorAll('.menu-btn')[2].classList.add('highlight');
                 }
                 
-                // Прогресс
                 dots.forEach((dot, i) => {
                     if (i <= onboardingStep) {
                         dot.classList.add('active');
@@ -942,7 +1007,6 @@
             }
             
             nextBtn.onclick = () => {
-                // Даем бонус
                 gameState.coins += onboardingSteps[onboardingStep].bonus;
                 playSound('coin');
                 
@@ -951,7 +1015,6 @@
                 if (onboardingStep < onboardingSteps.length) {
                     updateStep();
                 } else {
-                    // Завершение онбординга
                     overlay.classList.add('hidden');
                     localStorage.setItem(ONBOARDING_KEY, 'true');
                     document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
@@ -969,12 +1032,34 @@
             updateStep();
         }
         
+        // КОРОТКИЙ ОНБОРДИНГ (для повторных входов)
+        function showQuickOnboarding() {
+            const quickOverlay = document.getElementById('quickOnboarding');
+            const dontShowCheckbox = document.getElementById('dontShowAgain');
+            const skipBtn = document.getElementById('skipQuick');
+            const startBtn = document.getElementById('startQuick');
+            
+            quickOverlay.classList.remove('hidden');
+            
+            skipBtn.onclick = () => {
+                quickOverlay.classList.add('hidden');
+            };
+            
+            startBtn.onclick = () => {
+                if (dontShowCheckbox.checked) {
+                    localStorage.setItem(QUICK_ONBOARDING_KEY, 'true');
+                }
+                quickOverlay.classList.add('hidden');
+                playSound('coin');
+            };
+        }
+        
         // ОФЛАЙН-ЭНЕРГИЯ
         function checkOfflineEnergy() {
             const now = Date.now();
             const diffSeconds = (now - gameState.lastOnlineTime) / 1000;
             
-            if (diffSeconds > 10) { // Если прошло больше 10 секунд
+            if (diffSeconds > 10) {
                 const regenRate = 0.15 + (gameState.regenLevel * 0.1);
                 const recovered = diffSeconds * regenRate;
                 
@@ -1002,34 +1087,24 @@
             { id: 'click10000', name: 'МАШИНА', desc: '10000 кликов', icon: '🤖', target: 10000, reward: 10000 },
             { id: 'coins1000', name: 'БОГАЧ', desc: '1000 монет', icon: '💰', target: 1000, reward: 500 },
             { id: 'coins10000', name: 'МИЛЛИОНЕР', desc: '10000 монет', icon: '💎', target: 10000, reward: 2000 },
-            { id: 'crit100', name: 'СНАЙПЕР', desc: '100 критов', icon: '🎯', target: 100, reward: 1000 },
             { id: 'friends5', name: 'КОМАНДА', desc: '5 друзей', icon: '👥', target: 5, reward: 2500 },
             { id: 'upgrades10', name: 'КОЛЛЕКЦИОНЕР', desc: '10 улучшений', icon: '⚡', target: 10, reward: 1500 },
-            { id: 'treeMax', name: 'ЛЕСНОЙ КОРОЛЬ', desc: 'Макс. дерево', icon: '👑', target: 1, reward: 5000 },
-            { id: 'regen5', name: 'БАТАРЕЙКА', desc: '5 ур регена', icon: '🔋', target: 5, reward: 3000 }
+            { id: 'treeMax', name: 'ЛЕСНОЙ КОРОЛЬ', desc: 'Макс. дерево', icon: '👑', target: 1, reward: 5000 }
         ];
         
         function updateAchievements() {
-            // Проверка выполнения
             achievements.forEach(ach => {
                 if (gameState.completedAchievements.includes(ach.id)) return;
                 
                 let progress = 0;
-                let completed = false;
                 
-                if (ach.id === 'click100') progress = gameState.achievements.clicks;
-                if (ach.id === 'click1000') progress = gameState.achievements.clicks;
-                if (ach.id === 'click10000') progress = gameState.achievements.clicks;
-                if (ach.id === 'coins1000') progress = gameState.achievements.totalCoins;
-                if (ach.id === 'coins10000') progress = gameState.achievements.totalCoins;
-                if (ach.id === 'crit100') progress = gameState.achievements.crits;
+                if (ach.id.includes('click')) progress = gameState.achievements.clicks;
+                if (ach.id.includes('coins')) progress = gameState.achievements.totalCoins;
                 if (ach.id === 'friends5') progress = gameState.referrals.length;
                 if (ach.id === 'upgrades10') progress = gameState.achievements.upgrades;
                 if (ach.id === 'treeMax') progress = gameState.treeLevel >= 5 ? 1 : 0;
-                if (ach.id === 'regen5') progress = gameState.regenLevel;
                 
-                if (progress >= ach.target && !completed) {
-                    // Награда
+                if (progress >= ach.target) {
                     gameState.completedAchievements.push(ach.id);
                     gameState.coins += ach.reward;
                     
@@ -1043,45 +1118,39 @@
                 }
             });
             
-            // Отображение ачивок
             const panel = document.getElementById('achievementsPanel');
-            if (panel) {
-                let html = '';
-                achievements.forEach(ach => {
-                    const completed = gameState.completedAchievements.includes(ach.id);
-                    let progress = 0;
-                    
-                    if (ach.id.includes('click')) progress = gameState.achievements.clicks;
-                    if (ach.id.includes('coins')) progress = gameState.achievements.totalCoins;
-                    if (ach.id === 'crit100') progress = gameState.achievements.crits;
-                    if (ach.id === 'friends5') progress = gameState.referrals.length;
-                    if (ach.id === 'upgrades10') progress = gameState.achievements.upgrades;
-                    if (ach.id === 'treeMax') progress = gameState.treeLevel >= 5 ? 1 : 0;
-                    if (ach.id === 'regen5') progress = gameState.regenLevel;
-                    
-                    const percent = Math.min(100, (progress / ach.target) * 100);
-                    
-                    html += `
-                        <div class="achievement-item ${completed ? 'completed' : ''}">
-                            <div class="achievement-icon">${ach.icon}</div>
-                            <div class="achievement-info">
-                                <div class="achievement-name">${ach.name}</div>
-                                <div class="achievement-progress">
-                                    <div class="achievement-fill" style="width: ${percent}%"></div>
-                                </div>
-                                <div class="achievement-reward">${progress}/${ach.target} +${ach.reward}</div>
+            let html = '';
+            achievements.forEach(ach => {
+                const completed = gameState.completedAchievements.includes(ach.id);
+                let progress = 0;
+                
+                if (ach.id.includes('click')) progress = gameState.achievements.clicks;
+                if (ach.id.includes('coins')) progress = gameState.achievements.totalCoins;
+                if (ach.id === 'friends5') progress = gameState.referrals.length;
+                if (ach.id === 'upgrades10') progress = gameState.achievements.upgrades;
+                if (ach.id === 'treeMax') progress = gameState.treeLevel >= 5 ? 1 : 0;
+                
+                const percent = Math.min(100, (progress / ach.target) * 100);
+                
+                html += `
+                    <div class="achievement-item ${completed ? 'completed' : ''}">
+                        <div class="achievement-icon">${ach.icon}</div>
+                        <div class="achievement-info">
+                            <div class="achievement-name">${ach.name}</div>
+                            <div class="achievement-progress">
+                                <div class="achievement-fill" style="width: ${percent}%"></div>
                             </div>
+                            <div class="achievement-reward">${progress}/${ach.target} +${ach.reward}</div>
                         </div>
-                    `;
-                });
-                panel.innerHTML = html;
-            }
+                    </div>
+                `;
+            });
+            panel.innerHTML = html;
             
             document.querySelector('.achievements-btn').textContent = 
                 `🏆 АЧИВКИ (${gameState.completedAchievements.length}/10)`;
         }
         
-        // Остальные функции (updateDisplay, buyUpgrade, showScreen и т.д.)
         function getRegenRate() {
             return 0.15 + (gameState.regenLevel * 0.1);
         }
@@ -1154,7 +1223,6 @@
             }
         }
         
-        // КЛИК
         document.getElementById('treeClick').addEventListener('click', function(e) {
             if (gameState.energy < 1) return;
             
@@ -1190,7 +1258,6 @@
             updateDisplay();
         });
         
-        // ПОКУПКИ
         window.buyUpgrade = function(type) {
             let cost = 0;
             
@@ -1247,7 +1314,7 @@
         };
         
         window.inviteFriend = function() {
-            const botName = 'MONEY TREE CLICKER';
+            const botName = 'YOUR_BOT_NAME';
             const link = `https://t.me/${botName}/app?startapp=${userId}`;
             
             tg.openTelegramLink(
@@ -1262,20 +1329,14 @@
             document.getElementById('achievementsPanel').classList.toggle('hidden');
         };
         
-        // ОБНОВЛЕНИЕ
         setInterval(() => {
-            // Регенерация энергии (офлайн-совместимая)
             if (gameState.energy < gameState.maxEnergy) {
                 gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + getRegenRate() / 10);
             }
-            
-            // Обновляем время последнего онлайна
             gameState.lastOnlineTime = Date.now();
-            
             updateDisplay();
         }, 100);
         
-        // Старт
         showScreen('main', document.querySelector('.menu-btn'));
         updateDisplay();
     </script>
