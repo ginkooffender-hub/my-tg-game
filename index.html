@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MONEY TREE 🌳 АНИМАЦИЯ 20 КАДРОВ</title>
+    <title>MONEY TREE 🎮 ULTIMATE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
@@ -27,6 +27,7 @@
             position: relative;
         }
         
+        /* Пиксельный фон */
         body::before {
             content: "";
             position: fixed;
@@ -154,10 +155,6 @@
                 0 10px 0 #1e3a2a,
                 inset 0 -5px 0 #3a7a4a;
             transition: all 0.03s linear;
-            min-height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
         .tree-area:active {
@@ -165,22 +162,17 @@
             box-shadow: 0 0 0 #1e3a2a;
         }
         
-        /* АНИМИРОВАННОЕ ДЕРЕВО (20 кадров) */
         .tree-sprite {
-            width: 120px;
-            height: 120px;
-            background-size: 2400px 120px; /* 20 кадров * 120px */
-            background-repeat: no-repeat;
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
+            font-size: 120px;
             display: block;
             filter: drop-shadow(0 10px 0 #1e3a2a);
-            animation: treeBreath 1.5s steps(20) infinite;
+            animation: treeSway 2s infinite;
         }
         
-        @keyframes treeBreath {
-            from { background-position: 0 0; }
-            to { background-position: -2400px 0; }
+        @keyframes treeSway {
+            0%, 100% { transform: rotate(0deg); }
+            33% { transform: rotate(2deg); }
+            66% { transform: rotate(-2deg); }
         }
         
         .energy-container {
@@ -496,6 +488,7 @@
             border: 2px solid #3a3a6a;
         }
         
+        /* ПРЕЛОАДЕР */
         .preloader {
             position: fixed;
             top: 0;
@@ -563,28 +556,31 @@
     </style>
 </head>
 <body>
+    <!-- ПРЕЛОАДЕР -->
     <div id="preloader" class="preloader">
         <div class="preloader-box">
-            <div class="preloader-title">💰 MONEY TREE 🌳</div>
+            <div class="preloader-title">💰 MONEY TREE 💰</div>
             <div class="preloader-animation" id="preloaderEmoji">🌱</div>
             <div class="preloader-bar">
                 <div class="preloader-fill" id="preloaderFill" style="width: 0%"></div>
             </div>
             <div class="preloader-tip" id="preloaderTip">
-                ЗАГРУЗКА АНИМАЦИИ...
+                ЗАГРУЗКА...
             </div>
         </div>
     </div>
 
+    <!-- ИГРА -->
     <div class="cartridge">
-        <div class="cartridge-label">🎮 АНИМАЦИЯ 20 КАДРОВ 🎮</div>
+        <div class="cartridge-label">🎮 ULTIMATE EDITION 🎮</div>
         
         <div class="led-panel">
             <span class="led">🔴 POWER</span>
-            <span class="led">🟡 ANIMATION</span>
+            <span class="led">🟡 READY</span>
             <span class="led">🟢 PLAY</span>
         </div>
         
+        <!-- Основной экран -->
         <div id="mainScreen">
             <div class="score-panel">
                 <span class="coin-sprite">💰</span>
@@ -592,7 +588,7 @@
             </div>
             
             <div class="tree-area" id="treeClick">
-                <div class="tree-sprite" id="treeSprite"></div>
+                <span class="tree-sprite" id="treeEmoji">🌱</span>
                 <div id="hitEffect" class="hit-flash" style="display: none;"></div>
             </div>
             
@@ -609,7 +605,7 @@
             <div class="stats-line">
                 <span>⚡ РЕГЕН: <span id="regenRate">0.15</span>/сек</span>
                 <span>🎯 КРИТ: <span id="critRate">0</span>%</span>
-                <span>🌳 20 КАДРОВ</span>
+                <span>🤖 АВТО: <span id="autoStatus">ВЫКЛ</span></span>
             </div>
             
             <div class="power-indicator">
@@ -627,8 +623,18 @@
             <div id="achievementsPanel" class="achievements-panel hidden"></div>
         </div>
         
+        <!-- Магазин -->
         <div id="shopScreen" class="hidden">
             <div class="shop-container">
+                <div class="shop-item">
+                    <div class="item-info">
+                        <h3>🌱 ЭВОЛЮЦИЯ</h3>
+                        <div class="item-desc">Множитель дохода +0.5</div>
+                        <div class="item-price" id="evoPrice">2000</div>
+                    </div>
+                    <button class="buy-btn" onclick="buyUpgrade('evo')">АП</button>
+                </div>
+                
                 <div class="shop-item">
                     <div class="item-info">
                         <h3>💪 СИЛА ТАПА</h3>
@@ -676,6 +682,7 @@
             </div>
         </div>
         
+        <!-- Друзья -->
         <div id="friendsScreen" class="hidden">
             <div class="friends-area">
                 <button class="invite-btn" onclick="inviteFriend()">
@@ -690,11 +697,12 @@
             </div>
         </div>
         
+        <!-- Меню -->
         <div class="menu-buttons">
             <button class="menu-btn active" onclick="showScreen('main', this)">🌳 ИГРА</button>
             <button class="menu-btn" onclick="showScreen('shop', this)">🚀 БУСТЫ</button>
             <button class="menu-btn" onclick="showScreen('friends', this)">👥 ДРУЗЬЯ</button>
-            <button class="menu-btn" onclick="toggleAchievements()">🏆 АЧИВКИ</button>
+            <button class="menu-btn" onclick="showScreen('achievements', this)">🏆 АЧИВКИ</button>
         </div>
     </div>
 
@@ -704,54 +712,23 @@
         tg.ready();
         
         const userId = tg.initDataUnsafe?.user?.id || 'guest_' + Math.random();
-        const SAVE_KEY = 'money_tree_animated_' + userId;
+        const userName = tg.initDataUnsafe?.user?.first_name || 'ИГРОК';
         
-        // ========== 20 КАДРОВ АНИМАЦИИ (ВАШИ ССЫЛКИ) ==========
-        const treeFrames = [
-            "https://i.ibb.co/v6PSK3QN/Basic1.png",   // Basic1
-            "https://i.ibb.co/FShjgLf/Basic2.png",   // Basic2
-            "https://i.ibb.co/3YzQSTJ6/Basic11.png", // Basic3? Внимание: тут нужно проверить порядок!
-            "https://i.ibb.co/CpgnQ0bs/Basic10.png",  // Basic10
-            "https://i.ibb.co/F44hZmX2/Basic14.png",  // Basic14
-            "https://i.ibb.co/8nLk9chJ/Basic19.png",  // Basic19
-            "https://i.ibb.co/M5sbDLkM/Basic9.png",   // Basic9
-            "https://i.ibb.co/Y4X8qGML/Basic16.png",  // Basic16
-            "https://i.ibb.co/FLrBKg7P/Basic18.png",  // Basic18
-            "https://i.ibb.co/8LvNG43Q/Basic20.png",  // Basic20
-            "https://i.ibb.co/tTjtqV4z/Basic12.png",  // Basic12
-            "https://i.ibb.co/5wrY6Ck/Basic13.png",   // Basic13
-            "https://i.ibb.co/BH7jsBLn/Basic15.png",  // Basic15
-            "https://i.ibb.co/zHRDP9XM/Basic17.png",  // Basic17
-            "https://i.ibb.co/fzx8twdN/Basic4.png",   // Basic4
-            "https://i.ibb.co/5XzqRYy4/Basic5.png",   // Basic5
-            "https://i.ibb.co/NRMfmJY/Basic6.png",    // Basic6
-            "https://i.ibb.co/0jSWD7hJ/Basic7.png",   // Basic7
-            "https://i.ibb.co/XrxvWMrw/Basic8.png",   // Basic8
-            "https://i.ibb.co/Nd5XgMmG/Basic.png"     // Basic (последний)
-        ];
-        
-        // СОЗДАЁМ ОБЩИЙ СПРАЙТ-ЛИСТ (склеиваем все кадры в CSS)
-        const style = document.createElement('style');
-        let spriteStyle = '.tree-sprite { background-image: ';
-        
-        // Собираем все кадры в один спрайт через запятую
-        const frameUrls = treeFrames.map(url => `url(${url})`).join(', ');
-        spriteStyle += frameUrls + '; background-position: 0 0; }';
-        
-        style.textContent = spriteStyle;
-        document.head.appendChild(style);
+        const SAVE_KEY = 'money_tree_final_' + userId;
         
         // СОСТОЯНИЕ ИГРЫ
         let gameState = {
-            coins: 500,
+            coins: 0,
             tapPower: 1,
             energy: 200,
             maxEnergy: 200,
+            passiveIncome: 0,
+            treeLevel: 0,
             referrals: [],
             regenLevel: 0,
             autoClickerLevel: 0,
             critLevel: 0,
-            lastOnlineTime: Date.now(),
+            lastOnlineTime: Date.now(), // ВАЖНО: время последнего онлайна
             achievements: {
                 clicks: 0,
                 totalCoins: 0,
@@ -760,6 +737,8 @@
             },
             completedAchievements: []
         };
+        
+        const treeStages = ['🌱', '🌿', '🌳', '🌲', '🎄', '👑🌳'];
         
         // Загрузка сохранения
         try {
@@ -780,12 +759,12 @@
             localStorage.setItem('ref_' + userId, 'true');
         }
         
-        // ОФЛАЙН-ЭНЕРГИЯ
+        // ========== ОФЛАЙН-ЭНЕРГИЯ ==========
         function calculateOfflineEnergy() {
             const now = Date.now();
             const diffSeconds = (now - gameState.lastOnlineTime) / 1000;
             
-            if (diffSeconds > 5) {
+            if (diffSeconds > 5) { // Если прошло больше 5 секунд
                 const regenRate = 0.15 + (gameState.regenLevel * 0.1);
                 const recovered = diffSeconds * regenRate;
                 
@@ -804,29 +783,26 @@
             }
             
             gameState.lastOnlineTime = now;
-            saveGame();
-        }
-        
-        function saveGame() {
-            localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
         }
         
         // ПРЕЛОАДЕР
         const preloader = document.getElementById('preloader');
         const preloaderFill = document.getElementById('preloaderFill');
         const preloaderTip = document.getElementById('preloaderTip');
+        const preloaderEmoji = document.getElementById('preloaderEmoji');
         
         const tips = [
-            "20 КАДРОВ АНИМАЦИИ!",
-            "ДЕРЕВО ДЫШИТ И РАСТЁТ!",
-            "КЛИКАЙ ПО ДЕРЕВУ",
-            "ЭНЕРГИЯ КОПИТСЯ ОФЛАЙН"
+            "КЛИКАЙ ПО ДЕРЕВУ, ЧТОБЫ ЗАРАБАТЫВАТЬ!",
+            "ПОКУПАЙ БУСТЫ В МАГАЗИНЕ!",
+            "ПРИГЛАШАЙ ДРУЗЕЙ И ПОЛУЧАЙ БОНУСЫ!",
+            "ЭНЕРГИЯ ВОССТАНАВЛИВАЕТСЯ ДАЖЕ ОФЛАЙН!"
         ];
         
         let progress = 0;
         const preloadInterval = setInterval(() => {
             progress += 2;
             preloaderFill.style.width = progress + '%';
+            preloaderEmoji.textContent = ['🌱', '🌿', '🌳', '🌲', '🎄'][Math.floor(progress / 20)];
             
             if (progress % 25 === 0) {
                 preloaderTip.textContent = tips[Math.floor(Math.random() * tips.length)];
@@ -838,12 +814,13 @@
                 
                 setTimeout(() => {
                     preloader.classList.add('hidden');
+                    // ВАЖНО: считаем офлайн-энергию после загрузки
                     calculateOfflineEnergy();
-                    updateDisplay();
                 }, 500);
             }
         }, 30);
         
+        // Звук включения
         function playBootSound() {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             const ctx = new AudioContext();
@@ -890,7 +867,9 @@
             { id: 'coins10000', name: 'МИЛЛИОНЕР', desc: '10000 монет', icon: '💎', target: 10000, reward: 2000 },
             { id: 'crit100', name: 'СНАЙПЕР', desc: '100 критов', icon: '🎯', target: 100, reward: 1000 },
             { id: 'friends5', name: 'КОМАНДА', desc: '5 друзей', icon: '👥', target: 5, reward: 2500 },
-            { id: 'upgrades10', name: 'КОЛЛЕКЦИОНЕР', desc: '10 улучшений', icon: '⚡', target: 10, reward: 1500 }
+            { id: 'upgrades10', name: 'КОЛЛЕКЦИОНЕР', desc: '10 улучшений', icon: '⚡', target: 10, reward: 1500 },
+            { id: 'treeMax', name: 'ЛЕСНОЙ КОРОЛЬ', desc: 'Макс. дерево', icon: '👑', target: 1, reward: 5000 },
+            { id: 'regen5', name: 'БАТАРЕЙКА', desc: '5 ур регена', icon: '🔋', target: 5, reward: 3000 }
         ];
         
         function updateAchievements() {
@@ -904,6 +883,8 @@
                 if (ach.id === 'crit100') progress = gameState.achievements.crits;
                 if (ach.id === 'friends5') progress = gameState.referrals.length;
                 if (ach.id === 'upgrades10') progress = gameState.achievements.upgrades;
+                if (ach.id === 'treeMax') progress = gameState.treeLevel >= 5 ? 1 : 0;
+                if (ach.id === 'regen5') progress = gameState.regenLevel;
                 
                 if (progress >= ach.target) {
                     gameState.completedAchievements.push(ach.id);
@@ -930,6 +911,8 @@
                 if (ach.id === 'crit100') progress = gameState.achievements.crits;
                 if (ach.id === 'friends5') progress = gameState.referrals.length;
                 if (ach.id === 'upgrades10') progress = gameState.achievements.upgrades;
+                if (ach.id === 'treeMax') progress = gameState.treeLevel >= 5 ? 1 : 0;
+                if (ach.id === 'regen5') progress = gameState.regenLevel;
                 
                 const percent = Math.min(100, (progress / ach.target) * 100);
                 
@@ -952,6 +935,7 @@
                 `🏆 АЧИВКИ (${gameState.completedAchievements.length}/10)`;
         }
         
+        // Расчеты
         function getRegenRate() {
             return 0.15 + (gameState.regenLevel * 0.1);
         }
@@ -961,19 +945,24 @@
         }
         
         function getEarnPerTap() {
-            return gameState.tapPower * 1.5; // Простая формула
+            let base = gameState.tapPower * (1 + gameState.treeLevel * 0.5);
+            return base;
         }
         
+        // Обновление экрана
         function updateDisplay() {
             const coinsStr = Math.floor(gameState.coins).toString().padStart(4, '0').slice(-4);
             document.getElementById('coinDisplay').textContent = coinsStr;
             
             document.getElementById('energyDisplay').textContent = Math.floor(gameState.energy) + '/' + gameState.maxEnergy;
             document.getElementById('energyFill').style.width = (gameState.energy / gameState.maxEnergy * 100) + '%';
+            document.getElementById('treeEmoji').textContent = treeStages[gameState.treeLevel];
             document.getElementById('regenRate').textContent = getRegenRate().toFixed(2);
             document.getElementById('critRate').textContent = getCritChance();
             document.getElementById('earnPerTap').textContent = Math.floor(getEarnPerTap());
+            document.getElementById('autoStatus').textContent = gameState.autoClickerLevel > 0 ? gameState.autoClickerLevel + 'УР' : 'ВЫКЛ';
             
+            document.getElementById('evoPrice').textContent = (gameState.treeLevel + 1) * 2000;
             document.getElementById('tapPrice').textContent = Math.floor(100 * Math.pow(1.5, gameState.tapPower - 1));
             document.getElementById('energyPrice').textContent = gameState.maxEnergy;
             document.getElementById('regenPrice').textContent = 1000 * (gameState.regenLevel + 1);
@@ -986,9 +975,10 @@
             }
             
             updateAchievements();
-            saveGame();
+            localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
         }
         
+        // Звуки
         function playSound(type) {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             const ctx = new AudioContext();
@@ -1060,6 +1050,7 @@
             }
         }
         
+        // Клик по дереву
         document.getElementById('treeClick').addEventListener('click', function(e) {
             if (gameState.energy < 1) {
                 return;
@@ -1108,10 +1099,15 @@
             updateDisplay();
         });
         
+        // Покупки
         window.buyUpgrade = function(type) {
             let cost = 0;
             
             switch(type) {
+                case 'evo':
+                    if (gameState.treeLevel >= 5) return;
+                    cost = (gameState.treeLevel + 1) * 2000;
+                    break;
                 case 'tap':
                     if (gameState.tapPower >= 25) return;
                     cost = Math.floor(100 * Math.pow(1.5, gameState.tapPower - 1));
@@ -1138,6 +1134,7 @@
                 gameState.coins -= cost;
                 
                 switch(type) {
+                    case 'evo': gameState.treeLevel++; break;
                     case 'tap': gameState.tapPower++; break;
                     case 'energy': 
                         gameState.maxEnergy += 100; 
@@ -1158,6 +1155,7 @@
             updateDisplay();
         };
         
+        // Переключение экранов
         window.showScreen = function(screen, btn) {
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -1172,15 +1170,20 @@
                 document.getElementById('shopScreen').classList.remove('hidden');
             } else if (screen === 'friends') {
                 document.getElementById('friendsScreen').classList.remove('hidden');
+            } else if (screen === 'achievements') {
+                document.getElementById('mainScreen').classList.remove('hidden');
+                document.getElementById('achievementsPanel').classList.toggle('hidden');
             }
         };
         
+        // Приглашение друга
         window.inviteFriend = function() {
-            const link = `https://t.me/your_bot/app?startapp=${userId}`;
+            const botName = 'YOUR_BOT_NAME'; // ЗАМЕНИТЕ НА ИМЯ СВОЕГО БОТА
+            const link = `https://t.me/${botName}/app?startapp=${userId}`;
             
             tg.openTelegramLink(
                 'https://t.me/share/url?url=' + encodeURIComponent(link) + 
-                '&text=🌳 У МЕНЯ АНИМИРОВАННОЕ ДЕРЕВО! ПРИСОЕДИНЯЙСЯ!'
+                '&text=🌳 ПРИСОЕДИНЯЙСЯ К MONEY TREE! СТАРТОВЫЙ БОНУС 500 МОНЕТ!'
             );
             
             playSound('click');
@@ -1190,11 +1193,14 @@
             document.getElementById('achievementsPanel').classList.toggle('hidden');
         };
         
+        // ОБНОВЛЕНИЕ КАЖДУЮ СЕКУНДУ
         setInterval(() => {
+            // Регенерация энергии в реальном времени
             if (gameState.energy < gameState.maxEnergy) {
                 gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + getRegenRate() / 10);
             }
             
+            // Авто-кликер
             if (gameState.autoClickerLevel > 0 && gameState.energy >= 1) {
                 if (Math.random() < 0.1) {
                     gameState.energy -= 1;
@@ -1205,14 +1211,13 @@
                 }
             }
             
+            // ВАЖНО: обновляем время последнего онлайна
+            gameState.lastOnlineTime = Date.now();
+            
             updateDisplay();
         }, 100);
         
-        window.addEventListener('beforeunload', function() {
-            gameState.lastOnlineTime = Date.now();
-            saveGame();
-        });
-        
+        // Старт
         showScreen('main', document.querySelector('.menu-btn'));
         updateDisplay();
     </script>
