@@ -8,63 +8,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #ffcf4d; --emerald: #2ecc71; --glass: rgba(255, 255, 255, 0.08); --blue: #3498db; }
-        
-        body { 
-            margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; 
-            background: radial-gradient(circle at top, #1e293b, #020617); 
-            color: white; height: 100vh; overflow: hidden; 
-            user-select: none; -webkit-tap-highlight-color: transparent; 
-        }
-
+        body { margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; background: radial-gradient(circle at top, #1e293b, #020617); color: white; height: 100vh; overflow: hidden; user-select: none; -webkit-tap-highlight-color: transparent; }
         .app { height: 100vh; display: flex; flex-direction: column; padding: 20px 20px 100px 20px; box-sizing: border-box; }
-
-        /* Баланс */
-        .balance-card { 
-            background: var(--glass); backdrop-filter: blur(15px); 
-            padding: 20px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.1); 
-            text-align: center; margin-bottom: 20px; 
-        }
+        .balance-card { background: var(--glass); backdrop-filter: blur(15px); padding: 20px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.1); text-align: center; margin-bottom: 20px; }
         .balance-val { font-family: 'Bungee'; font-size: 44px; color: var(--gold); text-shadow: 0 4px 0 #b8860b; line-height: 1; }
         .passive-income { font-size: 13px; color: var(--emerald); font-weight: 800; margin-bottom: 5px; }
-
         .tab-content { display: none; flex: 1; flex-direction: column; align-items: center; width: 100%; overflow-y: auto; }
         .tab-content.active { display: flex; }
-
-        /* Игровое поле */
         .tree-container { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; }
-        .tree-emoji { 
-            font-size: 140px; cursor: pointer; transition: transform 0.1s; 
-            filter: drop-shadow(0 0 20px rgba(46, 204, 113, 0.3)); 
-        }
+        .tree-emoji { font-size: 140px; cursor: pointer; transition: transform 0.1s; filter: drop-shadow(0 0 20px rgba(46, 204, 113, 0.3)); }
         .tree-emoji:active { transform: scale(0.85); }
-
-        /* Списки */
         .list-container { width: 100%; display: flex; flex-direction: column; gap: 10px; }
-        .list-item { 
-            background: var(--glass); padding: 16px; border-radius: 20px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            border: 1px solid rgba(255,255,255,0.05); 
-        }
-        .buy-btn, .ref-btn { 
-            background: var(--gold); color: #451a03; border: none; 
-            padding: 10px 18px; border-radius: 12px; font-weight: 800; cursor: pointer; 
-        }
-
-        /* Энергия */
+        .list-item { background: var(--glass); padding: 16px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
+        .buy-btn, .ref-btn { background: var(--gold); color: #451a03; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 800; cursor: pointer; }
         .energy-section { width: 100%; margin-top: auto; padding-bottom: 10px; }
         .energy-bar { width: 100%; height: 12px; background: rgba(0,0,0,0.4); border-radius: 10px; overflow: hidden; margin-top: 5px; }
         .energy-fill { height: 100%; background: var(--emerald); transition: width 0.3s; box-shadow: 0 0 10px var(--emerald); }
-
-        /* Навигация */
-        .nav { 
-            position: fixed; bottom: 20px; left: 20px; right: 20px; 
-            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); 
-            border-radius: 24px; display: flex; justify-content: space-around; 
-            padding: 12px; border: 1px solid rgba(255,255,255,0.1); 
-        }
+        .nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border-radius: 24px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid rgba(255,255,255,0.1); }
         .nav-item { font-size: 10px; opacity: 0.4; text-align: center; color: white; cursor: pointer; flex: 1; }
         .nav-item.active { opacity: 1; color: var(--gold); }
-
         .tap-pop { position: absolute; color: white; font-family: 'Bungee'; font-size: 30px; pointer-events: none; animation: tapUp 0.6s ease-out forwards; }
         @keyframes tapUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-120px); opacity: 0; } }
     </style>
@@ -89,7 +51,7 @@
             <h3 style="font-family:'Bungee'; color:var(--gold);">МАГАЗИН</h3>
             <div class="list-container">
                 <div class="list-item">
-                    <div><b>🌟 Эволюция</b><br><small id="evoCostText">Загрузка...</small></div>
+                    <div><b>🌟 Эволюция</b><br><small id="evoCostText">Ур. 1</small></div>
                     <button class="buy-btn" onclick="buy('evo')">АП</button>
                 </div>
                 <div class="list-item">
@@ -109,8 +71,7 @@
 
         <div id="friends" class="tab-content">
             <h3 style="font-family:'Bungee'; color:var(--blue);">ДРУЗЬЯ</h3>
-            <p style="text-align:center; font-size:13px; opacity:0.7;">Здесь будет список твоих рефералов.</p>
-            <button class="ref-btn" style="background:var(--blue); color:white; width:100%; margin-top:20px;" onclick="tg.openTelegramLink('https://t.me/share/url?url=t.me/YOUR_BOT')">🔗 ПРИГЛАСИТЬ</button>
+            <button class="ref-btn" style="background:var(--blue); color:white; width:100%; margin-top:20px;" onclick="tg.openTelegramLink('https://t.me/share/url?url=t.me/your_bot_link')">🔗 ПРИГЛАСИТЬ</button>
         </div>
 
         <div class="nav">
@@ -124,8 +85,11 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Загрузка состояния (версия 3.1)
-        let state = JSON.parse(localStorage.getItem('mTree_v3.1')) || {
+        // --- ЛОГИКА АВТОРИЗАЦИИ (Уникальный кошелек для каждого игрока) ---
+        const userId = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 'guest';
+        const SAVE_KEY = `mTree_v3.1_id_${userId}`;
+
+        let state = JSON.parse(localStorage.getItem(SAVE_KEY)) || {
             coins: 0, power: 1, energy: 100, maxEnergy: 100, passive: 0, 
             treeLvl: 0, lastTime: Date.now()
         };
@@ -133,16 +97,11 @@
         const emojiStages = ["🌱", "🌿", "🌳", "🌲", "🎄", "✨"];
         const names = ["Росток", "Кустик", "Дерево", "Большое дерево", "Лес", "Золотое Древо"];
 
-        // Расчет офлайна
         function checkOffline() {
             const now = Date.now();
             const diffSeconds = (now - state.lastTime) / 1000;
-            
-            // Восстановление энергии: 1 единица каждые 10 секунд (0.1/сек)
             const recovered = diffSeconds * 0.1;
             state.energy = Math.min(state.maxEnergy, state.energy + recovered);
-
-            // Офлайн доход
             const multi = 1 + (state.treeLvl * 0.5);
             const earned = diffSeconds * (state.passive * multi);
             if (earned > 1) {
@@ -158,30 +117,21 @@
             document.getElementById('pIncome').textContent = (state.passive * multi).toFixed(1);
             document.getElementById('eText').textContent = Math.floor(state.energy) + "/" + state.maxEnergy;
             document.getElementById('eFill').style.width = (state.energy / state.maxEnergy * 100) + "%";
-            
-            // Тексты в магазине
-            document.getElementById('evoCostText').innerHTML = state.treeLvl < 5 ? 
-                `Ур. ${state.treeLvl+1} (Цена: ${(state.treeLvl+1)*2000})<br><small>Множитель: x${multi+0.5}</small>` : "МАКС. УРОВЕНЬ";
+            document.getElementById('evoCostText').innerHTML = state.treeLvl < 5 ? `Ур. ${state.treeLvl+1} (Цена: ${(state.treeLvl+1)*2000})<br><small>Множитель: x${multi+0.5}</small>` : "МАКС. УРОВЕНЬ";
             document.getElementById('tapCostText').textContent = "Цена: " + Math.floor(100 * Math.pow(1.8, state.power - 1));
             document.getElementById('energyCostText').textContent = "Цена: " + Math.floor(50 * (state.maxEnergy / 50));
             document.getElementById('autoCostText').textContent = "Цена: " + Math.floor((state.passive + 1) * 500);
-
-            // Визуал дерева
             document.getElementById('treeBtn').textContent = emojiStages[state.treeLvl];
             document.getElementById('lvlName').textContent = names[state.treeLvl];
-
             state.lastTime = Date.now();
-            localStorage.setItem('mTree_v3.1', JSON.stringify(state));
+            localStorage.setItem(SAVE_KEY, JSON.stringify(state));
         }
 
         document.getElementById('treeBtn').onclick = (e) => {
             if (state.energy < 1) { tg.HapticFeedback.notificationOccurred('warning'); return; }
-            
             const gain = state.power * (1 + (state.treeLvl * 0.5));
             state.coins += gain;
             state.energy -= 1;
-            
-            // Анимация
             const p = document.createElement('div');
             p.className = 'tap-pop';
             p.textContent = `+${Math.floor(gain)}`;
@@ -190,7 +140,6 @@
             p.style.left = x + 'px'; p.style.top = y + 'px';
             document.body.appendChild(p);
             setTimeout(() => p.remove(), 600);
-
             tg.HapticFeedback.impactOccurred('medium');
             update();
         };
@@ -201,17 +150,13 @@
             else if (type === 'tap') cost = Math.floor(100 * Math.pow(1.8, state.power - 1));
             else if (type === 'energy') cost = Math.floor(50 * (state.maxEnergy / 50));
             else if (type === 'auto') cost = Math.floor((state.passive + 1) * 500);
-
             if (state.coins >= cost) {
                 if (type === 'evo' && state.treeLvl < 5) { state.coins -= cost; state.treeLvl++; }
                 else if (type === 'tap') { state.coins -= cost; state.power++; }
                 else if (type === 'energy') { state.coins -= cost; state.maxEnergy += 50; state.energy = state.maxEnergy; }
                 else if (type === 'auto') { state.coins -= cost; state.passive += 0.5; }
-                
                 tg.HapticFeedback.notificationOccurred('success');
                 update();
-            } else {
-                tg.HapticFeedback.notificationOccurred('error');
             }
         }
 
@@ -222,16 +167,12 @@
             el.classList.add('active');
         }
 
-        // Запуск
         checkOffline();
         setInterval(() => {
-            // Восстановление 1 энергии каждые 10 секунд (0.1 в тик)
             if (state.energy < state.maxEnergy) state.energy = Math.min(state.maxEnergy, state.energy + 0.1);
-            // Пассивный доход
             if (state.passive > 0) state.coins += (state.passive * (1 + state.treeLvl * 0.5)) / 10;
             update();
         }, 100);
-
         update();
     </script>
 </body>
