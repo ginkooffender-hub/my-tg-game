@@ -3,501 +3,591 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Money Tree</title>
+    <title>MONEY TREE ⚡ 8-BIT</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #0b1a2e, #1a2f3f);
-            color: white;
             min-height: 100vh;
+            background: #1a1a2e;
+            font-family: 'Press Start 2P', cursive;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 16px;
-        }
-        
-        .game-container {
-            width: 100%;
-            max-width: 400px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 32px;
-            padding: 24px 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            padding: 10px;
             position: relative;
-            z-index: 1;
+            overflow: hidden;
         }
         
-        /* Затемненный фон для приветствия */
-        .welcome-overlay {
+        /* Пиксельный фон */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(255, 215, 0, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 215, 0, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            animation: bgMove 20s linear infinite;
+        }
+        
+        @keyframes bgMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+        
+        /* Главный контейнер в стиле Dendy */
+        .gameboy {
+            width: 100%;
+            max-width: 450px;
+            background: #16213e;
+            border: 8px solid #0f3460;
+            border-radius: 30px 30px 20px 20px;
+            padding: 20px 15px;
+            position: relative;
+            box-shadow: 
+                0 0 0 4px #e94560,
+                0 20px 0 #0a1a2f,
+                0 30px 30px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+        
+        /* Экран */
+        .screen {
+            background: #0f172a;
+            border: 6px solid #533483;
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            position: relative;
+        }
+        
+        /* Пиксельный бордюр */
+        .screen::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid #ffd700;
+            border-radius: 25px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        
+        /* Счетчик монет */
+        .coin-display {
+            background: #000000;
+            border: 4px solid #ffd700;
+            padding: 15px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+            box-shadow: 0 4px 0 #b8860b;
+        }
+        
+        .coin-icon {
+            font-size: 24px;
+            filter: drop-shadow(0 0 10px gold);
+            animation: coinGlow 1.5s infinite;
+        }
+        
+        @keyframes coinGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px gold); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 20px gold); }
+        }
+        
+        .coin-value {
+            color: #ffd700;
+            font-size: 24px;
+            text-shadow: 3px 3px 0 #b8860b;
+            letter-spacing: 2px;
+        }
+        
+        /* Дерево в стиле 8-bit */
+        .tree-pixel {
+            background: #2a5c3e;
+            border: 4px solid #1e3a2a;
+            padding: 30px 20px;
+            margin: 20px 0;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 
+                0 8px 0 #1e3a2a,
+                inset 0 -5px 0 #3d7a4a;
+            transition: all 0.05s linear;
+            image-rendering: pixelated;
+        }
+        
+        .tree-pixel:active {
+            transform: translateY(8px);
+            box-shadow: 
+                0 0 0 #1e3a2a,
+                inset 0 -5px 0 #3d7a4a;
+        }
+        
+        .tree-emoji {
+            font-size: 100px;
+            display: block;
+            filter: drop-shadow(0 10px 0 #1e3a2a);
+            animation: treeWiggle 2s infinite;
+        }
+        
+        @keyframes treeWiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(2deg); }
+            75% { transform: rotate(-2deg); }
+        }
+        
+        /* Пиксельная энергия */
+        .energy-pixel {
+            margin: 20px 0;
+            background: #1e1e3f;
+            border: 4px solid #4a4a8a;
+            padding: 15px;
+        }
+        
+        .energy-label {
+            color: #7fffd4;
+            font-size: 12px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0 #008b8b;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .energy-bar-bg {
+            background: #2a2a5a;
+            height: 25px;
+            border: 3px solid #4a4a8a;
+            position: relative;
+            image-rendering: pixelated;
+        }
+        
+        .energy-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7fffd4, #40e0d0);
+            width: 100%;
+            box-shadow: inset 0 2px 0 #b0ffff;
+            image-rendering: pixelated;
+        }
+        
+        /* Меню в стиле Dendy */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .menu-button {
+            background: #e94560;
+            border: none;
+            border-bottom: 6px solid #a02040;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            padding: 15px 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.05s linear;
+            text-shadow: 2px 2px 0 #4a0a2a;
+            box-shadow: 0 4px 0 #4a0a2a;
+        }
+        
+        .menu-button:active {
+            transform: translateY(6px);
+            border-bottom-width: 2px;
+            box-shadow: 0 2px 0 #4a0a2a;
+        }
+        
+        .menu-button.active {
+            background: #ffd700;
+            color: #000;
+            text-shadow: 2px 2px 0 #b8860b;
+            border-bottom-color: #b8860b;
+        }
+        
+        /* Магазин в пиксельном стиле */
+        .shop-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 350px;
+            overflow-y: auto;
+            padding: 5px;
+            scrollbar-width: none;
+        }
+        
+        .shop-item {
+            background: #2a2a5a;
+            border: 4px solid #4a4a8a;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            image-rendering: pixelated;
+        }
+        
+        .shop-item-info h4 {
+            color: #ffd700;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 0 #b8860b;
+        }
+        
+        .shop-item-price {
+            color: #7fffd4;
+            font-size: 12px;
+        }
+        
+        .shop-button {
+            background: #ffd700;
+            border: none;
+            border-bottom: 4px solid #b8860b;
+            color: #000;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.05s linear;
+        }
+        
+        .shop-button:active {
+            transform: translateY(4px);
+            border-bottom-width: 2px;
+        }
+        
+        /* Друзья */
+        .friends-panel {
+            background: #2a2a5a;
+            border: 4px solid #4a4a8a;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .ref-button {
+            background: #7fffd4;
+            border: none;
+            border-bottom: 6px solid #40e0d0;
+            color: #000;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            padding: 20px;
+            width: 100%;
+            cursor: pointer;
+            margin: 20px 0;
+            text-shadow: 2px 2px 0 #20b2aa;
+        }
+        
+        .ref-count {
+            color: #ffd700;
+            font-size: 12px;
+            margin-top: 15px;
+            text-shadow: 2px 2px 0 #b8860b;
+        }
+        
+        /* Пиксельные попапы */
+        .pixel-popup {
+            position: fixed;
+            color: #ffd700;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 1000;
+            text-shadow: 
+                3px 3px 0 #b8860b,
+                -2px -2px 0 #ffa500;
+            animation: pixelFloat 1s steps(5) forwards;
+            image-rendering: pixelated;
+        }
+        
+        @keyframes pixelFloat {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-120px) scale(1.5); opacity: 0; }
+        }
+        
+        /* Эффекты */
+        .hidden {
+            display: none;
+        }
+        
+        /* Пиксельная анимация удара */
+        .hit-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 215, 0, 0.3);
+            animation: hitFlash 0.1s steps(2);
+            pointer-events: none;
+        }
+        
+        @keyframes hitFlash {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        
+        /* Стили для приветствия */
+        .welcome-screen {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
+            background: rgba(10, 10, 30, 0.95);
+            backdrop-filter: blur(4px);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            opacity: 1;
-            transition: opacity 0.5s ease;
-            pointer-events: all;
+            z-index: 2000;
+            transition: opacity 0.3s steps(5);
         }
         
-        .welcome-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        /* Само модальное окно */
-        .welcome-modal {
-            background: linear-gradient(145deg, rgba(20, 30, 40, 0.95), rgba(10, 20, 30, 0.95));
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(255, 215, 0, 0.3);
-            border-radius: 48px;
+        .welcome-box {
+            background: #16213e;
+            border: 8px solid #e94560;
             padding: 40px 30px;
-            max-width: 320px;
-            width: 90%;
             text-align: center;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-            transform: scale(1);
-            animation: modalAppear 0.5s ease-out;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        /* Декоративные элементы */
-        .welcome-modal::before {
-            content: '🌳';
-            position: absolute;
-            top: -20px;
-            left: -20px;
-            font-size: 120px;
-            opacity: 0.1;
-            transform: rotate(-15deg);
-            pointer-events: none;
-        }
-        
-        .welcome-modal::after {
-            content: '💰';
-            position: absolute;
-            bottom: -30px;
-            right: -30px;
-            font-size: 150px;
-            opacity: 0.1;
-            transform: rotate(15deg);
-            pointer-events: none;
-        }
-        
-        @keyframes modalAppear {
-            0% {
-                transform: scale(0.7);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            max-width: 350px;
+            width: 90%;
+            box-shadow: 0 20px 0 #0a1a2f;
         }
         
         .welcome-title {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            background: linear-gradient(135deg, #ffd700, #ffa500);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-            position: relative;
-            z-index: 2;
+            color: #ffd700;
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-shadow: 4px 4px 0 #b8860b;
+            line-height: 1.4;
         }
         
-        .welcome-emoji {
-            font-size: 70px;
-            margin: 15px 0;
-            filter: drop-shadow(0 10px 20px rgba(255, 215, 0, 0.3));
-            animation: floatEmoji 3s ease-in-out infinite;
+        .welcome-8bit {
+            font-size: 60px;
+            margin: 20px 0;
+            filter: drop-shadow(0 10px 0 #1e3a2a);
+            animation: welcomeBob 1s steps(5) infinite;
         }
         
-        @keyframes floatEmoji {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
+        @keyframes welcomeBob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
         
         .welcome-text {
-            font-size: 18px;
-            line-height: 1.5;
-            margin-bottom: 25px;
-            color: rgba(255, 255, 255, 0.9);
-            position: relative;
-            z-index: 2;
+            color: #7fffd4;
+            font-size: 12px;
+            margin: 25px 0;
+            line-height: 1.8;
         }
         
-        .welcome-bonus {
-            background: rgba(255, 215, 0, 0.15);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 60px;
-            padding: 15px 20px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-size: 20px;
-            font-weight: bold;
-            color: gold;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-            }
-            50% {
-                box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
-            }
-        }
-        
-        .welcome-button {
-            background: linear-gradient(135deg, #ffd700, #ffa500);
+        .start-button {
+            background: #e94560;
             border: none;
-            border-radius: 60px;
-            padding: 18px 40px;
-            font-size: 20px;
-            font-weight: bold;
-            color: #1a2a3a;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            position: relative;
-            z-index: 2;
+            border-bottom: 8px solid #a02040;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 16px;
+            padding: 20px 30px;
             width: 100%;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        
-        .welcome-button:active {
-            transform: scale(0.95);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        .balance {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 24px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 24px;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-        }
-        
-        .balance-label {
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.7;
-            margin-bottom: 8px;
-        }
-        
-        .balance-amount {
-            font-size: 48px;
-            font-weight: bold;
-            color: gold;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-            line-height: 1;
-        }
-        
-        .tree {
-            text-align: center;
-            margin: 30px 0;
             cursor: pointer;
-            transition: transform 0.1s;
-        }
-        
-        .tree:active {
-            transform: scale(0.9);
-        }
-        
-        .tree-emoji {
-            font-size: 150px;
-            filter: drop-shadow(0 10px 20px rgba(0, 255, 0, 0.3));
-        }
-        
-        .energy-bar {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 30px;
-            height: 20px;
-            margin: 20px 0;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .energy-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00c853, #69f0ae);
-            width: 100%;
-            transition: width 0.3s;
-            border-radius: 30px;
-        }
-        
-        .energy-text {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            margin-bottom: 5px;
-            opacity: 0.8;
-        }
-        
-        .menu {
-            display: flex;
-            gap: 10px;
-            margin-top: 24px;
-        }
-        
-        .menu-item {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 12px;
-            text-align: center;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        .menu-item.active {
-            background: gold;
-            color: black;
-            border-color: gold;
-        }
-        
-        .shop-item {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        .shop-item-title {
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
-        
-        .shop-item-price {
-            color: gold;
-            font-size: 14px;
-        }
-        
-        .shop-item-button {
-            background: gold;
-            color: black;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
-        .shop-item-button:active {
-            transform: scale(0.95);
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .friends-link {
-            background: rgba(33, 150, 243, 0.2);
-            border: 1px solid #2196f3;
-            border-radius: 16px;
-            padding: 16px;
-            text-align: center;
             margin-top: 20px;
-            cursor: pointer;
+            text-shadow: 3px 3px 0 #4a0a2a;
         }
         
-        /* Анимация для цифр */
-        .coin-animation {
-            animation: coinSpin 0.5s ease-out;
+        .start-button:active {
+            transform: translateY(8px);
+            border-bottom-width: 4px;
         }
         
-        @keyframes coinSpin {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.2);
-                color: #ffd700;
-            }
-            100% {
-                transform: scale(1);
-            }
+        /* Украшения */
+        .pixel-decor {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            color: #4a4a8a;
+            font-size: 8px;
+        }
+        
+        /* Эффект перелива */
+        .glitch-text {
+            animation: glitch 3s infinite;
+        }
+        
+        @keyframes glitch {
+            0%, 100% { text-shadow: 3px 3px 0 #b8860b; }
+            25% { text-shadow: -3px 3px 0 #e94560, 3px -3px 0 #7fffd4; }
         }
     </style>
 </head>
 <body>
-    <!-- Приветственное окно (сначала видимо) -->
-    <div id="welcomeOverlay" class="welcome-overlay">
-        <div class="welcome-modal">
-            <div class="welcome-title">ДОБРО ПОЖАЛОВАТЬ!</div>
-            <div class="welcome-emoji">🌳💰</div>
-            <div class="welcome-text">
-                Ты попал в удивительный мир<br>
-                <strong style="color: gold;">Money Tree</strong>
+    <!-- Приветственный экран в стиле Dendy -->
+    <div id="welcomeScreen" class="welcome-screen">
+        <div class="welcome-box">
+            <div class="welcome-title glitch-text">💰 MONEY TREE 💰</div>
+            <div class="welcome-8bit" id="welcomeEmoji">🌱</div>
+            <div class="welcome-text" id="welcomeMessage">
+                ЗАГРУЗКА...
             </div>
-            <div class="welcome-bonus">
-                <span>🎁</span>
-                <span>+500 монет в подарок</span>
-                <span>💰</span>
+            <div class="pixel-decor">
+                <span>⚡</span>
+                <span>⚡⚡⚡</span>
+                <span>⚡</span>
             </div>
-            <div style="font-size: 14px; opacity: 0.7; margin-bottom: 20px;">
-                Кликай по дереву и зарабатывай!
-            </div>
-            <button class="welcome-button" id="startGameBtn">
-                НАЧАТЬ ИГРУ 🚀
+            <button class="start-button" id="startGameBtn">
+                START
             </button>
         </div>
     </div>
 
-    <div class="game-container">
-        <!-- Основной экран игры -->
-        <div id="mainScreen">
-            <div class="balance">
-                <div class="balance-label">💰 ТВОИ МОНЕТЫ</div>
-                <div class="balance-amount" id="coinDisplay">0</div>
+    <!-- Основная игра -->
+    <div class="gameboy">
+        <!-- Верхние пиксельные индикаторы -->
+        <div class="pixel-decor">
+            <span>🔴</span>
+            <span>🟡</span>
+            <span>🟢</span>
+        </div>
+        
+        <!-- Экран -->
+        <div class="screen">
+            <!-- Монеты -->
+            <div class="coin-display">
+                <span class="coin-icon">💰</span>
+                <span class="coin-value" id="coinDisplay">0000</span>
             </div>
             
-            <div class="tree" id="treeClick">
-                <div class="tree-emoji" id="treeEmoji">🌱</div>
+            <!-- Дерево (кликабельное) -->
+            <div class="tree-pixel" id="treeClick">
+                <span class="tree-emoji" id="treeEmoji">🌱</span>
+                <div id="hitEffect" class="hit-effect" style="display: none;"></div>
             </div>
             
-            <div>
-                <div class="energy-text">
-                    <span>🔋 ЭНЕРГИЯ</span>
+            <!-- Энергия -->
+            <div class="energy-pixel">
+                <div class="energy-label">
+                    <span>🔋 ENERGY</span>
                     <span id="energyDisplay">100/100</span>
                 </div>
-                <div class="energy-bar">
+                <div class="energy-bar-bg">
                     <div class="energy-fill" id="energyFill" style="width: 100%"></div>
                 </div>
             </div>
             
-            <div class="menu">
-                <div class="menu-item active" onclick="showScreen('main')">🌳 Игра</div>
-                <div class="menu-item" onclick="showScreen('shop')">🏪 Магазин</div>
-                <div class="menu-item" onclick="showScreen('friends')">👥 Друзья</div>
+            <!-- Меню (три кнопки) -->
+            <div class="menu-grid">
+                <button class="menu-button active" onclick="showScreen('main')">🌳 PLAY</button>
+                <button class="menu-button" onclick="showScreen('shop')">🏪 SHOP</button>
+                <button class="menu-button" onclick="showScreen('friends')">👥 FRIENDS</button>
+            </div>
+            
+            <!-- Динамические экраны -->
+            
+            <!-- Главный экран (инфо) -->
+            <div id="mainScreen">
+                <div style="color: #7fffd4; font-size: 8px; text-align: center; margin: 10px 0;">
+                    ⚡ TAP POWER: <span id="tapPower">1</span>x ⚡
+                </div>
+            </div>
+            
+            <!-- Магазин -->
+            <div id="shopScreen" class="hidden">
+                <div class="shop-grid">
+                    <div class="shop-item">
+                        <div class="shop-item-info">
+                            <h4>🌳 EVOLVE</h4>
+                            <span class="shop-item-price" id="evoPrice">2000</span>
+                        </div>
+                        <button class="shop-button" onclick="buyUpgrade('evo')">BUY</button>
+                    </div>
+                    
+                    <div class="shop-item">
+                        <div class="shop-item-info">
+                            <h4>💪 TAP POWER</h4>
+                            <span class="shop-item-price" id="tapPrice">100</span>
+                        </div>
+                        <button class="shop-button" onclick="buyUpgrade('tap')">BUY</button>
+                    </div>
+                    
+                    <div class="shop-item">
+                        <div class="shop-item-info">
+                            <h4>🔋 MAX ENERGY</h4>
+                            <span class="shop-item-price" id="energyPrice">50</span>
+                        </div>
+                        <button class="shop-button" onclick="buyUpgrade('energy')">BUY</button>
+                    </div>
+                    
+                    <div class="shop-item">
+                        <div class="shop-item-info">
+                            <h4>🤖 AUTO FARM</h4>
+                            <span class="shop-item-price" id="passivePrice">500</span>
+                        </div>
+                        <button class="shop-button" onclick="buyUpgrade('passive')">BUY</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Друзья -->
+            <div id="friendsScreen" class="hidden">
+                <div class="friends-panel">
+                    <button class="ref-button" onclick="inviteFriend()">
+                        🔗 INVITE FRIEND
+                    </button>
+                    <div class="ref-count" id="friendCount">
+                        FRIENDS: 0
+                    </div>
+                    <div style="color: #7fffd4; font-size: 8px; margin-top: 15px;">
+                        +500 COINS PER FRIEND
+                    </div>
+                </div>
             </div>
         </div>
         
-        <!-- Экран магазина -->
-        <div id="shopScreen" class="hidden">
-            <div class="balance" style="margin-bottom: 20px;">
-                <div class="balance-label">💰 ТВОИ МОНЕТЫ</div>
-                <div class="balance-amount" id="shopCoinDisplay">0</div>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <div class="shop-item">
-                    <div>
-                        <div class="shop-item-title">🌳 Эволюция дерева</div>
-                        <div class="shop-item-price" id="evoPrice">2000</div>
-                    </div>
-                    <button class="shop-item-button" onclick="buyUpgrade('evo')">Купить</button>
-                </div>
-                
-                <div class="shop-item">
-                    <div>
-                        <div class="shop-item-title">💪 Сила тапа</div>
-                        <div class="shop-item-price" id="tapPrice">100</div>
-                    </div>
-                    <button class="shop-item-button" onclick="buyUpgrade('tap')">Купить</button>
-                </div>
-                
-                <div class="shop-item">
-                    <div>
-                        <div class="shop-item-title">🔋 Макс. энергия</div>
-                        <div class="shop-item-price" id="energyPrice">50</div>
-                    </div>
-                    <button class="shop-item-button" onclick="buyUpgrade('energy')">Купить</button>
-                </div>
-                
-                <div class="shop-item">
-                    <div>
-                        <div class="shop-item-title">🤖 Пассивный доход</div>
-                        <div class="shop-item-price" id="passivePrice">500</div>
-                    </div>
-                    <button class="shop-item-button" onclick="buyUpgrade('passive')">Купить</button>
-                </div>
-            </div>
-            
-            <div class="menu">
-                <div class="menu-item" onclick="showScreen('main')">🌳 Игра</div>
-                <div class="menu-item active" onclick="showScreen('shop')">🏪 Магазин</div>
-                <div class="menu-item" onclick="showScreen('friends')">👥 Друзья</div>
-            </div>
-        </div>
-        
-        <!-- Экран друзей -->
-        <div id="friendsScreen" class="hidden">
-            <div class="balance" style="margin-bottom: 20px;">
-                <div class="balance-label">💰 ТВОИ МОНЕТЫ</div>
-                <div class="balance-amount" id="friendsCoinDisplay">0</div>
-            </div>
-            
-            <div class="friends-link" onclick="inviteFriend()">
-                <div style="font-size: 18px; margin-bottom: 5px;">🔗 ПРИГЛАСИТЬ ДРУГА</div>
-                <div style="font-size: 14px; opacity: 0.8;">Получи 500 монет за друга!</div>
-            </div>
-            
-            <div style="text-align: center; margin: 30px 0; opacity: 0.5;" id="friendCount">
-                Приглашено друзей: 0
-            </div>
-            
-            <div class="menu">
-                <div class="menu-item" onclick="showScreen('main')">🌳 Игра</div>
-                <div class="menu-item" onclick="showScreen('shop')">🏪 Магазин</div>
-                <div class="menu-item active" onclick="showScreen('friends')">👥 Друзья</div>
-            </div>
+        <!-- Нижняя панель (как на Dendy) -->
+        <div class="pixel-decor" style="margin-top: 15px;">
+            <span>◀</span>
+            <span>▶</span>
+            <span>SELECT</span>
+            <span>START</span>
+            <span>◀</span>
+            <span>▶</span>
         </div>
     </div>
 
     <script>
-        // Инициализация Telegram WebApp
+        // Telegram WebApp
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
         
-        // Получаем данные пользователя
+        // Данные пользователя
         const userId = tg.initDataUnsafe?.user?.id || 'guest_' + Math.random();
-        const userName = tg.initDataUnsafe?.user?.first_name || 'Игрок';
+        const userName = tg.initDataUnsafe?.user?.first_name || 'PLAYER';
         
-        // Ключ для localStorage
-        const SAVE_KEY = 'money_tree_' + userId;
-        const WELCOME_KEY = 'welcome_shown_' + userId;
+        // Сохранения
+        const SAVE_KEY = 'money_tree_8bit_' + userId;
+        const WELCOME_KEY = 'welcome_8bit_' + userId;
         
-        // Начальное состояние игры
+        // Состояние игры
         let gameState = {
-            coins: 0, // Стартовые монеты (0, бонус дадим в приветствии)
+            coins: 0,
             tapPower: 1,
             energy: 100,
             maxEnergy: 100,
@@ -506,66 +596,49 @@
             referrals: []
         };
         
-        // Эмодзи для разных уровней дерева
-        const treeEmojis = ['🌱', '🌿', '🌳', '🌲', '🎄', '✨🌳'];
+        // Пиксельные деревья
+        const treeStages = ['🌱', '🌿', '🌳', '🌲', '🎄', '👑🌳'];
         
-        // Загружаем сохранение
+        // Загрузка
         try {
             const saved = localStorage.getItem(SAVE_KEY);
             if (saved) {
-                const parsed = JSON.parse(saved);
-                gameState = {...gameState, ...parsed};
+                gameState = {...gameState, ...JSON.parse(saved)};
             }
-        } catch (e) {
-            console.log('Ошибка загрузки:', e);
-        }
+        } catch (e) {}
         
-        // Проверяем, нужно ли показывать приветствие
+        // Приветствие
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const welcomeMessage = document.getElementById('welcomeMessage');
+        const welcomeEmoji = document.getElementById('welcomeEmoji');
+        
+        // Проверка на первый вход
         const welcomeShown = localStorage.getItem(WELCOME_KEY);
         
-        // Управление приветственным окном
-        const welcomeOverlay = document.getElementById('welcomeOverlay');
-        const startButton = document.getElementById('startGameBtn');
-        
-        // Если приветствие уже показывали, скрываем его сразу
         if (welcomeShown) {
-            welcomeOverlay.classList.add('hidden');
+            welcomeScreen.style.display = 'none';
         } else {
-            // Обновляем текст с именем пользователя
-            const welcomeText = document.querySelector('.welcome-text');
-            welcomeText.innerHTML = `
-                Привет, <strong style="color: gold;">${userName}</strong>!<br>
-                Ты попал в удивительный мир<br>
-                <strong style="color: gold;">Money Tree</strong>
-            `;
+            welcomeMessage.innerHTML = `HELLO<br>${userName}!<br>+500 BONUS`;
+            welcomeEmoji.textContent = '💰';
         }
         
-        // Обработчик кнопки "Начать игру"
-        startButton.addEventListener('click', function() {
-            // Добавляем бонусные монеты
-            gameState.coins += 500;
+        // Кнопка старта
+        document.getElementById('startGameBtn').addEventListener('click', () => {
+            if (!welcomeShown) {
+                gameState.coins += 500;
+                localStorage.setItem(WELCOME_KEY, 'true');
+                tg.HapticFeedback.notificationOccurred('success');
+            }
             
-            // Плавно скрываем приветствие
-            welcomeOverlay.classList.add('hidden');
+            welcomeScreen.style.opacity = '0';
+            setTimeout(() => {
+                welcomeScreen.style.display = 'none';
+            }, 300);
             
-            // Запоминаем, что приветствие показано
-            localStorage.setItem(WELCOME_KEY, 'true');
-            
-            // Вибрация
-            tg.HapticFeedback.notificationOccurred('success');
-            
-            // Обновляем дисплей
             updateDisplay();
-            
-            // Показываем всплывашку с бонусом
-            tg.showPopup({
-                title: '🎁 Бонус получен!',
-                message: 'Ты получил 500 монет за вход в игру!',
-                buttons: [{ type: 'ok' }]
-            });
         });
         
-        // Проверяем реферальную ссылку
+        // Рефералка
         const urlParams = new URLSearchParams(window.location.search);
         const refId = urlParams.get('startapp');
         
@@ -574,50 +647,45 @@
             gameState.referrals.push(refId);
             localStorage.setItem('ref_' + userId, 'true');
             
-            // Показываем уведомление о реферальном бонусе
             setTimeout(() => {
                 tg.showPopup({
-                    title: '🎁 Реферальный бонус!',
-                    message: 'Ты получил 500 монет за переход по ссылке друга!',
+                    title: 'BONUS!',
+                    message: '+500 COINS FOR FRIEND INVITE',
                     buttons: [{ type: 'ok' }]
                 });
             }, 1000);
         }
         
-        // Функция обновления интерфейса
+        // Обновление экрана
         function updateDisplay() {
-            // Добавляем анимацию к монетам
-            const coinElement = document.getElementById('coinDisplay');
-            coinElement.classList.add('coin-animation');
-            setTimeout(() => coinElement.classList.remove('coin-animation'), 500);
+            // Монеты (с ведущими нулями)
+            const coinsStr = Math.floor(gameState.coins).toString().padStart(4, '0').slice(-4);
+            document.getElementById('coinDisplay').textContent = coinsStr;
             
-            // Обновляем монеты везде
-            document.getElementById('coinDisplay').textContent = Math.floor(gameState.coins);
-            if (document.getElementById('shopCoinDisplay')) {
-                document.getElementById('shopCoinDisplay').textContent = Math.floor(gameState.coins);
-            }
-            if (document.getElementById('friendsCoinDisplay')) {
-                document.getElementById('friendsCoinDisplay').textContent = Math.floor(gameState.coins);
-            }
+            // Энергия
+            document.getElementById('energyDisplay').textContent = 
+                Math.floor(gameState.energy) + '/' + gameState.maxEnergy;
             
-            // Обновляем энергию
-            document.getElementById('energyDisplay').textContent = Math.floor(gameState.energy) + '/' + gameState.maxEnergy;
-            const energyPercent = (gameState.energy / gameState.maxEnergy) * 100;
-            document.getElementById('energyFill').style.width = energyPercent + '%';
+            const percent = (gameState.energy / gameState.maxEnergy) * 100;
+            document.getElementById('energyFill').style.width = percent + '%';
             
-            // Обновляем эмодзи дерева
-            document.getElementById('treeEmoji').textContent = treeEmojis[gameState.treeLevel] || '🌱';
+            // Дерево
+            document.getElementById('treeEmoji').textContent = treeStages[gameState.treeLevel];
             
-            // Обновляем цены в магазине
+            // Сила тапа
+            document.getElementById('tapPower').textContent = gameState.tapPower;
+            
+            // Цены
             document.getElementById('evoPrice').textContent = (gameState.treeLevel + 1) * 2000;
-            document.getElementById('tapPrice').textContent = Math.floor(100 * Math.pow(1.5, gameState.tapPower - 1));
+            document.getElementById('tapPrice').textContent = 
+                Math.floor(100 * Math.pow(1.5, gameState.tapPower - 1));
             document.getElementById('energyPrice').textContent = gameState.maxEnergy;
             document.getElementById('passivePrice').textContent = (gameState.passiveIncome + 1) * 500;
             
-            // Обновляем счетчик друзей
-            document.getElementById('friendCount').textContent = 'Приглашено друзей: ' + gameState.referrals.length;
+            // Друзья
+            document.getElementById('friendCount').textContent = 'FRIENDS: ' + gameState.referrals.length;
             
-            // Сохраняем игру
+            // Сохраняем
             localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
         }
         
@@ -628,70 +696,49 @@
                 return;
             }
             
+            // Эффект удара
+            const hit = document.getElementById('hitEffect');
+            hit.style.display = 'block';
+            setTimeout(() => hit.style.display = 'none', 100);
+            
             // Заработок
             const earn = gameState.tapPower * (1 + gameState.treeLevel * 0.5);
             gameState.coins += earn;
             gameState.energy -= 1;
             
             // Вибрация
-            tg.HapticFeedback.impactOccurred('medium');
+            tg.HapticFeedback.impactOccurred('heavy');
             
-            // Создаем всплывающее окошко с доходом
+            // Пиксельный поп-ап
             const popup = document.createElement('div');
+            popup.className = 'pixel-popup';
             popup.textContent = '+' + Math.floor(earn);
-            popup.style.cssText = `
-                position: fixed;
-                left: ${e.clientX}px;
-                top: ${e.clientY}px;
-                color: gold;
-                font-weight: bold;
-                font-size: 24px;
-                pointer-events: none;
-                animation: floatUp 1s ease-out forwards;
-                z-index: 1000;
-                text-shadow: 0 0 10px rgba(255,215,0,0.5);
-            `;
+            popup.style.left = (e.clientX || e.touches[0].clientX) + 'px';
+            popup.style.top = (e.clientY || e.touches[0].clientY) + 'px';
             document.body.appendChild(popup);
-            
-            // Добавляем стиль анимации, если его еще нет
-            if (!document.getElementById('floatStyle')) {
-                const style = document.createElement('style');
-                style.id = 'floatStyle';
-                style.textContent = `
-                    @keyframes floatUp {
-                        0% { transform: translateY(0) scale(1); opacity: 1; }
-                        100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-            
-            setTimeout(() => popup.remove(), 1000);
+            setTimeout(() => popup.remove(), 500);
             
             updateDisplay();
         });
         
-        // Покупка улучшений
+        // Покупки
         window.buyUpgrade = function(type) {
             let cost = 0;
             
             switch(type) {
                 case 'evo':
                     if (gameState.treeLevel >= 5) {
-                        tg.showPopup({ title: '❌ Максимальный уровень', message: 'Дерево уже максимальное!' });
+                        tg.showPopup({ title: 'MAX', message: 'MAX LEVEL REACHED!' });
                         return;
                     }
                     cost = (gameState.treeLevel + 1) * 2000;
                     break;
-                    
                 case 'tap':
                     cost = Math.floor(100 * Math.pow(1.5, gameState.tapPower - 1));
                     break;
-                    
                 case 'energy':
                     cost = gameState.maxEnergy;
                     break;
-                    
                 case 'passive':
                     cost = (gameState.passiveIncome + 1) * 500;
                     break;
@@ -701,28 +748,18 @@
                 gameState.coins -= cost;
                 
                 switch(type) {
-                    case 'evo':
-                        gameState.treeLevel++;
-                        break;
-                    case 'tap':
-                        gameState.tapPower++;
-                        break;
-                    case 'energy':
-                        gameState.maxEnergy += 50;
+                    case 'evo': gameState.treeLevel++; break;
+                    case 'tap': gameState.tapPower++; break;
+                    case 'energy': 
+                        gameState.maxEnergy += 50; 
                         gameState.energy = gameState.maxEnergy;
                         break;
-                    case 'passive':
-                        gameState.passiveIncome += 0.5;
-                        break;
+                    case 'passive': gameState.passiveIncome += 0.5; break;
                 }
                 
                 tg.HapticFeedback.notificationOccurred('success');
             } else {
                 tg.HapticFeedback.notificationOccurred('error');
-                tg.showPopup({ 
-                    title: '❌ Не хватает монет', 
-                    message: 'Нужно еще ' + Math.floor(cost - gameState.coins) + ' монет' 
-                });
             }
             
             updateDisplay();
@@ -730,56 +767,43 @@
         
         // Переключение экранов
         window.showScreen = function(screen) {
+            document.querySelectorAll('.menu-button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
             document.getElementById('mainScreen').classList.add('hidden');
             document.getElementById('shopScreen').classList.add('hidden');
             document.getElementById('friendsScreen').classList.add('hidden');
             
             document.getElementById(screen + 'Screen').classList.remove('hidden');
-            
-            // Обновляем активное меню
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            const menuIndex = screen === 'main' ? 0 : screen === 'shop' ? 1 : 2;
-            document.querySelectorAll('.menu-item')[menuIndex].classList.add('active');
-            
-            updateDisplay();
         };
         
         // Приглашение друга
         window.inviteFriend = function() {
-            const botName = 'Money Tree'; // Замени на имя своего бота
-            const link = 'https://t.me/' + botName + '/app?startapp=' + userId;
+            const botName = 'MONEY TREE'; // Замени на своего бота
+            const link = `https://t.me/${botName}/app?startapp=${userId}`;
             
-            tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=🌳 Привет! Я играю в Money Tree и зарабатываю монеты. Присоединяйся!');
+            tg.openTelegramLink(
+                'https://t.me/share/url?url=' + encodeURIComponent(link) + 
+                '&text=🌳 JOIN ME IN MONEY TREE 8-BIT! GET 500 BONUS!'
+            );
         };
         
-        // Пассивный доход и восстановление энергии
+        // Авто-фарм и реген энергии
         setInterval(() => {
             if (gameState.passiveIncome > 0) {
-                const passiveEarn = gameState.passiveIncome * (1 + gameState.treeLevel * 0.5) / 10;
-                gameState.coins += passiveEarn;
+                gameState.coins += (gameState.passiveIncome * (1 + gameState.treeLevel * 0.5)) / 10;
             }
             
             if (gameState.energy < gameState.maxEnergy) {
-                gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + 0.5);
+                gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + 0.3);
             }
             
             updateDisplay();
         }, 100);
         
-        // Первое обновление
-        updateDisplay();
-        
-        // Показываем главный экран
+        // Старт
         showScreen('main');
-        
-        // Если это новый пользователь и приветствие не скрыто, добавляем небольшую задержку перед показом
-        if (!welcomeShown) {
-            // Убеждаемся что приветствие видно
-            welcomeOverlay.classList.remove('hidden');
-        }
+        updateDisplay();
     </script>
 </body>
 </html>
