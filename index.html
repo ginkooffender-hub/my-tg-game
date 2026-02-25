@@ -27,7 +27,6 @@
             position: relative;
         }
         
-        /* Пиксельный фон */
         body::before {
             content: "";
             position: fixed;
@@ -488,7 +487,6 @@
             border: 2px solid #3a3a6a;
         }
         
-        /* ПРЕЛОАДЕР */
         .preloader {
             position: fixed;
             top: 0;
@@ -556,7 +554,6 @@
     </style>
 </head>
 <body>
-    <!-- ПРЕЛОАДЕР -->
     <div id="preloader" class="preloader">
         <div class="preloader-box">
             <div class="preloader-title">💰 MONEY TREE 💰</div>
@@ -570,7 +567,6 @@
         </div>
     </div>
 
-    <!-- ИГРА -->
     <div class="cartridge">
         <div class="cartridge-label">🎮 ULTIMATE EDITION 🎮</div>
         
@@ -580,7 +576,6 @@
             <span class="led">🟢 PLAY</span>
         </div>
         
-        <!-- Основной экран -->
         <div id="mainScreen">
             <div class="score-panel">
                 <span class="coin-sprite">💰</span>
@@ -623,7 +618,6 @@
             <div id="achievementsPanel" class="achievements-panel hidden"></div>
         </div>
         
-        <!-- Магазин -->
         <div id="shopScreen" class="hidden">
             <div class="shop-container">
                 <div class="shop-item">
@@ -682,7 +676,6 @@
             </div>
         </div>
         
-        <!-- Друзья -->
         <div id="friendsScreen" class="hidden">
             <div class="friends-area">
                 <button class="invite-btn" onclick="inviteFriend()">
@@ -697,7 +690,6 @@
             </div>
         </div>
         
-        <!-- Меню -->
         <div class="menu-buttons">
             <button class="menu-btn active" onclick="showScreen('main', this)">🌳 ИГРА</button>
             <button class="menu-btn" onclick="showScreen('shop', this)">🚀 БУСТЫ</button>
@@ -712,8 +704,6 @@
         tg.ready();
         
         const userId = tg.initDataUnsafe?.user?.id || 'guest_' + Math.random();
-        const userName = tg.initDataUnsafe?.user?.first_name || 'ИГРОК';
-        
         const SAVE_KEY = 'money_tree_final_' + userId;
         
         // СОСТОЯНИЕ ИГРЫ
@@ -722,13 +712,12 @@
             tapPower: 1,
             energy: 200,
             maxEnergy: 200,
-            passiveIncome: 0,
             treeLevel: 0,
             referrals: [],
             regenLevel: 0,
             autoClickerLevel: 0,
             critLevel: 0,
-            lastOnlineTime: Date.now(), // ВАЖНО: время последнего онлайна
+            lastOnlineTime: Date.now(), // Сохраняем время последнего онлайна
             achievements: {
                 clicks: 0,
                 totalCoins: 0,
@@ -749,20 +738,12 @@
             }
         } catch (e) {}
         
-        // Рефералка
-        const urlParams = new URLSearchParams(window.location.search);
-        const refId = urlParams.get('startapp');
-        
-        if (refId && refId !== userId && !localStorage.getItem('ref_' + userId)) {
-            gameState.coins += 500;
-            gameState.referrals.push(refId);
-            localStorage.setItem('ref_' + userId, 'true');
-        }
-        
         // ========== ОФЛАЙН-ЭНЕРГИЯ ==========
         function calculateOfflineEnergy() {
             const now = Date.now();
             const diffSeconds = (now - gameState.lastOnlineTime) / 1000;
+            
+            console.log('Прошло секунд:', diffSeconds); // Для отладки
             
             if (diffSeconds > 5) { // Если прошло больше 5 секунд
                 const regenRate = 0.15 + (gameState.regenLevel * 0.1);
@@ -782,7 +763,24 @@
                 }
             }
             
+            // Обновляем время
             gameState.lastOnlineTime = now;
+            saveGame();
+        }
+        
+        // Сохранение игры
+        function saveGame() {
+            localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
+        }
+        
+        // Рефералка
+        const urlParams = new URLSearchParams(window.location.search);
+        const refId = urlParams.get('startapp');
+        
+        if (refId && refId !== userId && !localStorage.getItem('ref_' + userId)) {
+            gameState.coins += 500;
+            gameState.referrals.push(refId);
+            localStorage.setItem('ref_' + userId, 'true');
         }
         
         // ПРЕЛОАДЕР
@@ -816,11 +814,11 @@
                     preloader.classList.add('hidden');
                     // ВАЖНО: считаем офлайн-энергию после загрузки
                     calculateOfflineEnergy();
+                    updateDisplay();
                 }, 500);
             }
         }, 30);
         
-        // Звук включения
         function playBootSound() {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             const ctx = new AudioContext();
@@ -886,7 +884,7 @@
                 if (ach.id === 'treeMax') progress = gameState.treeLevel >= 5 ? 1 : 0;
                 if (ach.id === 'regen5') progress = gameState.regenLevel;
                 
-                if (progress >= ach.target) {
+                if (progress >= ach.target && !gameState.completedAchievements.includes(ach.id)) {
                     gameState.completedAchievements.push(ach.id);
                     gameState.coins += ach.reward;
                     
@@ -935,7 +933,6 @@
                 `🏆 АЧИВКИ (${gameState.completedAchievements.length}/10)`;
         }
         
-        // Расчеты
         function getRegenRate() {
             return 0.15 + (gameState.regenLevel * 0.1);
         }
@@ -945,11 +942,9 @@
         }
         
         function getEarnPerTap() {
-            let base = gameState.tapPower * (1 + gameState.treeLevel * 0.5);
-            return base;
+            return gameState.tapPower * (1 + gameState.treeLevel * 0.5);
         }
         
-        // Обновление экрана
         function updateDisplay() {
             const coinsStr = Math.floor(gameState.coins).toString().padStart(4, '0').slice(-4);
             document.getElementById('coinDisplay').textContent = coinsStr;
@@ -975,10 +970,9 @@
             }
             
             updateAchievements();
-            localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
+            saveGame(); // Сохраняем при каждом обновлении
         }
         
-        // Звуки
         function playSound(type) {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             const ctx = new AudioContext();
@@ -1050,7 +1044,6 @@
             }
         }
         
-        // Клик по дереву
         document.getElementById('treeClick').addEventListener('click', function(e) {
             if (gameState.energy < 1) {
                 return;
@@ -1099,7 +1092,6 @@
             updateDisplay();
         });
         
-        // Покупки
         window.buyUpgrade = function(type) {
             let cost = 0;
             
@@ -1155,7 +1147,6 @@
             updateDisplay();
         };
         
-        // Переключение экранов
         window.showScreen = function(screen, btn) {
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -1176,10 +1167,9 @@
             }
         };
         
-        // Приглашение друга
         window.inviteFriend = function() {
-            const botName = 'YOUR_BOT_NAME'; // ЗАМЕНИТЕ НА ИМЯ СВОЕГО БОТА
-            const link = `https://t.me/${botName}/app?startapp=${userId}`;
+            // Реферальная ссылка (не влияет на игру)
+            const link = `https://t.me/your_bot/app?startapp=${userId}`;
             
             tg.openTelegramLink(
                 'https://t.me/share/url?url=' + encodeURIComponent(link) + 
@@ -1195,12 +1185,10 @@
         
         // ОБНОВЛЕНИЕ КАЖДУЮ СЕКУНДУ
         setInterval(() => {
-            // Регенерация энергии в реальном времени
             if (gameState.energy < gameState.maxEnergy) {
                 gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + getRegenRate() / 10);
             }
             
-            // Авто-кликер
             if (gameState.autoClickerLevel > 0 && gameState.energy >= 1) {
                 if (Math.random() < 0.1) {
                     gameState.energy -= 1;
@@ -1211,13 +1199,17 @@
                 }
             }
             
-            // ВАЖНО: обновляем время последнего онлайна
-            gameState.lastOnlineTime = Date.now();
-            
+            // ВАЖНО: НЕ обновляем lastOnlineTime здесь!
+            // lastOnlineTime должно обновляться ТОЛЬКО при закрытии или входе
             updateDisplay();
         }, 100);
         
-        // Старт
+        // Сохраняем время при закрытии страницы
+        window.addEventListener('beforeunload', function() {
+            gameState.lastOnlineTime = Date.now();
+            saveGame();
+        });
+        
         showScreen('main', document.querySelector('.menu-btn'));
         updateDisplay();
     </script>
