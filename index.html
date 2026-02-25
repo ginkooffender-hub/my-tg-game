@@ -51,7 +51,6 @@
             100% { transform: translateY(4px); }
         }
         
-        /* Главный контейнер */
         .cartridge {
             width: 100%;
             max-width: 440px;
@@ -489,7 +488,7 @@
             border: 2px solid #3a3a6a;
         }
         
-        /* ПРЕЛОАДЕР (оставим красивый) */
+        /* ПРЕЛОАДЕР */
         .preloader {
             position: fixed;
             top: 0;
@@ -557,7 +556,7 @@
     </style>
 </head>
 <body>
-    <!-- ПРЕЛОАДЕР (только загрузка) -->
+    <!-- ПРЕЛОАДЕР -->
     <div id="preloader" class="preloader">
         <div class="preloader-box">
             <div class="preloader-title">💰 MONEY TREE 💰</div>
@@ -571,7 +570,7 @@
         </div>
     </div>
 
-    <!-- ИГРА (БЕЗ ОНБОРДИНГА) -->
+    <!-- ИГРА -->
     <div class="cartridge">
         <div class="cartridge-label">🎮 ULTIMATE EDITION 🎮</div>
         
@@ -627,7 +626,6 @@
         <!-- Магазин -->
         <div id="shopScreen" class="hidden">
             <div class="shop-container">
-                <!-- Эволюция -->
                 <div class="shop-item">
                     <div class="item-info">
                         <h3>🌱 ЭВОЛЮЦИЯ</h3>
@@ -637,7 +635,6 @@
                     <button class="buy-btn" onclick="buyUpgrade('evo')">АП</button>
                 </div>
                 
-                <!-- Сила тапа -->
                 <div class="shop-item">
                     <div class="item-info">
                         <h3>💪 СИЛА ТАПА</h3>
@@ -647,7 +644,6 @@
                     <button class="buy-btn" onclick="buyUpgrade('tap')">АП</button>
                 </div>
                 
-                <!-- Макс энергия -->
                 <div class="shop-item">
                     <div class="item-info">
                         <h3>🔋 МАКС ЭНЕРГИЯ</h3>
@@ -657,7 +653,6 @@
                     <button class="buy-btn" onclick="buyUpgrade('energy')">АП</button>
                 </div>
                 
-                <!-- Регенерация -->
                 <div class="shop-item special">
                     <div class="item-info">
                         <h3>⚡ РЕГЕНЕРАЦИЯ</h3>
@@ -667,7 +662,6 @@
                     <button class="buy-btn" onclick="buyUpgrade('regen')">АП</button>
                 </div>
                 
-                <!-- Авто-кликер -->
                 <div class="shop-item special">
                     <div class="item-info">
                         <h3>🤖 АВТО-КЛИКЕР</h3>
@@ -677,7 +671,6 @@
                     <button class="buy-btn" onclick="buyUpgrade('auto')">АП</button>
                 </div>
                 
-                <!-- Крит -->
                 <div class="shop-item special">
                     <div class="item-info">
                         <h3>🎯 КРИТ УДАР</h3>
@@ -735,7 +728,7 @@
             regenLevel: 0,
             autoClickerLevel: 0,
             critLevel: 0,
-            lastOnlineTime: Date.now(),
+            lastOnlineTime: Date.now(), // ВАЖНО: время последнего онлайна
             achievements: {
                 clicks: 0,
                 totalCoins: 0,
@@ -747,7 +740,7 @@
         
         const treeStages = ['🌱', '🌿', '🌳', '🌲', '🎄', '👑🌳'];
         
-        // Загрузка
+        // Загрузка сохранения
         try {
             const saved = localStorage.getItem(SAVE_KEY);
             if (saved) {
@@ -764,6 +757,32 @@
             gameState.coins += 500;
             gameState.referrals.push(refId);
             localStorage.setItem('ref_' + userId, 'true');
+        }
+        
+        // ========== ОФЛАЙН-ЭНЕРГИЯ ==========
+        function calculateOfflineEnergy() {
+            const now = Date.now();
+            const diffSeconds = (now - gameState.lastOnlineTime) / 1000;
+            
+            if (diffSeconds > 5) { // Если прошло больше 5 секунд
+                const regenRate = 0.15 + (gameState.regenLevel * 0.1);
+                const recovered = diffSeconds * regenRate;
+                
+                const oldEnergy = gameState.energy;
+                gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + recovered);
+                
+                const gained = Math.floor(gameState.energy - oldEnergy);
+                
+                if (gained > 0) {
+                    tg.showPopup({
+                        title: '⚡ ЭНЕРГИЯ ВОССТАНОВЛЕНА!',
+                        message: `Пока тебя не было, накопилось ${gained} энергии`,
+                        buttons: [{ type: 'ok' }]
+                    });
+                }
+            }
+            
+            gameState.lastOnlineTime = now;
         }
         
         // ПРЕЛОАДЕР
@@ -795,7 +814,8 @@
                 
                 setTimeout(() => {
                     preloader.classList.add('hidden');
-                    checkOfflineEnergy();
+                    // ВАЖНО: считаем офлайн-энергию после загрузки
+                    calculateOfflineEnergy();
                 }, 500);
             }
         }, 30);
@@ -836,32 +856,6 @@
             
             osc2.start(ctx.currentTime + 0.1);
             osc2.stop(ctx.currentTime + 0.3);
-        }
-        
-        // ОФЛАЙН-ЭНЕРГИЯ
-        function checkOfflineEnergy() {
-            const now = Date.now();
-            const diffSeconds = (now - gameState.lastOnlineTime) / 1000;
-            
-            if (diffSeconds > 10) {
-                const regenRate = 0.15 + (gameState.regenLevel * 0.1);
-                const recovered = diffSeconds * regenRate;
-                
-                const oldEnergy = gameState.energy;
-                gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + recovered);
-                
-                const gained = Math.floor(gameState.energy - oldEnergy);
-                
-                if (gained > 0) {
-                    tg.showPopup({
-                        title: '⚡ ВОЗВРАЩЕНИЕ!',
-                        message: `Пока тебя не было, накопилось ${gained} энергии!`,
-                        buttons: [{ type: 'ok' }]
-                    });
-                }
-            }
-            
-            gameState.lastOnlineTime = now;
         }
         
         // АЧИВКИ
@@ -1184,7 +1178,7 @@
         
         // Приглашение друга
         window.inviteFriend = function() {
-            const botName = 'MONEY TEE CLICKER'; // ЗАМЕНИТЕ НА ИМЯ СВОЕГО БОТА
+            const botName = 'YOUR_BOT_NAME'; // ЗАМЕНИТЕ НА ИМЯ СВОЕГО БОТА
             const link = `https://t.me/${botName}/app?startapp=${userId}`;
             
             tg.openTelegramLink(
@@ -1199,22 +1193,27 @@
             document.getElementById('achievementsPanel').classList.toggle('hidden');
         };
         
-        // Авто-кликер и регенерация
+        // ОБНОВЛЕНИЕ КАЖДУЮ СЕКУНДУ
         setInterval(() => {
+            // Регенерация энергии в реальном времени
             if (gameState.energy < gameState.maxEnergy) {
                 gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + getRegenRate() / 10);
             }
             
+            // Авто-кликер
             if (gameState.autoClickerLevel > 0 && gameState.energy >= 1) {
-                if (Math.random() < 0.1) { // 10% шанс каждый тик
+                if (Math.random() < 0.1) {
                     gameState.energy -= 1;
-                    gameState.coins += getEarnPerTap() * gameState.autoClickerLevel * 0.3;
+                    const earn = getEarnPerTap() * gameState.autoClickerLevel * 0.3;
+                    gameState.coins += earn;
                     gameState.achievements.clicks++;
-                    gameState.achievements.totalCoins += getEarnPerTap() * gameState.autoClickerLevel * 0.3;
+                    gameState.achievements.totalCoins += earn;
                 }
             }
             
+            // ВАЖНО: обновляем время последнего онлайна
             gameState.lastOnlineTime = Date.now();
+            
             updateDisplay();
         }, 100);
         
