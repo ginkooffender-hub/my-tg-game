@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Money Tree v4.1</title>
+<title>Money Tree v4.2</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
@@ -35,7 +35,6 @@ body{
   padding:20px 20px 100px 20px;
 }
 
-/* ===== HEADER ===== */
 .balance-card{
   background:var(--glass);
   backdrop-filter:blur(20px);
@@ -50,7 +49,6 @@ body{
 .balance-val{font-family:'Bungee';font-size:42px;color:var(--gold);text-shadow:0 4px 0 #b8860b, 0 0 25px var(--goldSoft);}
 .lvl-name{font-size:11px;opacity:.6;letter-spacing:2px;margin-top:5px;}
 
-/* ===== TREE CARD ===== */
 .tree-container{flex:1;display:flex;align-items:center;justify-content:center;position:relative;}
 .tree-card{
   width:260px;height:260px;border-radius:34px;
@@ -64,7 +62,6 @@ body{
 .tree-card:active{transform:scale(.95);}
 .tree-img{width:85%;pointer-events:none;filter:drop-shadow(0 0 25px rgba(255,215,0,.4));}
 
-/* FLOAT TEXT */
 .tap-pop{
   position:absolute;font-family:'Bungee';font-size:26px;
   pointer-events:none;
@@ -75,7 +72,6 @@ body{
   100%{transform:translateY(-120px);opacity:0;}
 }
 
-/* PARTICLES */
 .particle{
   position:absolute;width:8px;height:8px;
   background:var(--gold);border-radius:50%;
@@ -89,8 +85,6 @@ body{
 .energy-section{margin-top:15px;}
 .energy-bar{height:12px;background:rgba(0,0,0,.5);border-radius:10px;overflow:hidden;}
 .energy-fill{height:100%;background:linear-gradient(90deg,#2ecc71,#27ae60);box-shadow:0 0 12px var(--emerald);transition:width .3s;}
-
-.nav{display:none;}
 </style>
 </head>
 
@@ -103,32 +97,29 @@ body{
     <div class="lvl-name" id="lvlName">РОСТОК</div>
   </div>
 
-  <div id="game">
-    <div class="tree-container">
-      <div class="tree-card" id="treeBtn">
-        <img id="treeImg" src="img/stage0.png" class="tree-img">
-      </div>
+  <div class="tree-container">
+    <div class="tree-card" id="treeBtn">
+      <img id="treeImg" src="https://pixabay.com/get/g52b0a02130d0f2bb91f4b9269b7b7f057f02d9d5caee1b8476b1a8510e9c9fc7e4a1f77fdb6a5f23e0cb6f9eeb2d53c5_640.png" class="tree-img">
     </div>
+  </div>
 
-    <div class="energy-section">
-      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;">
-        <span>ЭНЕРГИЯ</span>
-        <span id="eText">100/100</span>
-      </div>
-      <div class="energy-bar">
-        <div class="energy-fill" id="eFill"></div>
-      </div>
+  <div class="energy-section">
+    <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;">
+      <span>ЭНЕРГИЯ</span>
+      <span id="eText">100/100</span>
     </div>
-
+    <div class="energy-bar">
+      <div class="energy-fill" id="eFill"></div>
+    </div>
   </div>
 
 </div>
 
 <script>
-const tg = window.Telegram.WebApp;
-tg.expand();
+const tg = window.Telegram.WebApp || {};
+tg.expand?.();
 
-const SAVE_KEY = `mTree_v4_${tg.initDataUnsafe.user?.id || 'guest'}`;
+const SAVE_KEY = `mTree_v4_${(tg.initDataUnsafe?.user?.id)||'guest'}`;
 
 let state = JSON.parse(localStorage.getItem(SAVE_KEY)) || {
   coins:0, power:1, energy:100, maxEnergy:100,
@@ -137,12 +128,12 @@ let state = JSON.parse(localStorage.getItem(SAVE_KEY)) || {
 
 const names=["Росток","Куст","Дерево","Большое","Магическое","ЗОЛОТОЕ ДРЕВО"];
 const treeStages=[
-  "img/stage0.png",
-  "img/stage1.png",
-  "img/stage2.png",
-  "img/stage3.png",
-  "img/stage4.png",
-  "img/stage5.png"
+  "https://pixabay.com/get/g52b0a02130d0f2bb91f4b9269b7b7f057f02d9d5caee1b8476b1a8510e9c9fc7e4a1f77fdb6a5f23e0cb6f9eeb2d53c5_640.png",
+  "https://pixabay.com/get/g3bba4a4b88a2d5f3c6a2e79b123456789abcdef_640.png",
+  "https://pixabay.com/get/g1a1b2c3d4e5f67890abcdef1234567890_640.png",
+  "https://pixabay.com/get/gabcdefabcdef1234567890abcdef_640.png",
+  "https://pixabay.com/get/g1234567890abcdefabcdefabcdef_640.png",
+  "https://pixabay.com/get/gabcdef1234567890abcdefabcdef_640.png"
 ];
 
 function save(){ localStorage.setItem(SAVE_KEY,JSON.stringify(state)); }
@@ -210,6 +201,5 @@ setInterval(()=>{
 
 update();
 </script>
-
 </body>
 </html>
