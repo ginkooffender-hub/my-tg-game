@@ -34,6 +34,167 @@
             padding: 24px 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Затемненный фон для приветствия */
+        .welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+            pointer-events: all;
+        }
+        
+        .welcome-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* Само модальное окно */
+        .welcome-modal {
+            background: linear-gradient(145deg, rgba(20, 30, 40, 0.95), rgba(10, 20, 30, 0.95));
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 48px;
+            padding: 40px 30px;
+            max-width: 320px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            transform: scale(1);
+            animation: modalAppear 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Декоративные элементы */
+        .welcome-modal::before {
+            content: '🌳';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            font-size: 120px;
+            opacity: 0.1;
+            transform: rotate(-15deg);
+            pointer-events: none;
+        }
+        
+        .welcome-modal::after {
+            content: '💰';
+            position: absolute;
+            bottom: -30px;
+            right: -30px;
+            font-size: 150px;
+            opacity: 0.1;
+            transform: rotate(15deg);
+            pointer-events: none;
+        }
+        
+        @keyframes modalAppear {
+            0% {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .welcome-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .welcome-emoji {
+            font-size: 70px;
+            margin: 15px 0;
+            filter: drop-shadow(0 10px 20px rgba(255, 215, 0, 0.3));
+            animation: floatEmoji 3s ease-in-out infinite;
+        }
+        
+        @keyframes floatEmoji {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .welcome-text {
+            font-size: 18px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .welcome-bonus {
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 60px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: gold;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
+            }
+        }
+        
+        .welcome-button {
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            border: none;
+            border-radius: 60px;
+            padding: 18px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #1a2a3a;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .welcome-button:active {
+            transform: scale(0.95);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
         }
         
         .balance {
@@ -175,9 +336,50 @@
             margin-top: 20px;
             cursor: pointer;
         }
+        
+        /* Анимация для цифр */
+        .coin-animation {
+            animation: coinSpin 0.5s ease-out;
+        }
+        
+        @keyframes coinSpin {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+                color: #ffd700;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Приветственное окно (сначала видимо) -->
+    <div id="welcomeOverlay" class="welcome-overlay">
+        <div class="welcome-modal">
+            <div class="welcome-title">ДОБРО ПОЖАЛОВАТЬ!</div>
+            <div class="welcome-emoji">🌳💰</div>
+            <div class="welcome-text">
+                Ты попал в удивительный мир<br>
+                <strong style="color: gold;">Money Tree</strong>
+            </div>
+            <div class="welcome-bonus">
+                <span>🎁</span>
+                <span>+500 монет в подарок</span>
+                <span>💰</span>
+            </div>
+            <div style="font-size: 14px; opacity: 0.7; margin-bottom: 20px;">
+                Кликай по дереву и зарабатывай!
+            </div>
+            <button class="welcome-button" id="startGameBtn">
+                НАЧАТЬ ИГРУ 🚀
+            </button>
+        </div>
+    </div>
+
     <div class="game-container">
         <!-- Основной экран игры -->
         <div id="mainScreen">
@@ -287,13 +489,15 @@
         
         // Получаем данные пользователя
         const userId = tg.initDataUnsafe?.user?.id || 'guest_' + Math.random();
+        const userName = tg.initDataUnsafe?.user?.first_name || 'Игрок';
         
-        // Ключ для localStorage (уникальный для каждого пользователя)
+        // Ключ для localStorage
         const SAVE_KEY = 'money_tree_' + userId;
+        const WELCOME_KEY = 'welcome_shown_' + userId;
         
         // Начальное состояние игры
         let gameState = {
-            coins: 1000, // Стартовые монеты для теста
+            coins: 0, // Стартовые монеты (0, бонус дадим в приветствии)
             tapPower: 1,
             energy: 100,
             maxEnergy: 100,
@@ -305,7 +509,7 @@
         // Эмодзи для разных уровней дерева
         const treeEmojis = ['🌱', '🌿', '🌳', '🌲', '🎄', '✨🌳'];
         
-        // Загружаем сохранение если есть
+        // Загружаем сохранение
         try {
             const saved = localStorage.getItem(SAVE_KEY);
             if (saved) {
@@ -316,6 +520,51 @@
             console.log('Ошибка загрузки:', e);
         }
         
+        // Проверяем, нужно ли показывать приветствие
+        const welcomeShown = localStorage.getItem(WELCOME_KEY);
+        
+        // Управление приветственным окном
+        const welcomeOverlay = document.getElementById('welcomeOverlay');
+        const startButton = document.getElementById('startGameBtn');
+        
+        // Если приветствие уже показывали, скрываем его сразу
+        if (welcomeShown) {
+            welcomeOverlay.classList.add('hidden');
+        } else {
+            // Обновляем текст с именем пользователя
+            const welcomeText = document.querySelector('.welcome-text');
+            welcomeText.innerHTML = `
+                Привет, <strong style="color: gold;">${userName}</strong>!<br>
+                Ты попал в удивительный мир<br>
+                <strong style="color: gold;">Money Tree</strong>
+            `;
+        }
+        
+        // Обработчик кнопки "Начать игру"
+        startButton.addEventListener('click', function() {
+            // Добавляем бонусные монеты
+            gameState.coins += 500;
+            
+            // Плавно скрываем приветствие
+            welcomeOverlay.classList.add('hidden');
+            
+            // Запоминаем, что приветствие показано
+            localStorage.setItem(WELCOME_KEY, 'true');
+            
+            // Вибрация
+            tg.HapticFeedback.notificationOccurred('success');
+            
+            // Обновляем дисплей
+            updateDisplay();
+            
+            // Показываем всплывашку с бонусом
+            tg.showPopup({
+                title: '🎁 Бонус получен!',
+                message: 'Ты получил 500 монет за вход в игру!',
+                buttons: [{ type: 'ok' }]
+            });
+        });
+        
         // Проверяем реферальную ссылку
         const urlParams = new URLSearchParams(window.location.search);
         const refId = urlParams.get('startapp');
@@ -324,14 +573,24 @@
             gameState.coins += 500;
             gameState.referrals.push(refId);
             localStorage.setItem('ref_' + userId, 'true');
-            tg.showPopup({
-                title: '🎁 Бонус!',
-                message: 'Ты получил 500 монет за переход по ссылке друга!'
-            });
+            
+            // Показываем уведомление о реферальном бонусе
+            setTimeout(() => {
+                tg.showPopup({
+                    title: '🎁 Реферальный бонус!',
+                    message: 'Ты получил 500 монет за переход по ссылке друга!',
+                    buttons: [{ type: 'ok' }]
+                });
+            }, 1000);
         }
         
         // Функция обновления интерфейса
         function updateDisplay() {
+            // Добавляем анимацию к монетам
+            const coinElement = document.getElementById('coinDisplay');
+            coinElement.classList.add('coin-animation');
+            setTimeout(() => coinElement.classList.remove('coin-animation'), 500);
+            
             // Обновляем монеты везде
             document.getElementById('coinDisplay').textContent = Math.floor(gameState.coins);
             if (document.getElementById('shopCoinDisplay')) {
@@ -374,7 +633,7 @@
             gameState.coins += earn;
             gameState.energy -= 1;
             
-            // Эффект (вибрация)
+            // Вибрация
             tg.HapticFeedback.impactOccurred('medium');
             
             // Создаем всплывающее окошко с доходом
@@ -390,18 +649,22 @@
                 pointer-events: none;
                 animation: floatUp 1s ease-out forwards;
                 z-index: 1000;
+                text-shadow: 0 0 10px rgba(255,215,0,0.5);
             `;
             document.body.appendChild(popup);
             
-            // Добавляем стиль анимации
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes floatUp {
-                    0% { transform: translateY(0); opacity: 1; }
-                    100% { transform: translateY(-100px); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
+            // Добавляем стиль анимации, если его еще нет
+            if (!document.getElementById('floatStyle')) {
+                const style = document.createElement('style');
+                style.id = 'floatStyle';
+                style.textContent = `
+                    @keyframes floatUp {
+                        0% { transform: translateY(0) scale(1); opacity: 1; }
+                        100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
             
             setTimeout(() => popup.remove(), 1000);
             
@@ -419,39 +682,40 @@
                         return;
                     }
                     cost = (gameState.treeLevel + 1) * 2000;
-                    if (gameState.coins >= cost) {
-                        gameState.coins -= cost;
-                        gameState.treeLevel++;
-                    }
                     break;
                     
                 case 'tap':
                     cost = Math.floor(100 * Math.pow(1.5, gameState.tapPower - 1));
-                    if (gameState.coins >= cost) {
-                        gameState.coins -= cost;
-                        gameState.tapPower++;
-                    }
                     break;
                     
                 case 'energy':
                     cost = gameState.maxEnergy;
-                    if (gameState.coins >= cost) {
-                        gameState.coins -= cost;
-                        gameState.maxEnergy += 50;
-                        gameState.energy = gameState.maxEnergy;
-                    }
                     break;
                     
                 case 'passive':
                     cost = (gameState.passiveIncome + 1) * 500;
-                    if (gameState.coins >= cost) {
-                        gameState.coins -= cost;
-                        gameState.passiveIncome += 0.5;
-                    }
                     break;
             }
             
             if (gameState.coins >= cost) {
+                gameState.coins -= cost;
+                
+                switch(type) {
+                    case 'evo':
+                        gameState.treeLevel++;
+                        break;
+                    case 'tap':
+                        gameState.tapPower++;
+                        break;
+                    case 'energy':
+                        gameState.maxEnergy += 50;
+                        gameState.energy = gameState.maxEnergy;
+                        break;
+                    case 'passive':
+                        gameState.passiveIncome += 0.5;
+                        break;
+                }
+                
                 tg.HapticFeedback.notificationOccurred('success');
             } else {
                 tg.HapticFeedback.notificationOccurred('error');
@@ -485,20 +749,19 @@
         
         // Приглашение друга
         window.inviteFriend = function() {
-            const botName = 'YOUR_BOT_NAME'; // Замени на имя своего бота
+            const botName = 'Money Tree'; // Замени на имя своего бота
             const link = 'https://t.me/' + botName + '/app?startapp=' + userId;
             
-            tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=🌳 Играй в Money Tree и зарабатывай монеты!');
+            tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=🌳 Привет! Я играю в Money Tree и зарабатываю монеты. Присоединяйся!');
         };
         
-        // Пассивный доход (каждую секунду)
+        // Пассивный доход и восстановление энергии
         setInterval(() => {
             if (gameState.passiveIncome > 0) {
                 const passiveEarn = gameState.passiveIncome * (1 + gameState.treeLevel * 0.5) / 10;
                 gameState.coins += passiveEarn;
             }
             
-            // Восстановление энергии
             if (gameState.energy < gameState.maxEnergy) {
                 gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + 0.5);
             }
@@ -511,6 +774,12 @@
         
         // Показываем главный экран
         showScreen('main');
+        
+        // Если это новый пользователь и приветствие не скрыто, добавляем небольшую задержку перед показом
+        if (!welcomeShown) {
+            // Убеждаемся что приветствие видно
+            welcomeOverlay.classList.remove('hidden');
+        }
     </script>
 </body>
 </html>
