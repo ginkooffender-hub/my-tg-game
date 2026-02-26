@@ -579,7 +579,7 @@
         <div id="mainScreen">
             <div class="score-panel">
                 <span class="coin-sprite">💰</span>
-                <span class="score-value" id="coinDisplay">0000</span>
+                <span class="score-value" id="coinDisplay">0</span>
             </div>
             
             <div class="tree-area" id="treeClick">
@@ -851,6 +851,19 @@
             osc2.stop(ctx.currentTime + 0.3);
         }
         
+        // Функция форматирования чисел (K, M, B)
+        function formatNumber(num) {
+            if (num >= 1000000000) {
+                return (num / 1000000000).toFixed(1) + 'B';
+            } else if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            } else {
+                return num.toString();
+            }
+        }
+        
         // АЧИВКИ
         const achievements = [
             { id: 'click100', name: 'НОВИЧОК', desc: '100 кликов', icon: '👆', target: 100, reward: 500 },
@@ -940,24 +953,25 @@
             return gameState.tapPower * (1 + gameState.treeLevel * 0.5);
         }
         
+        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ОБНОВЛЕНИЯ
         function updateDisplay() {
-            const coinsStr = Math.floor(gameState.coins).toString().padStart(4, '0').slice(-4);
-            document.getElementById('coinDisplay').textContent = coinsStr;
+            // Теперь монеты отображаются правильно и не обрезаются
+            document.getElementById('coinDisplay').textContent = formatNumber(Math.floor(gameState.coins));
             
             document.getElementById('energyDisplay').textContent = Math.floor(gameState.energy) + '/' + gameState.maxEnergy;
             document.getElementById('energyFill').style.width = (gameState.energy / gameState.maxEnergy * 100) + '%';
             document.getElementById('treeEmoji').textContent = treeStages[gameState.treeLevel];
             document.getElementById('regenRate').textContent = getRegenRate().toFixed(2);
             document.getElementById('critRate').textContent = getCritChance();
-            document.getElementById('earnPerTap').textContent = Math.floor(getEarnPerTap());
+            document.getElementById('earnPerTap').textContent = formatNumber(Math.floor(getEarnPerTap()));
             document.getElementById('autoStatus').textContent = gameState.autoClickerLevel > 0 ? gameState.autoClickerLevel + 'УР' : 'ВЫКЛ';
             
-            document.getElementById('evoPrice').textContent = (gameState.treeLevel + 1) * 2000;
-            document.getElementById('tapPrice').textContent = Math.floor(100 * Math.pow(1.5, gameState.tapPower - 1));
-            document.getElementById('energyPrice').textContent = gameState.maxEnergy;
-            document.getElementById('regenPrice').textContent = 1000 * (gameState.regenLevel + 1);
-            document.getElementById('autoPrice').textContent = 5000 * (gameState.autoClickerLevel + 1);
-            document.getElementById('critPrice').textContent = 2000 * (gameState.critLevel + 1);
+            document.getElementById('evoPrice').textContent = formatNumber((gameState.treeLevel + 1) * 2000);
+            document.getElementById('tapPrice').textContent = formatNumber(Math.floor(100 * Math.pow(1.5, gameState.tapPower - 1)));
+            document.getElementById('energyPrice').textContent = formatNumber(gameState.maxEnergy);
+            document.getElementById('regenPrice').textContent = formatNumber(1000 * (gameState.regenLevel + 1));
+            document.getElementById('autoPrice').textContent = formatNumber(5000 * (gameState.autoClickerLevel + 1));
+            document.getElementById('critPrice').textContent = formatNumber(2000 * (gameState.critLevel + 1));
             document.getElementById('friendCount').textContent = 'ДРУЗЕЙ: ' + gameState.referrals.length;
             
             if (getCritChance() > 0) {
@@ -1072,7 +1086,7 @@
             
             const popup = document.createElement('div');
             popup.className = 'popup-8bit' + (isCrit ? ' popup-crit' : '');
-            popup.textContent = (isCrit ? '🎯 ' : '+') + Math.floor(earn);
+            popup.textContent = (isCrit ? '🎯 ' : '+') + formatNumber(Math.floor(earn));
             
             const clientX = e.clientX || (e.touches && e.touches[0].clientX);
             const clientY = e.clientY || (e.touches && e.touches[0].clientY);
@@ -1177,21 +1191,17 @@
             document.getElementById('achievementsPanel').classList.toggle('hidden');
         };
         
-        // ========== ИСПРАВЛЕННЫЙ ИНТЕРВАЛ (ЭНЕРГИЯ БОЛЬШЕ НЕ ТРАТИТСЯ) ==========
+        // ИНТЕРВАЛ ОБНОВЛЕНИЯ
         setInterval(() => {
             // ТОЛЬКО регенерация энергии - никогда не тратится сама
             if (gameState.energy < gameState.maxEnergy) {
                 gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + getRegenRate() / 10);
             }
             
-            // АВТО-КЛИКЕР - теперь НЕ тратит энергию, а просто даёт монеты
-            if (gameState.autoClickerLevel > 0) {
-                // Каждую секунду получаем монеты без траты энергии
-                const autoEarn = getEarnPerTap() * gameState.autoClickerLevel * 0.3;
-                gameState.coins += autoEarn;
-                gameState.achievements.clicks++;
-                gameState.achievements.totalCoins += autoEarn;
-            }
+            // АВТО-КЛИКЕР ПОЛНОСТЬЮ ОТКЛЮЧЕН
+            // if (gameState.autoClickerLevel > 0) {
+            //     // ничего не делаем
+            // }
             
             updateDisplay();
         }, 100);
