@@ -717,7 +717,7 @@
             regenLevel: 0,
             autoClickerLevel: 0,
             critLevel: 0,
-            lastOnlineTime: Date.now(), // Сохраняем время последнего онлайна
+            lastOnlineTime: Date.now(),
             achievements: {
                 clicks: 0,
                 totalCoins: 0,
@@ -743,9 +743,7 @@
             const now = Date.now();
             const diffSeconds = (now - gameState.lastOnlineTime) / 1000;
             
-            console.log('Прошло секунд:', diffSeconds); // Для отладки
-            
-            if (diffSeconds > 5) { // Если прошло больше 5 секунд
+            if (diffSeconds > 5) {
                 const regenRate = 0.15 + (gameState.regenLevel * 0.1);
                 const recovered = diffSeconds * regenRate;
                 
@@ -763,12 +761,10 @@
                 }
             }
             
-            // Обновляем время
             gameState.lastOnlineTime = now;
             saveGame();
         }
         
-        // Сохранение игры
         function saveGame() {
             localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
         }
@@ -812,7 +808,6 @@
                 
                 setTimeout(() => {
                     preloader.classList.add('hidden');
-                    // ВАЖНО: считаем офлайн-энергию после загрузки
                     calculateOfflineEnergy();
                     updateDisplay();
                 }, 500);
@@ -970,7 +965,7 @@
             }
             
             updateAchievements();
-            saveGame(); // Сохраняем при каждом обновлении
+            saveGame();
         }
         
         function playSound(type) {
@@ -1168,7 +1163,6 @@
         };
         
         window.inviteFriend = function() {
-            // Реферальная ссылка (не влияет на игру)
             const link = `https://t.me/your_bot/app?startapp=${userId}`;
             
             tg.openTelegramLink(
@@ -1183,24 +1177,22 @@
             document.getElementById('achievementsPanel').classList.toggle('hidden');
         };
         
-        // ОБНОВЛЕНИЕ КАЖДУЮ СЕКУНДУ
+        // ========== ИСПРАВЛЕННЫЙ ИНТЕРВАЛ (ЭНЕРГИЯ БОЛЬШЕ НЕ ТРАТИТСЯ) ==========
         setInterval(() => {
+            // ТОЛЬКО регенерация энергии - никогда не тратится сама
             if (gameState.energy < gameState.maxEnergy) {
                 gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + getRegenRate() / 10);
             }
             
-            if (gameState.autoClickerLevel > 0 && gameState.energy >= 1) {
-                if (Math.random() < 0.1) {
-                    gameState.energy -= 1;
-                    const earn = getEarnPerTap() * gameState.autoClickerLevel * 0.3;
-                    gameState.coins += earn;
-                    gameState.achievements.clicks++;
-                    gameState.achievements.totalCoins += earn;
-                }
+            // АВТО-КЛИКЕР - теперь НЕ тратит энергию, а просто даёт монеты
+            if (gameState.autoClickerLevel > 0) {
+                // Каждую секунду получаем монеты без траты энергии
+                const autoEarn = getEarnPerTap() * gameState.autoClickerLevel * 0.3;
+                gameState.coins += autoEarn;
+                gameState.achievements.clicks++;
+                gameState.achievements.totalCoins += autoEarn;
             }
             
-            // ВАЖНО: НЕ обновляем lastOnlineTime здесь!
-            // lastOnlineTime должно обновляться ТОЛЬКО при закрытии или входе
             updateDisplay();
         }, 100);
         
