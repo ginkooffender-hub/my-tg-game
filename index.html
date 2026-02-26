@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MONEY TREE 🎮 ULTIMATE</title>
+    <title>ПИКСЕЛЬНАЯ ПРОЯВКА █ 90's</title>
+    <!-- Подключаем пиксельные шрифты -->
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P|VT323&display=swap&subset=cyrillic" rel="stylesheet">
+    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        
+        /* Пиксельный ресет */
         * {
             margin: 0;
             padding: 0;
@@ -15,1205 +17,684 @@
             image-rendering: pixelated;
             image-rendering: crisp-edges;
         }
-        
+
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #0a0f1e, #1a1f3a);
-            font-family: 'Press Start 2P', cursive;
+            background: #000000;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 8px;
+            font-family: 'VT323', 'Press Start 2P', monospace;
+        }
+
+        /* Главный экран — как старый дисплей */
+        .game-container {
+            max-width: 400px;
+            width: 100%;
+            background: #000000;
+            border: 4px solid #00ff00;
+            padding: 16px 12px;
+            box-shadow: 0 0 0 2px #004400, 0 0 0 4px #00aa00;
             position: relative;
         }
-        
-        body::before {
+
+        /* Эффект старого экрана (строчки) */
+        .game-container::before {
             content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                repeating-linear-gradient(0deg, 
-                    rgba(0,0,0,0.15) 0px, 
-                    rgba(0,0,0,0.15) 2px,
-                    transparent 2px,
-                    transparent 4px);
-            pointer-events: none;
-            z-index: 1000;
-            animation: scanlines 8s linear infinite;
-        }
-        
-        @keyframes scanlines {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(4px); }
-        }
-        
-        .cartridge {
-            width: 100%;
-            max-width: 440px;
-            background: #1e2a3a;
-            border: 6px solid #ff6b6b;
-            border-radius: 30px 30px 15px 15px;
-            padding: 20px 12px;
-            position: relative;
-            box-shadow: 
-                0 15px 0 #b22222,
-                0 20px 20px rgba(0,0,0,0.5);
-            max-height: 700px;
-            overflow-y: auto;
-            scrollbar-width: none;
-        }
-        
-        .cartridge::-webkit-scrollbar {
-            display: none;
-        }
-        
-        .cartridge-label {
-            position: sticky;
-            top: 0;
-            background: #ffd700;
-            color: #000;
-            font-size: 12px;
-            padding: 8px 20px;
-            border-radius: 20px;
-            border: 3px solid #b8860b;
-            text-align: center;
-            margin-bottom: 10px;
-            z-index: 100;
-            box-shadow: 0 4px 0 #8b6910;
-        }
-        
-        .screen {
-            background: #0a1420;
-            border: 6px solid #4a4a6a;
-            border-radius: 20px;
-            padding: 15px;
-            margin: 15px 0 20px 0;
-            box-shadow: inset 0 0 30px rgba(0,255,0,0.2);
-        }
-        
-        .led-panel {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            padding: 5px;
-            background: #000;
-            border: 2px solid #3a3a5a;
-        }
-        
-        .led {
-            color: #ff4d4d;
-            font-size: 10px;
-            animation: blink 1s infinite;
-        }
-        
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-        
-        .score-panel {
-            background: #000;
-            border: 4px solid #ffd700;
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        
-        .coin-sprite {
-            font-size: 28px;
-            filter: drop-shadow(0 0 10px #ffd700);
-            animation: spin 2s steps(8) infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .score-value {
-            color: #ffd700;
-            font-size: 24px;
-            text-shadow: 4px 4px 0 #8b6910;
-            letter-spacing: 2px;
-        }
-        
-        .tree-area {
-            background: #2a5a3a;
-            border: 6px solid #1e3a2a;
-            padding: 25px;
-            margin: 20px 0;
-            text-align: center;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 
-                0 10px 0 #1e3a2a,
-                inset 0 -5px 0 #3a7a4a;
-            transition: all 0.03s linear;
-        }
-        
-        .tree-area:active {
-            transform: translateY(10px);
-            box-shadow: 0 0 0 #1e3a2a;
-        }
-        
-        .tree-sprite {
-            font-size: 120px;
-            display: block;
-            filter: drop-shadow(0 10px 0 #1e3a2a);
-            animation: treeSway 2s infinite;
-        }
-        
-        @keyframes treeSway {
-            0%, 100% { transform: rotate(0deg); }
-            33% { transform: rotate(2deg); }
-            66% { transform: rotate(-2deg); }
-        }
-        
-        .energy-container {
-            margin: 20px 0;
-            background: #1a1a3a;
-            border: 4px solid #4a4a8a;
-            padding: 15px;
-        }
-        
-        .energy-header {
-            display: flex;
-            justify-content: space-between;
-            color: #7fffd4;
-            font-size: 12px;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 0 #2a6a6a;
-        }
-        
-        .energy-track {
-            background: #2a2a5a;
-            height: 25px;
-            border: 3px solid #6a6aaa;
-        }
-        
-        .energy-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #7fffd4, #40e0d0);
-            width: 100%;
-            box-shadow: inset 0 2px 0 #b0ffff;
-            transition: width 0.1s steps(5);
-        }
-        
-        .power-indicator {
-            color: #ffb347;
-            font-size: 10px;
-            text-align: center;
-            margin: 10px 0;
-            text-shadow: 2px 2px 0 #b85e00;
-        }
-        
-        .crit-indicator {
-            color: #ff6b6b;
-            font-size: 8px;
-            text-align: center;
-            margin: 5px 0;
-            animation: critPulse 1s infinite;
-        }
-        
-        @keyframes critPulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; text-shadow: 0 0 10px red; }
-        }
-        
-        .menu-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            gap: 5px;
-            margin: 20px 0;
-        }
-        
-        .menu-btn {
-            background: #ff6b6b;
-            border: none;
-            border-bottom: 4px solid #b22222;
-            color: white;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 8px;
-            padding: 12px 0;
-            cursor: pointer;
-            text-align: center;
-            text-shadow: 2px 2px 0 #8b0000;
-            transition: all 0.03s linear;
-        }
-        
-        .menu-btn:active {
-            transform: translateY(4px);
-            border-bottom-width: 2px;
-        }
-        
-        .menu-btn.active {
-            background: #ffd700;
-            color: #000;
-            text-shadow: 2px 2px 0 #b8860b;
-            border-bottom-color: #b8860b;
-        }
-        
-        .shop-container {
-            background: #1e2a3a;
-            border: 4px solid #ffd700;
-            padding: 15px;
-            margin-top: 15px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
-        .shop-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .shop-container::-webkit-scrollbar-track {
-            background: #1e2a3a;
-        }
-        
-        .shop-container::-webkit-scrollbar-thumb {
-            background: #ffd700;
-            border: 2px solid #b8860b;
-        }
-        
-        .shop-item {
-            background: #2a3a5a;
-            border: 4px solid #4a6a9a;
-            padding: 12px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .shop-item.special {
-            border-color: #ff6b6b;
-            background: #3a2a5a;
-        }
-        
-        .item-info h3 {
-            color: #ffd700;
-            font-size: 8px;
-            margin-bottom: 4px;
-        }
-        
-        .item-desc {
-            color: #aaccff;
-            font-size: 6px;
-            margin-bottom: 4px;
-        }
-        
-        .item-price {
-            color: #7fffd4;
-            font-size: 7px;
-        }
-        
-        .buy-btn {
-            background: #ffd700;
-            border: none;
-            border-bottom: 4px solid #b8860b;
-            color: #000;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 7px;
-            padding: 8px 10px;
-            cursor: pointer;
-            min-width: 60px;
-        }
-        
-        .buy-btn:active {
-            transform: translateY(4px);
-            border-bottom-width: 2px;
-        }
-        
-        .friends-area {
-            background: #2a3a5a;
-            border: 4px solid #4a6a9a;
-            padding: 15px;
-            margin-top: 15px;
-            text-align: center;
-        }
-        
-        .invite-btn {
-            background: #7fffd4;
-            border: none;
-            border-bottom: 6px solid #40e0d0;
-            color: #000;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 10px;
-            padding: 15px;
-            width: 100%;
-            cursor: pointer;
-            margin: 10px 0;
-        }
-        
-        .friend-counter {
-            color: #ffd700;
-            font-size: 10px;
-            text-shadow: 2px 2px 0 #8b6910;
-        }
-        
-        .achievements-panel {
-            background: #1e2a3a;
-            border: 4px solid #ffd700;
-            padding: 15px;
-            margin: 15px 0;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .achievement-item {
-            background: #2a3a5a;
-            border: 3px solid #4a6a9a;
-            padding: 12px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .achievement-item.completed {
-            border-color: #ffd700;
-            background: #3a2a5a;
-        }
-        
-        .achievement-icon {
-            font-size: 24px;
-            min-width: 40px;
-            text-align: center;
-        }
-        
-        .achievement-info {
-            flex: 1;
-        }
-        
-        .achievement-name {
-            color: #ffd700;
-            font-size: 8px;
-            margin-bottom: 5px;
-        }
-        
-        .achievement-progress {
-            height: 6px;
-            background: #1a1a3a;
-            border: 2px solid #4a4a8a;
-            margin: 5px 0;
-        }
-        
-        .achievement-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #7fffd4, #40e0d0);
-            width: 0%;
-        }
-        
-        .achievement-reward {
-            color: #7fffd4;
-            font-size: 7px;
-        }
-        
-        .achievements-btn {
-            background: #ffb347;
-            border: none;
-            border-bottom: 4px solid #b85e00;
-            color: #000;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 7px;
-            padding: 8px;
-            width: 100%;
-            cursor: pointer;
-            margin: 5px 0;
-        }
-        
-        .popup-8bit {
-            position: fixed;
-            color: #ffd700;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 20px;
-            pointer-events: none;
-            z-index: 9999;
-            text-shadow: 
-                4px 4px 0 #b8860b,
-                -2px -2px 0 #ff8c00;
-            animation: popupFloat 0.6s steps(5) forwards;
-        }
-        
-        .popup-crit {
-            color: #ff6b6b;
-            text-shadow: 
-                4px 4px 0 #8b0000,
-                -2px -2px 0 #ff4500;
-        }
-        
-        @keyframes popupFloat {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-120px) scale(2); opacity: 0; }
-        }
-        
-        .hit-flash {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 215, 0, 0.5);
-            animation: flash 0.1s steps(2);
+            background: linear-gradient(rgba(0, 255, 0, 0.03) 50%, rgba(0, 0, 0, 0.03) 50%);
+            background-size: 100% 4px;
             pointer-events: none;
+            z-index: 10;
         }
-        
-        .hit-flash.crit {
-            background: rgba(255, 0, 0, 0.7);
-        }
-        
-        @keyframes flash {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 1; }
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .stats-line {
+
+        /* Верхняя панель — как в Brick Game */
+        .status-bar {
             display: flex;
             justify-content: space-between;
-            color: #aaccff;
-            font-size: 8px;
-            margin: 10px 0;
-            padding: 5px;
-            background: #1a1a3a;
-            border: 2px solid #3a3a6a;
+            align-items: center;
+            border: 2px solid #00ff00;
+            padding: 8px 12px;
+            margin-bottom: 16px;
+            background: #001100;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            color: #00ff00;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
-        
-        .preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
+
+        .blink {
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Основной экран с плёнкой */
+        .film-display {
+            border: 4px solid #00ff00;
+            background: #001100;
+            padding: 20px 16px;
+            margin-bottom: 16px;
+            text-align: center;
+            position: relative;
+        }
+
+        .film-strip {
             display: flex;
             justify-content: center;
-            align-items: center;
-            z-index: 20000;
-            transition: opacity 0.5s;
-            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 16px;
         }
-        
-        .preloader.hidden {
-            opacity: 0;
-            pointer-events: none;
+
+        .frame {
+            width: 40px;
+            height: 40px;
+            background: #002200;
+            border: 2px solid #00aa00;
+            position: relative;
         }
-        
-        .preloader-box {
-            text-align: center;
+
+        .frame.filled {
+            background: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
         }
-        
-        .preloader-title {
-            color: #ffd700;
+
+        .frame.filled::after {
+            content: "☀";
+            color: #000000;
             font-size: 20px;
-            margin-bottom: 30px;
-            text-shadow: 4px 4px 0 #8b6910;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
-        
-        .preloader-animation {
-            font-size: 80px;
-            margin: 20px 0;
-            animation: preloadSpin 1s steps(8) infinite;
+
+        .frame.current {
+            border-color: #ffff00;
+            box-shadow: 0 0 15px #ffff00;
+            animation: pulse 0.8s infinite;
         }
-        
-        @keyframes preloadSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        @keyframes pulse {
+            0% { border-color: #ffff00; }
+            50% { border-color: #00ff00; }
+            100% { border-color: #ffff00; }
         }
-        
-        .preloader-bar {
-            width: 250px;
+
+        /* Индикатор прогресса */
+        .progress-bar {
+            width: 100%;
             height: 20px;
-            background: #1a1a3a;
-            border: 4px solid #4a4a8a;
-            margin: 20px auto;
+            border: 2px solid #00ff00;
+            background: #001100;
+            margin: 12px 0;
+            position: relative;
         }
-        
-        .preloader-fill {
+
+        .progress-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #7fffd4, #40e0d0);
-            transition: width 0.1s;
+            background: #00ff00;
+            transition: width 0.1s linear;
         }
-        
-        .preloader-tip {
-            color: #7fffd4;
-            font-size: 8px;
-            max-width: 250px;
-            line-height: 1.5;
-            margin-top: 20px;
+
+        /* Информационная строка (как на кассовом аппарате) */
+        .info-line {
+            display: flex;
+            justify-content: space-between;
+            color: #00ff00;
+            font-family: 'VT323', monospace;
+            font-size: 20px;
+            border-top: 2px solid #00aa00;
+            border-bottom: 2px solid #00aa00;
+            padding: 8px 0;
+            margin: 12px 0;
+        }
+
+        /* Кнопки (пиксельные, как в тетрисе) */
+        .button-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        .pixel-btn {
+            background: #001100;
+            border: 3px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            padding: 16px 4px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 0 0 2px #000000;
+            transition: all 0.05s linear;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .pixel-btn:active {
+            background: #00ff00;
+            color: #000000;
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        .pixel-btn:disabled {
+            opacity: 0.3;
+            border-color: #004400;
+            pointer-events: none;
+        }
+
+        /* Счётчик монет */
+        .coin-display {
+            background: #001100;
+            border: 2px solid #00ff00;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #ffff00;
+            font-family: 'VT323', monospace;
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        /* Лог действий */
+        .log {
+            border: 2px solid #00ff00;
+            background: #001100;
+            padding: 8px;
+            height: 70px;
+            overflow-y: hidden;
+            font-family: 'VT323', monospace;
+            font-size: 16px;
+            color: #00ff00;
+            margin-top: 12px;
+        }
+
+        .log p {
+            margin: 4px 0;
+            line-height: 1.2;
+        }
+
+        /* Мигающий курсор */
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 16px;
+            background: #00ff00;
+            animation: blink 1s infinite;
+            margin-left: 4px;
+        }
+
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div id="preloader" class="preloader">
-        <div class="preloader-box">
-            <div class="preloader-title">💰 MONEY TREE 💰</div>
-            <div class="preloader-animation" id="preloaderEmoji">🌱</div>
-            <div class="preloader-bar">
-                <div class="preloader-fill" id="preloaderFill" style="width: 0%"></div>
-            </div>
-            <div class="preloader-tip" id="preloaderTip">
-                ЗАГРУЗКА...
-            </div>
+    <div class="game-container">
+        <!-- Статус-бар как в Brick Game -->
+        <div class="status-bar">
+            <span>ПРОЯВКА v1.0</span>
+            <span class="blink">▶▶ РАБОТАЕМ ◀◀</span>
+            <span>2026</span>
         </div>
-    </div>
 
-    <div class="cartridge">
-        <div class="cartridge-label">🎮 ULTIMATE EDITION 🎮</div>
-        
-        <div class="led-panel">
-            <span class="led">🔴 POWER</span>
-            <span class="led">🟡 READY</span>
-            <span class="led">🟢 PLAY</span>
-        </div>
-        
-        <div id="mainScreen">
-            <div class="score-panel">
-                <span class="coin-sprite">💰</span>
-                <span class="score-value" id="coinDisplay">0</span>
+        <!-- Основной дисплей -->
+        <div class="film-display">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; color: #00ff00; font-size: 14px;">
+                <span>ПЛЁНКА: <span id="filmType">ILFORD HP5</span></span>
+                <span>КАДР: <span id="currentFrameDisplay">01</span>/36</span>
             </div>
-            
-            <div class="tree-area" id="treeClick">
-                <span class="tree-sprite" id="treeEmoji">🌱</span>
-                <div id="hitEffect" class="hit-flash" style="display: none;"></div>
+
+            <!-- Пиксельная полоска плёнки -->
+            <div class="film-strip" id="filmStrip"></div>
+
+            <!-- Этап процесса -->
+            <div style="color: #ffff00; font-size: 22px; margin: 10px 0; font-family: 'VT323';">
+                ЭТАП: <span id="stageName">ЗАРЯДКА</span>
+                <span class="cursor"></span>
             </div>
-            
-            <div class="energy-container">
-                <div class="energy-header">
-                    <span>🔋 ENERGY</span>
-                    <span id="energyDisplay">200/200</span>
-                </div>
-                <div class="energy-track">
-                    <div class="energy-fill" id="energyFill" style="width: 100%"></div>
-                </div>
+
+            <!-- Индикатор прогресса -->
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
             </div>
-            
-            <div class="stats-line">
-                <span>⚡ РЕГЕН: <span id="regenRate">0.15</span>/сек</span>
-                <span>🎯 КРИТ: <span id="critRate">0</span>%</span>
-                <span>🤖 АВТО: <span id="autoStatus">ВЫКЛ</span></span>
-            </div>
-            
-            <div class="power-indicator">
-                💰 ЗА КЛИК: <span id="earnPerTap">1</span>
-            </div>
-            
-            <div class="crit-indicator" id="critMessage" style="display: none;">
-                🎯 КРИТИЧЕСКИЙ УДАР! 🎯
-            </div>
-            
-            <button class="achievements-btn" onclick="toggleAchievements()">
-                🏆 АЧИВКИ (0/10)
-            </button>
-            
-            <div id="achievementsPanel" class="achievements-panel hidden"></div>
-        </div>
-        
-        <div id="shopScreen" class="hidden">
-            <div class="shop-container">
-                <div class="shop-item">
-                    <div class="item-info">
-                        <h3>🌱 ЭВОЛЮЦИЯ</h3>
-                        <div class="item-desc">Множитель дохода +0.5</div>
-                        <div class="item-price" id="evoPrice">2000</div>
-                    </div>
-                    <button class="buy-btn" onclick="buyUpgrade('evo')">АП</button>
-                </div>
-                
-                <div class="shop-item">
-                    <div class="item-info">
-                        <h3>💪 СИЛА ТАПА</h3>
-                        <div class="item-desc">+1 монета за клик</div>
-                        <div class="item-price" id="tapPrice">100</div>
-                    </div>
-                    <button class="buy-btn" onclick="buyUpgrade('tap')">АП</button>
-                </div>
-                
-                <div class="shop-item">
-                    <div class="item-info">
-                        <h3>🔋 МАКС ЭНЕРГИЯ</h3>
-                        <div class="item-desc">+100 к лимиту</div>
-                        <div class="item-price" id="energyPrice">100</div>
-                    </div>
-                    <button class="buy-btn" onclick="buyUpgrade('energy')">АП</button>
-                </div>
-                
-                <div class="shop-item special">
-                    <div class="item-info">
-                        <h3>⚡ РЕГЕНЕРАЦИЯ</h3>
-                        <div class="item-desc">+0.1 энергии/сек</div>
-                        <div class="item-price" id="regenPrice">1000</div>
-                    </div>
-                    <button class="buy-btn" onclick="buyUpgrade('regen')">АП</button>
-                </div>
-                
-                <div class="shop-item special">
-                    <div class="item-info">
-                        <h3>🤖 АВТО-КЛИКЕР</h3>
-                        <div class="item-desc">Автоматические клики</div>
-                        <div class="item-price" id="autoPrice">5000</div>
-                    </div>
-                    <button class="buy-btn" onclick="buyUpgrade('auto')">АП</button>
-                </div>
-                
-                <div class="shop-item special">
-                    <div class="item-info">
-                        <h3>🎯 КРИТ УДАР</h3>
-                        <div class="item-desc">Шанс x3 урона</div>
-                        <div class="item-price" id="critPrice">2000</div>
-                    </div>
-                    <button class="buy-btn" onclick="buyUpgrade('crit')">АП</button>
-                </div>
+
+            <!-- Подсказка по тапам -->
+            <div style="color: #00aa00; font-size: 14px; margin-top: 8px;" id="hintText">
+                ТАПАЙ 10 РАЗ, ЧТОБЫ ЗАРЯДИТЬ ПЛЁНКУ
             </div>
         </div>
-        
-        <div id="friendsScreen" class="hidden">
-            <div class="friends-area">
-                <button class="invite-btn" onclick="inviteFriend()">
-                    🔗 ПРИГЛАСИТЬ ДРУГА
-                </button>
-                <div class="friend-counter" id="friendCount">
-                    ДРУЗЕЙ: 0
-                </div>
-                <div style="color: #7fffd4; font-size: 8px; margin-top: 15px;">
-                    +500 ЗА КАЖДОГО ДРУГА
-                </div>
-            </div>
+
+        <!-- Информация -->
+        <div class="info-line">
+            <span>💰 КОИНЫ: <span id="coinCount">0</span></span>
+            <span>⚡ ОПЫТ: <span id="expCount">0</span></span>
         </div>
-        
-        <div class="menu-buttons">
-            <button class="menu-btn active" onclick="showScreen('main', this)">🌳 ИГРА</button>
-            <button class="menu-btn" onclick="showScreen('shop', this)">🚀 БУСТЫ</button>
-            <button class="menu-btn" onclick="showScreen('friends', this)">👥 ДРУЗЬЯ</button>
-            <button class="menu-btn" onclick="showScreen('achievements', this)">🏆 АЧИВКИ</button>
+
+        <!-- Панель с монетами и бустерами -->
+        <div class="coin-display">
+            <span>🪙 БАЛАНС</span>
+            <span><span id="coinDisplay">0</span> MC</span>
         </div>
+
+        <!-- Кнопки управления -->
+        <div class="button-panel">
+            <button class="pixel-btn" id="tapBtn">▶ ТАП!</button>
+            <button class="pixel-btn" id="buyFilmBtn">📷 КУПИТЬ ПЛЁНКУ (50)</button>
+            <button class="pixel-btn" id="boostBtn">⚡ БУСТЕР (100)</button>
+        </div>
+
+        <!-- Лог событий (как печатная машинка) -->
+        <div class="log" id="logBox">
+            <p>> СИСТЕМА ГОТОВА</p>
+            <p>> ЗАРЯДИТЕ ПЛЁНКУ</p>
+        </div>
+
+        <!-- Скрытое поле для Telegram данных -->
+        <div id="telegram-data" style="display: none;"></div>
     </div>
 
     <script>
+        // ========== ИНИЦИАЛИЗАЦИЯ TELEGRAM ==========
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
-        
-        const userId = tg.initDataUnsafe?.user?.id || 'guest_' + Math.random();
-        const SAVE_KEY = 'money_tree_final_' + userId;
-        
-        // СОСТОЯНИЕ ИГРЫ
-        let gameState = {
+        tg.enableClosingConfirmation(); // Спрашивает при закрытии
+
+        // ========== СОСТОЯНИЕ ИГРЫ ==========
+        const gameState = {
+            // Ресурсы
             coins: 0,
-            tapPower: 1,
-            energy: 200,
-            maxEnergy: 200,
-            treeLevel: 0,
-            referrals: [],
-            regenLevel: 0,
-            autoClickerLevel: 0,
-            critLevel: 0,
-            lastOnlineTime: Date.now(),
-            achievements: {
-                clicks: 0,
-                totalCoins: 0,
-                crits: 0,
-                upgrades: 0
-            },
-            completedAchievements: []
+            exp: 0,
+            
+            // Плёнка
+            filmType: 'ILFORD HP5',
+            currentFrame: 1,
+            maxFrames: 36,
+            exposedFrames: [], // какие кадры уже "сняты"
+            
+            // Процесс проявки
+            stage: 'loading', // loading, develop, stop, fix, wash, scan, complete
+            stageProgress: 0,
+            stageMax: 10, // сколько тапов нужно
+            
+            // Бустеры
+            boostActive: false,
+            boostEndTime: 0,
+            
+            // Статистика
+            filmsDeveloped: 0,
+            totalTaps: 0,
+            
+            // Таймеры
+            lastTick: Date.now(),
+            
+            // Жив ли процесс
+            isActive: true
         };
-        
-        const treeStages = ['🌱', '🌿', '🌳', '🌲', '🎄', '👑🌳'];
-        
-        // Загрузка сохранения
-        try {
-            const saved = localStorage.getItem(SAVE_KEY);
-            if (saved) {
-                const loaded = JSON.parse(saved);
-                gameState = {...gameState, ...loaded};
+
+        // ========== КОНФИГУРАЦИЯ ЭТАПОВ ==========
+        const stages = {
+            loading: {
+                name: 'ЗАРЯДКА',
+                hint: 'ТАПАЙ 10 РАЗ, ЧТОБЫ ЗАРЯДИТЬ ПЛЁНКУ',
+                maxTaps: 10,
+                next: 'develop',
+                coinReward: 5,
+                expReward: 2
+            },
+            develop: {
+                name: 'ПРОЯВИТЕЛЬ',
+                hint: 'ТАПАЙ КАЖДЫЕ 5 СЕК, ЧТОБЫ ВЗБАЛТЫВАТЬ',
+                maxTaps: 20,
+                next: 'stop',
+                coinReward: 10,
+                expReward: 5
+            },
+            stop: {
+                name: 'СТОП-ВАННА',
+                hint: 'БЫСТРЫЕ ТАПЫ! УСПЕЙ ЗА 10 СЕК',
+                maxTaps: 15,
+                next: 'fix',
+                coinReward: 8,
+                expReward: 4
+            },
+            fix: {
+                name: 'ФИКСАЖ',
+                hint: 'ТАПАЙ, ПОКА ПЛЁНКА НЕ СТАНЕТ ПРОЗРАЧНОЙ',
+                maxTaps: 25,
+                next: 'wash',
+                coinReward: 12,
+                expReward: 6
+            },
+            wash: {
+                name: 'СУШКА',
+                hint: 'НЕ ТАПАЙ! ЖДИ 15 СЕКУНД',
+                maxTaps: 0, // нельзя тапать
+                waitTime: 15000, // 15 секунд
+                next: 'scan',
+                coinReward: 5,
+                expReward: 3
+            },
+            scan: {
+                name: 'СКАНИРОВАНИЕ',
+                hint: 'ТАПАЙ, ЧТОБЫ ПРОДВИГАТЬ СКАНЕР',
+                maxTaps: 30,
+                next: 'complete',
+                coinReward: 20,
+                expReward: 10
+            },
+            complete: {
+                name: 'ГОТОВО!',
+                hint: 'ПЛЁНКА ПРОЯВЛЕНА. НОВАЯ?',
+                maxTaps: 0,
+                next: 'loading',
+                coinReward: 0,
+                expReward: 0
             }
-        } catch (e) {}
-        
-        // ========== ОФЛАЙН-ЭНЕРГИЯ ==========
-        function calculateOfflineEnergy() {
-            const now = Date.now();
-            const diffSeconds = (now - gameState.lastOnlineTime) / 1000;
+        };
+
+        // ========== ЭЛЕМЕНТЫ DOM ==========
+        const elements = {
+            filmType: document.getElementById('filmType'),
+            currentFrameDisplay: document.getElementById('currentFrameDisplay'),
+            filmStrip: document.getElementById('filmStrip'),
+            stageName: document.getElementById('stageName'),
+            progressFill: document.getElementById('progressFill'),
+            hintText: document.getElementById('hintText'),
+            coinCount: document.getElementById('coinCount'),
+            coinDisplay: document.getElementById('coinDisplay'),
+            expCount: document.getElementById('expCount'),
+            logBox: document.getElementById('logBox'),
+            tapBtn: document.getElementById('tapBtn'),
+            buyFilmBtn: document.getElementById('buyFilmBtn'),
+            boostBtn: document.getElementById('boostBtn')
+        };
+
+        // ========== ФУНКЦИИ ЛОГА ==========
+        function addLog(message) {
+            const p = document.createElement('p');
+            p.textContent = '> ' + message;
+            elements.logBox.appendChild(p);
             
-            if (diffSeconds > 5) {
-                const regenRate = 0.15 + (gameState.regenLevel * 0.1);
-                const recovered = diffSeconds * regenRate;
-                
-                const oldEnergy = gameState.energy;
-                gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + recovered);
-                
-                const gained = Math.floor(gameState.energy - oldEnergy);
-                
-                if (gained > 0) {
-                    tg.showPopup({
-                        title: '⚡ ЭНЕРГИЯ ВОССТАНОВЛЕНА!',
-                        message: `Пока тебя не было, накопилось ${gained} энергии`,
-                        buttons: [{ type: 'ok' }]
-                    });
-                }
+            // Ограничиваем количество строк
+            while (elements.logBox.children.length > 5) {
+                elements.logBox.removeChild(elements.logBox.firstChild);
             }
             
-            gameState.lastOnlineTime = now;
-            saveGame();
+            // Скролл вниз
+            elements.logBox.scrollTop = elements.logBox.scrollHeight;
         }
-        
-        function saveGame() {
-            localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
-        }
-        
-        // Рефералка
-        const urlParams = new URLSearchParams(window.location.search);
-        const refId = urlParams.get('startapp');
-        
-        if (refId && refId !== userId && !localStorage.getItem('ref_' + userId)) {
-            gameState.coins += 500;
-            gameState.referrals.push(refId);
-            localStorage.setItem('ref_' + userId, 'true');
-        }
-        
-        // ПРЕЛОАДЕР
-        const preloader = document.getElementById('preloader');
-        const preloaderFill = document.getElementById('preloaderFill');
-        const preloaderTip = document.getElementById('preloaderTip');
-        const preloaderEmoji = document.getElementById('preloaderEmoji');
-        
-        const tips = [
-            "КЛИКАЙ ПО ДЕРЕВУ, ЧТОБЫ ЗАРАБАТЫВАТЬ!",
-            "ПОКУПАЙ БУСТЫ В МАГАЗИНЕ!",
-            "ПРИГЛАШАЙ ДРУЗЕЙ И ПОЛУЧАЙ БОНУСЫ!",
-            "ЭНЕРГИЯ ВОССТАНАВЛИВАЕТСЯ ДАЖЕ ОФЛАЙН!"
-        ];
-        
-        let progress = 0;
-        const preloadInterval = setInterval(() => {
-            progress += 2;
-            preloaderFill.style.width = progress + '%';
-            preloaderEmoji.textContent = ['🌱', '🌿', '🌳', '🌲', '🎄'][Math.floor(progress / 20)];
-            
-            if (progress % 25 === 0) {
-                preloaderTip.textContent = tips[Math.floor(Math.random() * tips.length)];
-            }
-            
-            if (progress >= 100) {
-                clearInterval(preloadInterval);
-                playBootSound();
-                
-                setTimeout(() => {
-                    preloader.classList.add('hidden');
-                    calculateOfflineEnergy();
-                    updateDisplay();
-                }, 500);
-            }
-        }, 30);
-        
-        function playBootSound() {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            const ctx = new AudioContext();
-            
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(440, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
-            osc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.2);
-            
-            gain.gain.setValueAtTime(0.2, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-            
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            
-            osc.start();
-            osc.stop(ctx.currentTime + 0.3);
-            
-            const osc2 = ctx.createOscillator();
-            osc2.type = 'triangle';
-            osc2.frequency.setValueAtTime(880, ctx.currentTime + 0.1);
-            osc2.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.2);
-            
-            const gain2 = ctx.createGain();
-            gain2.gain.setValueAtTime(0.1, ctx.currentTime + 0.1);
-            gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-            
-            osc2.connect(gain2);
-            gain2.connect(ctx.destination);
-            
-            osc2.start(ctx.currentTime + 0.1);
-            osc2.stop(ctx.currentTime + 0.3);
-        }
-        
-        // Функция форматирования чисел (K, M, B)
-        function formatNumber(num) {
-            if (num >= 1000000000) {
-                return (num / 1000000000).toFixed(1) + 'B';
-            } else if (num >= 1000000) {
-                return (num / 1000000).toFixed(1) + 'M';
-            } else if (num >= 1000) {
-                return (num / 1000).toFixed(1) + 'K';
-            } else {
-                return num.toString();
-            }
-        }
-        
-        // АЧИВКИ
-        const achievements = [
-            { id: 'click100', name: 'НОВИЧОК', desc: '100 кликов', icon: '👆', target: 100, reward: 500 },
-            { id: 'click1000', name: 'ТРУЖЕНИК', desc: '1000 кликов', icon: '👐', target: 1000, reward: 2000 },
-            { id: 'click10000', name: 'МАШИНА', desc: '10000 кликов', icon: '🤖', target: 10000, reward: 10000 },
-            { id: 'coins1000', name: 'БОГАЧ', desc: '1000 монет', icon: '💰', target: 1000, reward: 500 },
-            { id: 'coins10000', name: 'МИЛЛИОНЕР', desc: '10000 монет', icon: '💎', target: 10000, reward: 2000 },
-            { id: 'crit100', name: 'СНАЙПЕР', desc: '100 критов', icon: '🎯', target: 100, reward: 1000 },
-            { id: 'friends5', name: 'КОМАНДА', desc: '5 друзей', icon: '👥', target: 5, reward: 2500 },
-            { id: 'upgrades10', name: 'КОЛЛЕКЦИОНЕР', desc: '10 улучшений', icon: '⚡', target: 10, reward: 1500 },
-            { id: 'treeMax', name: 'ЛЕСНОЙ КОРОЛЬ', desc: 'Макс. дерево', icon: '👑', target: 1, reward: 5000 },
-            { id: 'regen5', name: 'БАТАРЕЙКА', desc: '5 ур регена', icon: '🔋', target: 5, reward: 3000 }
-        ];
-        
-        function updateAchievements() {
-            achievements.forEach(ach => {
-                if (gameState.completedAchievements.includes(ach.id)) return;
-                
-                let progress = 0;
-                
-                if (ach.id.includes('click')) progress = gameState.achievements.clicks;
-                if (ach.id.includes('coins')) progress = gameState.achievements.totalCoins;
-                if (ach.id === 'crit100') progress = gameState.achievements.crits;
-                if (ach.id === 'friends5') progress = gameState.referrals.length;
-                if (ach.id === 'upgrades10') progress = gameState.achievements.upgrades;
-                if (ach.id === 'treeMax') progress = gameState.treeLevel >= 5 ? 1 : 0;
-                if (ach.id === 'regen5') progress = gameState.regenLevel;
-                
-                if (progress >= ach.target && !gameState.completedAchievements.includes(ach.id)) {
-                    gameState.completedAchievements.push(ach.id);
-                    gameState.coins += ach.reward;
-                    
-                    tg.showPopup({
-                        title: '🏆 АЧИВКА!',
-                        message: `${ach.name}: ${ach.desc}\n+${ach.reward} монет!`,
-                        buttons: [{ type: 'ok' }]
-                    });
-                    
-                    playSound('buy');
-                }
-            });
-            
-            const panel = document.getElementById('achievementsPanel');
+
+        // ========== ОТРИСОВКА ПЛЁНКИ ==========
+        function renderFilmStrip() {
             let html = '';
-            achievements.forEach(ach => {
-                const completed = gameState.completedAchievements.includes(ach.id);
-                let progress = 0;
-                
-                if (ach.id.includes('click')) progress = gameState.achievements.clicks;
-                if (ach.id.includes('coins')) progress = gameState.achievements.totalCoins;
-                if (ach.id === 'crit100') progress = gameState.achievements.crits;
-                if (ach.id === 'friends5') progress = gameState.referrals.length;
-                if (ach.id === 'upgrades10') progress = gameState.achievements.upgrades;
-                if (ach.id === 'treeMax') progress = gameState.treeLevel >= 5 ? 1 : 0;
-                if (ach.id === 'regen5') progress = gameState.regenLevel;
-                
-                const percent = Math.min(100, (progress / ach.target) * 100);
-                
-                html += `
-                    <div class="achievement-item ${completed ? 'completed' : ''}">
-                        <div class="achievement-icon">${ach.icon}</div>
-                        <div class="achievement-info">
-                            <div class="achievement-name">${ach.name}</div>
-                            <div class="achievement-progress">
-                                <div class="achievement-fill" style="width: ${percent}%"></div>
-                            </div>
-                            <div class="achievement-reward">${progress}/${ach.target} +${ach.reward}</div>
-                        </div>
-                    </div>
-                `;
-            });
-            panel.innerHTML = html;
+            const startFrame = Math.max(1, gameState.currentFrame - 2);
+            const endFrame = Math.min(gameState.maxFrames, gameState.currentFrame + 2);
             
-            document.querySelector('.achievements-btn').textContent = 
-                `🏆 АЧИВКИ (${gameState.completedAchievements.length}/10)`;
-        }
-        
-        function getRegenRate() {
-            return 0.15 + (gameState.regenLevel * 0.1);
-        }
-        
-        function getCritChance() {
-            return gameState.critLevel * 3;
-        }
-        
-        function getEarnPerTap() {
-            return gameState.tapPower * (1 + gameState.treeLevel * 0.5);
-        }
-        
-        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ОБНОВЛЕНИЯ
-        function updateDisplay() {
-            // Теперь монеты отображаются правильно и не обрезаются
-            document.getElementById('coinDisplay').textContent = formatNumber(Math.floor(gameState.coins));
-            
-            document.getElementById('energyDisplay').textContent = Math.floor(gameState.energy) + '/' + gameState.maxEnergy;
-            document.getElementById('energyFill').style.width = (gameState.energy / gameState.maxEnergy * 100) + '%';
-            document.getElementById('treeEmoji').textContent = treeStages[gameState.treeLevel];
-            document.getElementById('regenRate').textContent = getRegenRate().toFixed(2);
-            document.getElementById('critRate').textContent = getCritChance();
-            document.getElementById('earnPerTap').textContent = formatNumber(Math.floor(getEarnPerTap()));
-            document.getElementById('autoStatus').textContent = gameState.autoClickerLevel > 0 ? gameState.autoClickerLevel + 'УР' : 'ВЫКЛ';
-            
-            document.getElementById('evoPrice').textContent = formatNumber((gameState.treeLevel + 1) * 2000);
-            document.getElementById('tapPrice').textContent = formatNumber(Math.floor(100 * Math.pow(1.5, gameState.tapPower - 1)));
-            document.getElementById('energyPrice').textContent = formatNumber(gameState.maxEnergy);
-            document.getElementById('regenPrice').textContent = formatNumber(1000 * (gameState.regenLevel + 1));
-            document.getElementById('autoPrice').textContent = formatNumber(5000 * (gameState.autoClickerLevel + 1));
-            document.getElementById('critPrice').textContent = formatNumber(2000 * (gameState.critLevel + 1));
-            document.getElementById('friendCount').textContent = 'ДРУЗЕЙ: ' + gameState.referrals.length;
-            
-            if (getCritChance() > 0) {
-                document.getElementById('critMessage').style.display = 'block';
+            for (let i = startFrame; i <= endFrame; i++) {
+                let classes = 'frame';
+                if (gameState.exposedFrames.includes(i)) {
+                    classes += ' filled';
+                }
+                if (i === gameState.currentFrame) {
+                    classes += ' current';
+                }
+                html += `<div class="${classes}" data-frame="${i}"></div>`;
             }
             
-            updateAchievements();
-            saveGame();
+            elements.filmStrip.innerHTML = html;
+            elements.currentFrameDisplay.textContent = String(gameState.currentFrame).padStart(2, '0');
         }
-        
-        function playSound(type) {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            const ctx = new AudioContext();
-            
-            if (type === 'coin') {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(660, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.2);
+
+        // ========== ОБНОВЛЕНИЕ ИНТЕРФЕЙСА ==========
+        function updateUI() {
+            // Обновляем прогресс
+            const stage = stages[gameState.stage];
+            if (stage) {
+                elements.stageName.textContent = stage.name;
+                elements.hintText.textContent = stage.hint;
+                
+                if (stage.maxTaps > 0) {
+                    const progressPercent = (gameState.stageProgress / stage.maxTaps) * 100;
+                    elements.progressFill.style.width = progressPercent + '%';
+                } else {
+                    elements.progressFill.style.width = '0%';
+                }
             }
             
-            if (type === 'click') {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(220, ctx.currentTime);
-                gain.gain.setValueAtTime(0.05, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.1);
-            }
+            // Обновляем монеты и опыт
+            elements.coinCount.textContent = gameState.coins;
+            elements.coinDisplay.textContent = gameState.coins;
+            elements.expCount.textContent = gameState.exp;
             
-            if (type === 'buy') {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(330, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.1);
-                osc.frequency.exponentialRampToValueAtTime(554, ctx.currentTime + 0.2);
-                gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.3);
-            }
-            
-            if (type === 'crit') {
-                const osc1 = ctx.createOscillator();
-                const osc2 = ctx.createOscillator();
-                const gain = ctx.createGain();
-                
-                osc1.type = 'square';
-                osc2.type = 'triangle';
-                
-                osc1.frequency.setValueAtTime(880, ctx.currentTime);
-                osc2.frequency.setValueAtTime(440, ctx.currentTime);
-                
-                gain.gain.setValueAtTime(0.15, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-                
-                osc1.connect(gain);
-                osc2.connect(gain);
-                gain.connect(ctx.destination);
-                
-                osc1.start();
-                osc2.start();
-                osc1.stop(ctx.currentTime + 0.3);
-                osc2.stop(ctx.currentTime + 0.3);
-            }
+            // Обновляем плёнку
+            renderFilmStrip();
         }
-        
-        document.getElementById('treeClick').addEventListener('click', function(e) {
-            if (gameState.energy < 1) {
+
+        // ========== ПЕРЕХОД К СЛЕДУЮЩЕМУ ЭТАПУ ==========
+        function nextStage() {
+            const currentStage = stages[gameState.stage];
+            if (!currentStage) return;
+            
+            // Начисляем награду
+            if (currentStage.coinReward > 0) {
+                gameState.coins += currentStage.coinReward;
+                addLog(`+${currentStage.coinReward} MC ЗА ЭТАП`);
+            }
+            if (currentStage.expReward > 0) {
+                gameState.exp += currentStage.expReward;
+            }
+            
+            // Если этап завершён
+            if (gameState.stage === 'complete') {
+                gameState.filmsDeveloped++;
+                addLog(`🎞️ ПЛЁНКА #${gameState.filmsDeveloped} ПРОЯВЛЕНА!`);
+                gameState.stage = 'loading';
+                gameState.currentFrame = 1;
+                gameState.exposedFrames = [];
+            } else {
+                gameState.stage = currentStage.next;
+            }
+            
+            gameState.stageProgress = 0;
+            
+            // Особые случаи
+            if (gameState.stage === 'wash') {
+                // Этап сушки — запускаем таймер
+                addLog('🌬️ СУШКА... НЕ ТРОГАЙ 15 СЕК');
+                setTimeout(() => {
+                    if (gameState.stage === 'wash') {
+                        nextStage();
+                    }
+                }, 15000);
+            }
+            
+            updateUI();
+        }
+
+        // ========== ОБРАБОТКА ТАПОВ ==========
+        function handleTap() {
+            if (!gameState.isActive) return;
+            
+            const stage = stages[gameState.stage];
+            if (!stage) return;
+            
+            gameState.totalTaps++;
+            
+            // Этап сушки — тапать нельзя
+            if (gameState.stage === 'wash') {
+                addLog('⚠️ НЕ ТАПАЙ! ИДЁТ СУШКА');
                 return;
             }
             
-            playSound('click');
-            
-            const hit = document.getElementById('hitEffect');
-            hit.style.display = 'block';
-            
-            const isCrit = Math.random() * 100 < getCritChance();
-            let earn = getEarnPerTap();
-            
-            if (isCrit) {
-                earn *= 3;
-                hit.classList.add('crit');
-                playSound('crit');
-                gameState.achievements.crits++;
-                tg.HapticFeedback.impactOccurred('heavy');
-            } else {
-                hit.classList.remove('crit');
-                tg.HapticFeedback.impactOccurred('medium');
+            // Этап завершён — тапаем для новой плёнки
+            if (gameState.stage === 'complete') {
+                nextStage();
+                return;
             }
             
-            gameState.coins += earn;
-            gameState.energy -= 1;
-            gameState.achievements.clicks++;
-            gameState.achievements.totalCoins += earn;
-            
-            setTimeout(() => hit.style.display = 'none', 100);
-            
-            const popup = document.createElement('div');
-            popup.className = 'popup-8bit' + (isCrit ? ' popup-crit' : '');
-            popup.textContent = (isCrit ? '🎯 ' : '+') + formatNumber(Math.floor(earn));
-            
-            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-            
-            if (clientX && clientY) {
-                popup.style.left = clientX + 'px';
-                popup.style.top = clientY + 'px';
-                document.body.appendChild(popup);
-                setTimeout(() => popup.remove(), 600);
-            }
-            
-            updateDisplay();
-        });
-        
-        window.buyUpgrade = function(type) {
-            let cost = 0;
-            
-            switch(type) {
-                case 'evo':
-                    if (gameState.treeLevel >= 5) return;
-                    cost = (gameState.treeLevel + 1) * 2000;
-                    break;
-                case 'tap':
-                    if (gameState.tapPower >= 25) return;
-                    cost = Math.floor(100 * Math.pow(1.5, gameState.tapPower - 1));
-                    break;
-                case 'energy':
-                    if (gameState.maxEnergy >= 1200) return;
-                    cost = gameState.maxEnergy;
-                    break;
-                case 'regen':
-                    if (gameState.regenLevel >= 5) return;
-                    cost = 1000 * (gameState.regenLevel + 1);
-                    break;
-                case 'auto':
-                    if (gameState.autoClickerLevel >= 5) return;
-                    cost = 5000 * (gameState.autoClickerLevel + 1);
-                    break;
-                case 'crit':
-                    if (gameState.critLevel >= 10) return;
-                    cost = 2000 * (gameState.critLevel + 1);
-                    break;
-            }
-            
-            if (gameState.coins >= cost) {
-                gameState.coins -= cost;
+            // Обычный этап с тапами
+            if (stage.maxTaps > 0) {
+                gameState.stageProgress++;
                 
-                switch(type) {
-                    case 'evo': gameState.treeLevel++; break;
-                    case 'tap': gameState.tapPower++; break;
-                    case 'energy': 
-                        gameState.maxEnergy += 100; 
-                        gameState.energy = gameState.maxEnergy;
-                        break;
-                    case 'regen': gameState.regenLevel++; break;
-                    case 'auto': gameState.autoClickerLevel++; break;
-                    case 'crit': gameState.critLevel++; break;
+                // Бустер ускоряет прогресс
+                if (gameState.boostActive) {
+                    gameState.stageProgress++;
                 }
                 
-                gameState.achievements.upgrades++;
-                playSound('buy');
-                tg.HapticFeedback.notificationOccurred('success');
-            } else {
-                tg.HapticFeedback.notificationOccurred('error');
+                // Проверяем завершение этапа
+                if (gameState.stageProgress >= stage.maxTaps) {
+                    nextStage();
+                }
+                
+                // Добавляем визуальный эффект
+                addLog(`👆 ТАП! ${gameState.stageProgress}/${stage.maxTaps}`);
+                
+                // Случайно "снимаем" кадры во время проявки
+                if (Math.random() < 0.1 && !gameState.exposedFrames.includes(gameState.currentFrame)) {
+                    gameState.exposedFrames.push(gameState.currentFrame);
+                    addLog(`📸 КАДР ${gameState.currentFrame} ПРОЯВИЛСЯ!`);
+                    
+                    if (gameState.currentFrame < gameState.maxFrames) {
+                        gameState.currentFrame++;
+                    }
+                }
             }
             
-            updateDisplay();
-        };
-        
-        window.showScreen = function(screen, btn) {
-            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            document.getElementById('mainScreen').classList.add('hidden');
-            document.getElementById('shopScreen').classList.add('hidden');
-            document.getElementById('friendsScreen').classList.add('hidden');
-            
-            if (screen === 'main') {
-                document.getElementById('mainScreen').classList.remove('hidden');
-            } else if (screen === 'shop') {
-                document.getElementById('shopScreen').classList.remove('hidden');
-            } else if (screen === 'friends') {
-                document.getElementById('friendsScreen').classList.remove('hidden');
-            } else if (screen === 'achievements') {
-                document.getElementById('mainScreen').classList.remove('hidden');
-                document.getElementById('achievementsPanel').classList.toggle('hidden');
-            }
-        };
-        
-        window.inviteFriend = function() {
-            const link = `https://t.me/your_bot/app?startapp=${userId}`;
-            
-            tg.openTelegramLink(
-                'https://t.me/share/url?url=' + encodeURIComponent(link) + 
-                '&text=🌳 ПРИСОЕДИНЯЙСЯ К MONEY TREE! СТАРТОВЫЙ БОНУС 500 МОНЕТ!'
-            );
-            
-            playSound('click');
-        };
-        
-        window.toggleAchievements = function() {
-            document.getElementById('achievementsPanel').classList.toggle('hidden');
-        };
-        
-        // ИНТЕРВАЛ ОБНОВЛЕНИЯ
-        setInterval(() => {
-            // ТОЛЬКО регенерация энергии - никогда не тратится сама
-            if (gameState.energy < gameState.maxEnergy) {
-                gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + getRegenRate() / 10);
+            updateUI();
+        }
+
+        // ========== ПОКУПКА ПЛЁНКИ ==========
+        function buyFilm() {
+            if (gameState.coins < 50) {
+                addLog('❌ НЕ ХВАТАЕТ МОНЕТ');
+                return;
             }
             
-            // АВТО-КЛИКЕР ПОЛНОСТЬЮ ОТКЛЮЧЕН
-            // if (gameState.autoClickerLevel > 0) {
-            //     // ничего не делаем
-            // }
+            gameState.coins -= 50;
+            gameState.filmType = gameState.filmType === 'ILFORD HP5' ? 'KODAK PORTRA' : 'ILFORD HP5';
+            addLog(`📀 КУПЛЕНА ПЛЁНКА: ${gameState.filmType}`);
+            updateUI();
+        }
+
+        // ========== БУСТЕР ==========
+        function activateBoost() {
+            if (gameState.coins < 100) {
+                addLog('❌ НЕ ХВАТАЕТ МОНЕТ');
+                return;
+            }
             
-            updateDisplay();
-        }, 100);
-        
-        // Сохраняем время при закрытии страницы
-        window.addEventListener('beforeunload', function() {
-            gameState.lastOnlineTime = Date.now();
-            saveGame();
+            gameState.coins -= 100;
+            gameState.boostActive = true;
+            gameState.boostEndTime = Date.now() + 30000; // 30 секунд
+            
+            addLog('⚡ БУСТЕР АКТИВИРОВАН НА 30 СЕК');
+            
+            setTimeout(() => {
+                gameState.boostActive = false;
+                addLog('⚡ БУСТЕР ЗАКОНЧИЛСЯ');
+            }, 30000);
+            
+            updateUI();
+        }
+
+        // ========== ЗАГРУЗКА СОХРАНЕНИЯ ИЗ TELEGRAM ==========
+        function loadFromTelegram() {
+            try {
+                // Пробуем получить сохранённые данные из initData
+                const initData = tg.initDataUnsafe;
+                if (initData && initData.user) {
+                    addLog(`👋 ПРИВЕТ, ${initData.user.first_name}!`);
+                }
+                
+                // Проверяем реферальный параметр
+                if (initData && initData.start_param) {
+                    gameState.coins += 100;
+                    addLog('🎁 +100 МОНЕТ ЗА РЕФЕРАЛА!');
+                }
+            } catch (e) {
+                console.log('Telegram data error:', e);
+            }
+        }
+
+        // ========== СОХРАНЕНИЕ ПРОГРЕССА ==========
+        function saveGame() {
+            try {
+                const saveData = {
+                    coins: gameState.coins,
+                    exp: gameState.exp,
+                    filmsDeveloped: gameState.filmsDeveloped,
+                    totalTaps: gameState.totalTaps
+                };
+                
+                // Отправляем в Telegram Cloud (если нужно)
+                tg.sendData(JSON.stringify(saveData));
+            } catch (e) {
+                console.log('Save error:', e);
+            }
+        }
+
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        function initGame() {
+            // Создаём начальные кадры
+            for (let i = 1; i <= 5; i++) {
+                if (Math.random() < 0.3) {
+                    gameState.exposedFrames.push(i);
+                }
+            }
+            gameState.currentFrame = Math.max(...gameState.exposedFrames, 0) + 1;
+            
+            loadFromTelegram();
+            updateUI();
+            
+            addLog('🎞️ ФОТОЛАБОРАТОРИЯ 199X');
+            addLog('▶ ЗАРЯДИ ПЛЁНКУ');
+            
+            // Автосохранение каждые 30 секунд
+            setInterval(saveGame, 30000);
+            
+            // Обработка закрытия
+            window.addEventListener('beforeunload', saveGame);
+        }
+
+        // ========== НАЗНАЧАЕМ ОБРАБОТЧИКИ ==========
+        elements.tapBtn.addEventListener('click', handleTap);
+        elements.buyFilmBtn.addEventListener('click', buyFilm);
+        elements.boostBtn.addEventListener('click', activateBoost);
+
+        // Запускаем игру
+        initGame();
+
+        // ========== ДОПОЛНИТЕЛЬНО: ТАП ПО ВСЕМУ ЭКРАНУ ДЛЯ УДОБСТВА ==========
+        document.querySelector('.game-container').addEventListener('click', function(e) {
+            // Если клик не по кнопке — считаем как тап
+            if (!e.target.classList.contains('pixel-btn')) {
+                handleTap();
+            }
         });
-        
-        showScreen('main', document.querySelector('.menu-btn'));
-        updateDisplay();
+
+        // Обновление времени бустера (не обязательно, но красиво)
+        setInterval(() => {
+            if (gameState.boostActive) {
+                const timeLeft = Math.max(0, Math.ceil((gameState.boostEndTime - Date.now()) / 1000));
+                document.getElementById('hintText').innerHTML = `⚡ БУСТЕР: ${timeLeft}С`;
+            }
+        }, 1000);
     </script>
 </body>
 </html>
